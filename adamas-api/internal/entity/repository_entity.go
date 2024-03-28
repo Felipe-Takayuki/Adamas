@@ -14,6 +14,7 @@ type Category struct {
 type Repository struct {
 	ID string
 	Title string
+	Description string
 	OwnersID []string
 	OwnersName []string
 	Categories []*Category

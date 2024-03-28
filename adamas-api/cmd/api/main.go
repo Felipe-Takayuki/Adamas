@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/database"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -14,9 +15,10 @@ func main() {
 		panic(err.Error())
 	}
 	userDB := database.NewUserDB(db)
-	repositories, err := userDB.GetRepositories()
+	userService := service.NewUserService(*userDB)
+	repositories, err := userService.GetRepositories()
 	if err != nil {
 		panic(err)
 	}
-	print(repositories[0].ID)
+	print(repositories[0].Title)
 }

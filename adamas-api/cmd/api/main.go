@@ -16,9 +16,9 @@ func main() {
 	}
 	userDB := database.NewUserDB(db)
 	userService := service.NewUserService(*userDB)
-	repositories, err := userService.GetRepositories()
+	usr, err := userService.CreateUser("Felipe", "felipe@gmail.com", "12345678")
 	if err != nil {
 		panic(err)
 	}
-	print(repositories[0].Title)
+	print(usr.Id, " ", usr.Name, " ", usr.Email, usr.Password)
 }

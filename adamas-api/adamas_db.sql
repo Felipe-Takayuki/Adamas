@@ -1,39 +1,39 @@
+DROP DATABASE IF EXISTS ADAMAS_DB;
+
 CREATE DATABASE ADAMAS_DB;
 
 USE ADAMAS_DB;
 
-CREATE TABLE COMMON_USER(
-    id varchar(36) NOT NULL PRIMARY KEY,
-    name varchar(255) NOT NULL,
-    email varchar(255) NOT NULL,
-    password varchar(64) NOT NULL
-);
-CREATE TABLE INSTUTION_USER(
+
+CREATE TABLE INSTITUTION_USER(
     id varchar(36) NOT NULL PRIMARY KEY,
     name varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
     password varchar(64) NOT NULL,
     cnpj char(14) NOT NULL
 );
+CREATE TABLE COMMON_USER(
+    id varchar(36) NOT NULL PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    institution_id VARCHAR(36) NULL,
+    password varchar(64) NOT NULL,
+    FOREIGN KEY (institution_id) REFERENCES INSTITUTION_USER(id)
+);
 
-
+DROP TABLE IF EXISTS EVENT;
 CREATE TABLE EVENT(
     id varchar(36) NOT NULL PRIMARY KEY,
     data date NOT NULL,
     name varchar(255) NOT NULL, 
-    owner_id vachar(36) NOT NULL,
+    owner_id vadamas_dbadamas_dbachar(36) NOT NULL,
     FOREIGN KEY (owner_id) REFERENCES INSTITUTION_USER(id)
 );
 
 CREATE TABLE REPOSITORIES_IN_EVENT(
-    
     repository_id varchar(36) NOT NULL,
     event_id varchar(36) NOT NULL,
-
-
 )
-
-
 
 
 CREATE TABLE REPOSITORY(

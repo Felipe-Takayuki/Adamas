@@ -2,11 +2,10 @@ package entity
 
 import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
-	"github.com/google/uuid"
 )
 
 type User struct {
-	Id           string
+	Id           int
 	Name         string
 	Email        string
 	Password     string
@@ -15,7 +14,6 @@ type User struct {
 
 func NewUser(name string, email string, password string) *User {
 	return &User{
-		Id: uuid.NewString(),
 		Name: name,
 		Email: email,
 		Password: utils.EncriptKey(password),

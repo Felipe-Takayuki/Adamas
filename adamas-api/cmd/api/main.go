@@ -20,5 +20,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	print(usr.Id, " ", usr.Name, " ", usr.Email, usr.Password)
+	print(usr.Name, " ", usr.Email, " ", usr.Password)
 }

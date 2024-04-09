@@ -6,44 +6,44 @@ USE ADAMAS_DB;
 
 
 CREATE TABLE INSTITUTION_USER(
-    id varchar(36) NOT NULL PRIMARY KEY,
+    id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
     password varchar(64) NOT NULL,
     cnpj char(14) NOT NULL
 );
 CREATE TABLE COMMON_USER(
-    id varchar(36) NOT NULL PRIMARY KEY,
+    id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
-    institution_id VARCHAR(36) NULL,
+    institution_id int NULL,
     password varchar(64) NOT NULL,
     FOREIGN KEY (institution_id) REFERENCES INSTITUTION_USER(id)
 );
 
 DROP TABLE IF EXISTS EVENT;
 CREATE TABLE EVENT(
-    id varchar(36) NOT NULL PRIMARY KEY,
+    id int auto_increment NOT NULL PRIMARY KEY,
     data date NOT NULL,
     name varchar(255) NOT NULL, 
-    owner_id vadamas_dbadamas_dbachar(36) NOT NULL,
+    owner_id int NOT NULL,
     FOREIGN KEY (owner_id) REFERENCES INSTITUTION_USER(id)
-);
+); 
 
 CREATE TABLE REPOSITORIES_IN_EVENT(
-    repository_id varchar(36) NOT NULL,
-    event_id varchar(36) NOT NULL,
+    repository_id int NOT NULL,
+    event_id int NOT NULL,
 )
 
 
 CREATE TABLE REPOSITORY(
-    id varchar(36) NOT NULL PRIMARY KEY,
+    id int auto_increment NOT NULL PRIMARY KEY,
     title varchar(255) NOT NULL,
     description varchar(255) NOT NULL
 );
 CREATE TABLE OWNERS_REPOSITORY(
-    repository_id varchar(36) NOT NULL REFERENCES REPOSITORY(id),
-    owner_id varchar(36) NOT NULL REFERENCES COMMON_USER(id),
+    repository_id int NOT NULL REFERENCES REPOSITORY(id),
+    owner_id int NOT NULL REFERENCES COMMON_USER(id),
     PRIMARY KEY(repository_id, owner_id)
 );
 CREATE TABLE BLOC_REPOSITORY(
@@ -53,8 +53,8 @@ CREATE TABLE BLOC_REPOSITORY(
     content varchar(255) NOT NULL
 );
 CREATE TABLE CATEGORY(
-    id varchar(36) NOT NULL PRIMARY KEY,
+    id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(200) NOT NULL,
-    repository_id varchar(36) NOT NULL,
+    repository_id int NOT NULL,
     FOREIGN KEY (repository_id) REFERENCES REPOSITORY(id)
 ); 

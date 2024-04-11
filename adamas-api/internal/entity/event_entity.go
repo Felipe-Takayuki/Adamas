@@ -6,20 +6,16 @@ type Event struct {
 	OwnerID string
 	OwnerName string
 	Repositories []*RepositoryInEvent
-
 }
 
 type RepositoryInEvent struct {
 	ID string
 	Repository *Repository
 	Locale string
-
 }
 
 type Comment struct {
-	
 	UserID string
 	UserName string
 	Comment string
-
 }

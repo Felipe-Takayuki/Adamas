@@ -5,25 +5,35 @@ import (
 )
 
 type User struct {
-	Id           int
-	Name         string
-	Email        string
-	Password     string
-	Repositories []*Repository
+	Id           int `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	Password     string `json:"password"`
+	Repositories []*Repository `json:"repositories"`
 }
 
 func NewUser(name string, email string, password string) *User {
 	return &User{
-		Name: name,
-		Email: email,
+		Name:     name,
+		Email:    email,
 		Password: utils.EncriptKey(password),
 	}
 }
 
 type Institution struct {
-	Name     string
-	Email    string
-	Password string
-	CNPJ     string
-	Events   []string
+	Name     string   `json:"name"`
+	Email    string   `json:"email"`
+	Password string   `json:"password"`
+	CNPJ     string   `json:"cnpj"`
+	Events   []string `json:"events"`
+}
+
+func NewInstitution(name, email, password, cnpj string, events []string) *Institution {
+	return &Institution{
+		Name:     name,
+		Email:    email,
+		Password: password,
+		CNPJ:     cnpj,
+		Events:   events,
+	}
 }

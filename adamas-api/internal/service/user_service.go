@@ -31,3 +31,10 @@ func (us *UserService) CreateUser(name, email, password string) (*entity.User, e
 	return user, nil
 }
 
+func (us *UserService) LoginUser(email, password string) (*entity.User, error) {
+	user, err := us.UserDB.LoginUser(email, password)
+	if err != nil{
+		return nil, err
+	}
+	return user, nil
+} 

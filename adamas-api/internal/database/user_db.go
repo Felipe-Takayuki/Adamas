@@ -46,7 +46,7 @@ func (ud *UserDB) CreateUser(name, email, password string) (*entity.User, error)
 func (ud * UserDB) LoginUser(email, password string) (*entity.User, error) {
 	var user entity.User
 	err := ud.db.QueryRow("SELECT id, name, email FROM common_user WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
-		user.Id, user.Name, user.Email,
+		&user.Id, &user.Name, &user.Email,
 	)
 	if err != nil {
 		return nil, err

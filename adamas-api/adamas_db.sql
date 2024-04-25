@@ -38,7 +38,7 @@ CREATE TABLE REPOSITORIES_IN_EVENT(
 
 CREATE TABLE REPOSITORY(
     id int auto_increment NOT NULL PRIMARY KEY,
-    title varchar(255) NOT NULL,
+    title varchar(255) NOT NULL UNIQUE,
     description varchar(255) NOT NULL
 );
 CREATE TABLE OWNERS_REPOSITORY(

@@ -8,14 +8,14 @@ USE ADAMAS_DB;
 CREATE TABLE INSTITUTION_USER(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(255) NOT NULL,
-    email varchar(255) NOT NULL,
+    email varchar(255) NOT NULL UNIQUE,
     password varchar(64) NOT NULL,
-    cnpj char(14) NOT NULL
+    cnpj char(14) NOT NULL UNIQUE
 );
 CREATE TABLE COMMON_USER(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(255) NOT NULL,
-    email varchar(255) NOT NULL,
+    email varchar(255) NOT NULL UNIQUE,
     institution_id int NULL,
     password varchar(64) NOT NULL,
     FOREIGN KEY (institution_id) REFERENCES INSTITUTION_USER(id)
@@ -52,9 +52,14 @@ CREATE TABLE BLOC_REPOSITORY(
     subtitle varchar(255) NOT NULL,
     content varchar(255) NOT NULL
 );
+
+CREATE TABLE CATEGORY_REPO(
+    category_id int NOT NULL,
+    owner_id int NOT NULL,
+    PRIMARY KEY(repository_id, owner_id)
+);
+
 CREATE TABLE CATEGORY(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(200) NOT NULL,
-    repository_id int NOT NULL,
-    FOREIGN KEY (repository_id) REFERENCES REPOSITORY(id)
 ); 

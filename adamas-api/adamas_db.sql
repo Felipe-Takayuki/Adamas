@@ -56,7 +56,7 @@ CREATE TABLE BLOC_REPOSITORY(
 CREATE TABLE CATEGORY_REPO(
     category_id int NOT NULL,
     repository_id int NOT NULL,
-    PRIMARY KEY(repository_id, repository_id)
+    PRIMARY KEY(category_id, repository_id)
 );
 
 CREATE TABLE CATEGORY(

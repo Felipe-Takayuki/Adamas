@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/database"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
@@ -14,7 +15,12 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:@tcp(localhost:3306)/adamas_db")
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "127.0.0.1" // Valor padrão
+	} 
+
+    db, err := sql.Open("mysql", fmt.Sprintf("root:root@tcp(%s:3306)/adamas_db", dbHost))
 	if err != nil {
 		print("ERROR")
 		panic(err.Error())

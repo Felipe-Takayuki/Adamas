@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS ADAMAS_DB;
+DROP DATABASE IF EXISTS adamas_db;
 
-CREATE DATABASE ADAMAS_DB;
+CREATE DATABASE adamas_db;
 
-USE ADAMAS_DB;
+USE adamas_db;
 
 
 CREATE TABLE INSTITUTION_USER(
@@ -20,20 +20,6 @@ CREATE TABLE COMMON_USER(
     password varchar(64) NOT NULL,
     FOREIGN KEY (institution_id) REFERENCES INSTITUTION_USER(id)
 );
-
-DROP TABLE IF EXISTS EVENT;
-CREATE TABLE EVENT(
-    id int auto_increment NOT NULL PRIMARY KEY,
-    data date NOT NULL,
-    name varchar(255) NOT NULL, 
-    owner_id int NOT NULL,
-    FOREIGN KEY (owner_id) REFERENCES INSTITUTION_USER(id)
-); 
-
-CREATE TABLE REPOSITORIES_IN_EVENT(
-    repository_id int NOT NULL,
-    event_id int NOT NULL,
-)
 
 
 CREATE TABLE REPOSITORY(
@@ -63,3 +49,5 @@ CREATE TABLE CATEGORY(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(200) NOT NULL,
 ); 
+
+                                                                                                                     

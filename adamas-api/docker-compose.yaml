@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: host.docker.internal  
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - db  
+  db:
+    image: mysql:latest
+    container_name: adamas-db
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./adamas_db.sql:/docker-entrypoint-initdb.d/adamas_db.sql   

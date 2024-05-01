@@ -36,7 +36,7 @@ func (ud * UserDB) GetRepositoriesByUserName(username string) ([]*entity.Reposit
 
 func (ud *UserDB) CreateUser(name, email, password string) (*entity.User, error) {
 	user := entity.NewUser(name, email, password)
-	_, err := ud.db.Exec("INSERT INTO common_user(id, name, email, password) VALUES(?, ?, ?, ?)", user.Id, user.Name, user.Email, user.Password)
+	_, err := ud.db.Exec("INSERT INTO COMMON_USER(id, name, email, password) VALUES(?, ?, ?, ?)", user.Id, user.Name, user.Email, user.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (ud *UserDB) CreateUser(name, email, password string) (*entity.User, error)
 
 func (ud * UserDB) LoginUser(email, password string) (*entity.User, error) {
 	var user entity.User
-	err := ud.db.QueryRow("SELECT id, name, email FROM common_user WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
+	err := ud.db.QueryRow("SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
 		&user.Id, &user.Name, &user.Email,
 	)
 	if err != nil {

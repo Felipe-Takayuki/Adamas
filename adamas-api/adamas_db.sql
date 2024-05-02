@@ -47,7 +47,7 @@ CREATE TABLE CATEGORY_REPO(
 
 CREATE TABLE CATEGORY(
     id int auto_increment NOT NULL PRIMARY KEY,
-    name varchar(200) NOT NULL,
+    name varchar(200) NOT NULL
 ); 
 
                                                                                                                      

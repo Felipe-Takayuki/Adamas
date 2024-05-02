@@ -16,11 +16,13 @@ import (
 
 func main() {
 	dbHost := os.Getenv("DB_HOST")
+	password := "root"
 	if dbHost == "" {
-		dbHost = "127.0.0.1" // Valor padrão
+		dbHost = "127.0.0.1"
+		password = ""
 	} 
 
-    db, err := sql.Open("mysql", fmt.Sprintf("root:root@tcp(%s:3306)/adamas_db", dbHost))
+    db, err := sql.Open("mysql", "root:"+password+"@tcp("+dbHost+":3306)/adamas_db")
 	if err != nil {
 		print("ERROR")
 		panic(err.Error())

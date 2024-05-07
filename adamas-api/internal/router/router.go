@@ -2,6 +2,7 @@ package router
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/database"
@@ -20,9 +21,20 @@ func Router(db *sql.DB) http.Handler {
 	c := chi.NewRouter()
 	c.Use(middleware.Logger)
 	c.Use(middleware.Recoverer)
-	c.Post("/create", webUserService.CreateUser)
+	c.Post("/create", func(w http.ResponseWriter, r *http.Request) {
+		webUserService.CreateUser(w, r, tokenAuth)
+	})
 	c.Post("/login", func(w http.ResponseWriter, r *http.Request) {
 		webUserService.LoginUser(w, r, tokenAuth)
 	})
+	c.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator)
+		r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
+			_, claims, _ := jwtauth.FromContext(r.Context())
+			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["name"])))
+		})
+	},
+	)
 	return c
 }

@@ -18,8 +18,9 @@ func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 	return &WebUserHandler{UserService: &userService}
 }
 
-func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user *entity.User
+	
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -29,8 +30,12 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	} else {
+		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{
+			"id": result.Id, "name": result.Name, "email": result.Email})
+		json.NewEncoder(w).Encode(tokenString)
 	}
-	json.NewEncoder(w).Encode(result)
+	
 }
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
+	"github.com/go-chi/jwtauth"
 )
 
 type WebUserHandler struct {
@@ -31,7 +32,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-func (wub * WebUserHandler) LoginUser(w http.ResponseWriter, r * http.Request)  {
+func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user entity.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -43,5 +44,6 @@ func (wub * WebUserHandler) LoginUser(w http.ResponseWriter, r * http.Request)  
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(result)
+	_, tokenString, _ := tokenAuth.Encode(map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email })
+	json.NewEncoder(w).Encode(tokenString)
 }

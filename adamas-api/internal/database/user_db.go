@@ -36,10 +36,17 @@ func (ud * UserDB) GetRepositoriesByUserName(username string) ([]*entity.Reposit
 
 func (ud *UserDB) CreateUser(name, email, password string) (*entity.User, error) {
 	user := entity.NewUser(name, email, password)
-	_, err := ud.db.Exec("INSERT INTO COMMON_USER(id, name, email, password) VALUES(?, ?, ?, ?)", user.Id, user.Name, user.Email, user.Password)
+	_, err := ud.db.Exec("INSERT INTO COMMON_USER(name, email, password) VALUES( ?, ?, ?)",  user.Name, user.Email, user.Password)
 	if err != nil {
 		return nil, err
 	}
+	err = ud.db.QueryRow("SELECT id FROM COMMON_USER WHERE email = ?", email).Scan(
+		&user.Id,    
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return user, nil
 }
 

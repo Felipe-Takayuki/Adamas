@@ -12,6 +12,7 @@ import (
 type WebUserHandler struct {
 	UserService *service.UserService
 }
+var tokenString string 
 
 func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 	return &WebUserHandler{UserService: &userService}
@@ -43,7 +44,11 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	} else {
+		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{
+			"id": result.Id, "name": result.Name, "email": result.Email})
+		json.NewEncoder(w).Encode(tokenString)
 	}
-	_, tokenString, _ := tokenAuth.Encode(map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email })
-	json.NewEncoder(w).Encode(tokenString)
+	
+	
 }

@@ -6,21 +6,37 @@ import (
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
+	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 )
 
 type WebUserHandler struct {
 	UserService *service.UserService
 }
-var tokenString string 
+
+var tokenString string
 
 func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 	return &WebUserHandler{UserService: &userService}
 }
 
+func (wub *WebUserHandler) GetRepositoriesByUserName(w http.ResponseWriter, r *http.Request) {
+	name := chi.URLParam(r, "name")
+	if name == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
+		return
+	}
+	repositories, err := wub.UserService.GetRepositoriesByUserName(name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(repositories)
+
+}
 func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user *entity.User
-	
+
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -35,7 +51,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 			"id": result.Id, "name": result.Name, "email": result.Email})
 		json.NewEncoder(w).Encode(tokenString)
 	}
-	
+
 }
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
@@ -50,10 +66,8 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else {
-		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{
-			"id": result.Id, "name": result.Name, "email": result.Email})
+		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email})
 		json.NewEncoder(w).Encode(tokenString)
 	}
-	
-	
+
 }

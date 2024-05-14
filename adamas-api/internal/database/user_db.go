@@ -17,7 +17,7 @@ func NewUserDB (db *sql.DB) *UserDB {
 }
 
 func (ud * UserDB) GetRepositoriesByUserName(username string) ([]*entity.Repository, error) {
-	rows, err := ud.db.Query("SELECT r.id, r.title, r.description FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id WHERE u.username = ?",username)
+	rows, err := ud.db.Query("SELECT r.id, r.title, r.description FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id WHERE u.name = ?",username)
 	if err != nil {
 		return nil, err
 	}

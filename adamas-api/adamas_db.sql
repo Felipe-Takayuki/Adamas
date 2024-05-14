@@ -50,4 +50,14 @@ CREATE TABLE CATEGORY(
     name varchar(200) NOT NULL
 ); 
 
+INSERT INTO CATEGORY(name) values (
+    "Saúde",
+    "Agricultura",
+    "Ferramenta",
+    "Música",
+    "TI",
+    "Marketing",
+    "Mecânica"
+);
+
                                                                                                                      

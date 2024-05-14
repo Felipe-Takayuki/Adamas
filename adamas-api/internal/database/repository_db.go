@@ -16,8 +16,8 @@ func NewRepoDB(rdb *sql.DB) *RepoDB {
 	}
 }
 
-func (rdb *RepoDB) CreateRepo(title, description string, owner_id int, categories []int) (*entity.Repository, error) {
-	repo := entity.NewRepository(title, description, owner_id, categories)
+func (rdb *RepoDB) CreateRepo(title, description string,ownerID int, categories []int) (*entity.Repository, error) {
+	repo := entity.NewRepository(title, description, ownerID, categories)
 	_, err := rdb.db.Exec("INSERT INTO repository(title, description) VALUES (?,?)", &repo.Title, &repo.Description)
 	if err != nil {
 		return nil, err
@@ -30,6 +30,9 @@ func (rdb *RepoDB) CreateRepo(title, description string, owner_id int, categorie
 	if err != nil {
 		return nil, err
 	}
-
-	return repo, nil
+	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, ownerID) VALUES (?, ?)", &repo.ID, ownerID)
+	if err != nil {
+		return nil, err 
+	}
+	return repo, nil 
 }

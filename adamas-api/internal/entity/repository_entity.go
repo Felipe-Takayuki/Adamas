@@ -1,6 +1,5 @@
 package entity
 
-
 type Bloc struct {
 	SubTitle string
 	Content  string
@@ -12,22 +11,22 @@ type Category struct {
 }
 
 type Repository struct {
-	ID          int
-	Title       string
-	Description string
-	OwnersID    []int
-	OwnersName  []string
-	CategoriesID []int 
-	CategoriesName string
-	Blocs       []*Bloc
+	ID                 int      `json:"id"`
+	Title              string   `json:"title"`
+	Description        string   `json:"description"`
+	FirstOwnerUserID   int      `json:"user_id"`
+	FirstOwnerUserName string   `json:"user_name"`
+	OwnersID           []int    `json:"owners_id"`
+	OwnersName         []string `json:"owners_name"`
+	CategoriesID       []int	`json:"categories_id"`	
+	CategoriesName     string	`json:"catetegories"`
+	Blocs              []*Bloc	`json:"blocs"`
 }
 
-func NewRepository(title, description string, ownerID int, categoriesID []int) *Repository {
-	var ownersID []int
+func NewRepository(title, description string, ownerID int) *Repository {
 	return &Repository{
 		Title:       title,
 		Description: description,
-		OwnersID:    append(ownersID, ownerID),
-		CategoriesID:  categoriesID,
+		FirstOwnerUserID: ownerID,
 	}
 }

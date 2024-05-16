@@ -3,6 +3,7 @@ package webserver
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
@@ -48,7 +49,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		return
 	} else {
 		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{
-			"id": result.Id, "name": result.Name, "email": result.Email})
+			"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)})
 		json.NewEncoder(w).Encode(tokenString)
 	}
 
@@ -66,7 +67,9 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else {
-		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email})
+		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
+
+		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(tokenString)
 	}
 

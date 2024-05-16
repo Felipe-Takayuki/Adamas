@@ -15,8 +15,8 @@ func NewRepoService(repoDB database.RepoDB) *RepositoryService {
 	}
 }
 
-func (rs *RepositoryService) CreateRepo(title, description string, ownerID int, categoriesID []int ) (*entity.Repository, error) {
-	repo, err := rs.RepositoryDB.CreateRepo(title, description, ownerID, categoriesID)
+func (rs *RepositoryService) CreateRepo(title, description string, ownerID int) (*entity.Repository, error) {
+	repo, err := rs.RepositoryDB.CreateRepo(title, description, ownerID)
 	if err != nil {
 		return nil, err 
 	}

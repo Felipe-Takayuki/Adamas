@@ -17,7 +17,10 @@ func Router(db *sql.DB) http.Handler {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 	userDB := database.NewUserDB(db)
 	userService := service.NewUserService(*userDB)
+	repoDB := database.NewRepoDB(db)
+	repoService := service.NewRepoService(*repoDB)
 	webUserService := webserver.NewWebUserHandler(*userService)
+	webRepoService := webserver.NewRepoHandler(repoService)
 	c := chi.NewRouter()
 	c.Use(middleware.Logger)
 	c.Use(middleware.Recoverer)
@@ -43,5 +46,6 @@ func Router(db *sql.DB) http.Handler {
 		})
 	},
 	)
+	c.Post("/repo", webRepoService.CreateRepo)
 	return c
 }

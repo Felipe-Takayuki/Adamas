@@ -15,8 +15,8 @@ func NewUserService(userDB database.UserDB) *UserService {
 	}
 }
 
-func (us *UserService) GetRepositoriesByUserName(username string) ([]*entity.Repository, error) {
-	repositories, err := us.UserDB.GetRepositoriesByUserName(username)
+func (us *UserService) GetRepositoriesByName(name string) ([]*entity.Repository, error) {
+	repositories, err := us.UserDB.GetRepositoriesByName(name)
 	if err != nil {
 		return nil, err
 	}

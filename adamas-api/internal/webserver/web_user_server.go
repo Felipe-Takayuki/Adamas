@@ -21,13 +21,13 @@ func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 	return &WebUserHandler{UserService: &userService}
 }
 
-func (wub *WebUserHandler) GetRepositoriesByUserName(w http.ResponseWriter, r *http.Request) {
-	name := chi.URLParam(r, "name")
-	if name == "" {
+func (wub *WebUserHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
+	repository := chi.URLParam(r, "repo")
+	if repository == "" {
 		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
-	repositories, err := wub.UserService.GetRepositoriesByUserName(name)
+	repositories, err := wub.UserService.GetRepositoriesByName(repository)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,7 +51,9 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 	} else {
 		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
-		json.NewEncoder(w).Encode(tokenString)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"token" : tokenString,
+		})
 	}
 
 }
@@ -70,7 +72,9 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 	} else {
 		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
-		json.NewEncoder(w).Encode(tokenString)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"token" : tokenString,
+		})
 	}
 
 }

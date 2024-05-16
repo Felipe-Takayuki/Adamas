@@ -14,10 +14,12 @@ type Repository struct {
 	ID                 int      `json:"id"`
 	Title              string   `json:"title"`
 	Description        string   `json:"description"`
+	FirstOwnerID       int 		`json:"owner_id"`
+	FirstOwnerName 	   string 	`json:"owner_name"`
 	OwnerIDs           []int    `json:"owners_id"`
 	OwnerNames         []string `json:"owners_name"`
 	CategoriesID       []int	`json:"categories_id"`	
-	CategoriesName     string	`json:"catetegories"`
+	CategoriesName     string	`json:"categories"`
 	Blocs              []*Bloc	`json:"blocs"`
 }
 type RepositoryRequestFirst struct {
@@ -30,6 +32,7 @@ func NewRepository(title, description string, ownerID int) *Repository {
 	return &Repository{
 		Title:       title,
 		Description: description,
+		FirstOwnerID: ownerID,
 		OwnerIDs: append(ownerIDs, ownerID),
 	}
 }

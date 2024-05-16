@@ -27,12 +27,12 @@ func (rdb *RepoDB) CreateRepo(title, description string,ownerID int,) (*entity.R
 		return nil, err
 	}
 	
-	err = rdb.db.QueryRow("SELECT name FROM COMMON_USER WHERE id = ?", repo.OwnerIDs[0]).Scan(&repo.OwnerNames[0])
+	err = rdb.db.QueryRow("SELECT name FROM COMMON_USER WHERE id = ?", repo.FirstOwnerID).Scan(&repo.FirstOwnerName)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, owner_id) VALUES (?, ?)", &repo.ID, &repo.OwnerIDs[0] )
+	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, owner_id) VALUES (?, ?)", &repo.ID, &repo.FirstOwnerID)
 	if err != nil {
 		return nil, err 
 	}

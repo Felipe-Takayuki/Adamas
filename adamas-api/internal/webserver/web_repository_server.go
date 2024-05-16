@@ -19,15 +19,16 @@ func NewRepoHandler(repoService *service.RepositoryService) *WebRepoHandler {
 }
 
 func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
-	var repo *entity.Repository
+	var repo *entity.RepositoryRequestFirst
 	err := json.NewDecoder(r.Body).Decode(&repo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	result, err := wph.RepoService.CreateRepo(repo.Title, repo.Description, repo.FirstOwnerUserID)
+	result, err := wph.RepoService.CreateRepo(repo.Title, repo.Description, repo.FirstOwnerID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	json.NewEncoder(w).Encode(result)
 

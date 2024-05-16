@@ -18,21 +18,24 @@ func NewRepoDB(rdb *sql.DB) *RepoDB {
 
 func (rdb *RepoDB) CreateRepo(title, description string,ownerID int,) (*entity.Repository, error) {
 	repo := entity.NewRepository(title, description, ownerID)
-	_, err := rdb.db.Exec("INSERT INTO repository(title, description) VALUES (?,?)", &repo.Title, &repo.Description)
+	_, err := rdb.db.Exec("INSERT INTO REPOSITORY(title, description) VALUES (?,?)", &repo.Title, &repo.Description)
 	if err != nil {
 		return nil, err
 	}
-	err = rdb.db.QueryRow("SELECT id FROM repository WHERE title = ?", &repo.Title).Scan(&repo.ID)
+	err = rdb.db.QueryRow("SELECT id FROM REPOSITORY WHERE title = ? AND description = ?", repo.Title, repo.Description).Scan(&repo.ID)
 	if err != nil {
 		return nil, err
 	}
-	err = rdb.db.QueryRow("SELECT name FROM common_user WHERE id = ?", ownerID).Scan(&repo.FirstOwnerUserName)
+	
+	err = rdb.db.QueryRow("SELECT name FROM COMMON_USER WHERE id = ?", repo.OwnerIDs[0]).Scan(&repo.OwnerNames[0])
 	if err != nil {
 		return nil, err
 	}
-	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, ownerID) VALUES (?, ?)", &repo.ID, ownerID)
+
+	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, owner_id) VALUES (?, ?)", &repo.ID, &repo.OwnerIDs[0] )
 	if err != nil {
 		return nil, err 
 	}
+
 	return repo, nil 
 }

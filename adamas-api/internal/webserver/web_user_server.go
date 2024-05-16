@@ -35,6 +35,7 @@ func (wub *WebUserHandler) GetRepositoriesByUserName(w http.ResponseWriter, r *h
 	json.NewEncoder(w).Encode(repositories)
 
 }
+
 func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user *entity.User
 
@@ -48,8 +49,8 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else {
-		_, tokenString, _ = tokenAuth.Encode(map[string]interface{}{
-			"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)})
+		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
+		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(tokenString)
 	}
 
@@ -68,7 +69,6 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 		return
 	} else {
 		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
-
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(tokenString)
 	}

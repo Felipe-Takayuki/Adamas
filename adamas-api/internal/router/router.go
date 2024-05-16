@@ -31,6 +31,8 @@ func Router(db *sql.DB) http.Handler {
 		webUserService.LoginUser(w, r, tokenAuth)
 	})
 	c.Get("/search/{name}", webUserService.GetRepositoriesByUserName)
+
+	c.Post("/repo", webRepoService.CreateRepo)
 	
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -46,6 +48,6 @@ func Router(db *sql.DB) http.Handler {
 		})
 	},
 	)
-	c.Post("/repo", webRepoService.CreateRepo)
+	
 	return c
 }

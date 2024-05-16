@@ -10,7 +10,7 @@ CREATE TABLE INSTITUTION_USER(
     name varchar(255) NOT NULL,
     email varchar(255) NOT NULL UNIQUE,
     password varchar(64) NOT NULL,
-    cnpj char(14) NOT NULL UNIQUE
+    cnpj char(14) NOT NULL
 );
 CREATE TABLE COMMON_USER(
     id int auto_increment NOT NULL PRIMARY KEY,
@@ -24,7 +24,7 @@ CREATE TABLE COMMON_USER(
 
 CREATE TABLE REPOSITORY(
     id int auto_increment NOT NULL PRIMARY KEY,
-    title varchar(255) NOT NULL UNIQUE,
+    title varchar(255) NOT NULL,
     description varchar(255) NOT NULL
 );
 CREATE TABLE OWNERS_REPOSITORY(
@@ -50,14 +50,13 @@ CREATE TABLE CATEGORY(
     name varchar(200) NOT NULL
 ); 
 
-INSERT INTO CATEGORY(name) values (
-    "Saúde",
-    "Agricultura",
-    "Ferramenta",
-    "Música",
-    "TI",
-    "Marketing",
-    "Mecânica"
-);
+INSERT INTO CATEGORY(name) values 
+("Saúde"),
+("Agricultura"),
+("Ferramenta"),
+("Música"),
+("TI"),
+("Marketing"),
+("Mecânica");
 
                                                                                                                      

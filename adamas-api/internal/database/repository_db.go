@@ -16,8 +16,8 @@ func NewRepoDB(rdb *sql.DB) *RepoDB {
 	}
 }
 
-func (rdb *RepoDB) CreateRepo(title, description string,ownerID int, categories []int) (*entity.Repository, error) {
-	repo := entity.NewRepository(title, description, ownerID, categories)
+func (rdb *RepoDB) CreateRepo(title, description string,ownerID int,) (*entity.Repository, error) {
+	repo := entity.NewRepository(title, description, ownerID)
 	_, err := rdb.db.Exec("INSERT INTO repository(title, description) VALUES (?,?)", &repo.Title, &repo.Description)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (rdb *RepoDB) CreateRepo(title, description string,ownerID int, categories 
 	if err != nil {
 		return nil, err
 	}
-	err = rdb.db.QueryRow("SELECT name FROM common_user WHERE id = ?", &repo.OwnersID).Scan(&repo.OwnersName)
+	err = rdb.db.QueryRow("SELECT name FROM common_user WHERE id = ?", ownerID).Scan(&repo.FirstOwnerUserName)
 	if err != nil {
 		return nil, err
 	}

@@ -49,7 +49,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
+		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 10)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token" : tokenString,
@@ -70,7 +70,7 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 1)}
+		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 10)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token" : tokenString,

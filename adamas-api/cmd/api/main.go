@@ -23,7 +23,7 @@ func main() {
 		panic(err.Error())
 	}
 	c := router.Router(db)
-	fmt.Println("Server is running on port 8080")
-	http.ListenAndServe(":8080", c)
+	fmt.Println("Server is running on port 3000")
+	http.ListenAndServe(":3000", c)
 
 }

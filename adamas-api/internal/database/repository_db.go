@@ -36,6 +36,9 @@ func (rdb *RepoDB) CreateRepo(title, description string,ownerID int,) (*entity.R
 	if err != nil {
 		return nil, err 
 	}
+	var ownerNames[]string
+	repo.OwnerNames = append(ownerNames, repo.FirstOwnerName)
 
 	return repo, nil 
 }
+

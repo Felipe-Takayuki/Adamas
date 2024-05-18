@@ -7,7 +7,7 @@ import (
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
-	"github.com/go-chi/chi"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/jwtauth"
 )
 
@@ -21,38 +21,29 @@ func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 	return &WebUserHandler{UserService: &userService}
 }
 
-func (wub *WebUserHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
-	repository := chi.URLParam(r, "repo")
-	if repository == "" {
-		http.Error(w, "id is required", http.StatusBadRequest)
-		return
-	}
-	repositories, err := wub.UserService.GetRepositoriesByName(repository)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	json.NewEncoder(w).Encode(repositories)
-
-}
-
 func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user *entity.User
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
 		return
 	}
 	result, err := wub.UserService.CreateUser(user.Name, user.Email, user.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp" : jwtauth.ExpireIn(time.Minute * 10)}
+		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp": jwtauth.ExpireIn(time.Minute * 10)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"token" : tokenString,
+			"token": tokenString,
 		})
 	}
 
@@ -62,18 +53,24 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 	var user entity.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
 		return
 	}
 	result, err := wub.UserService.LoginUser(user.Email, user.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
 		return
 	} else {
 		claims := map[string]interface{}{"id": result.Id, "name": result.Name, "email": result.Email, "exp": jwtauth.ExpireIn(time.Minute * 10)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"token" : tokenString,
+			"token": tokenString,
 		})
 	}
 

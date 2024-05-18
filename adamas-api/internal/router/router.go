@@ -29,7 +29,7 @@ func Router(db *sql.DB) http.Handler {
 	c.Post("/login", func(w http.ResponseWriter, r *http.Request) {
 		webUserService.LoginUser(w, r, tokenAuth)
 	})
-	c.Get("/search/{repo}", webUserService.GetRepositoriesByName)
+	c.Get("/search/{repo}", webRepoService.GetRepositoriesByName)
 
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {

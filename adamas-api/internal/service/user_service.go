@@ -15,13 +15,7 @@ func NewUserService(userDB database.UserDB) *UserService {
 	}
 }
 
-func (us *UserService) GetRepositoriesByName(name string) ([]*entity.Repository, error) {
-	repositories, err := us.UserDB.GetRepositoriesByName(name)
-	if err != nil {
-		return nil, err
-	}
-	return repositories, nil
-}
+
 
 func (us *UserService) CreateUser(name, email, password string) (*entity.User, error) {
 	user, err := us.UserDB.CreateUser(name, email, password)

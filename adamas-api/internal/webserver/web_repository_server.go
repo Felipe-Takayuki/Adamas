@@ -23,9 +23,9 @@ func NewRepoHandler(repoService *service.RepositoryService) *WebRepoHandler {
 
 func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
 	repository := chi.URLParam(r, "repo")
+	w.Header().Set("Content-Type", "application/json")
 	if repository == "" {
 		error := utils.ErrorMessage{Message: "id is required"}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -33,7 +33,6 @@ func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.
 	repositories, err := wph.RepoService.GetRepositoriesByName(repository)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -49,7 +48,7 @@ func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.
 
 func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
-
+	w.Header().Set("Content-Type", "application/json")
 	flt64, ok := claims["id"].(float64)
 	if !ok {
 		http.Error(w, "id is not int!", http.StatusInternalServerError)
@@ -60,7 +59,6 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -68,7 +66,6 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	result, err := wph.RepoService.CreateRepo(req.Title, req.Description, int(userID))
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return

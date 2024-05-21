@@ -4,8 +4,14 @@ import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 )
 
+
+type LoginRequest struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
 type User struct {
-	Id           int           `json:"id"`
+	ID           int           `json:"id"`
 	Name         string        `json:"name"`
 	Email        string        `json:"email"`
 	Password     string        `json:"password"`
@@ -21,12 +27,19 @@ func NewUser(name string, email string, password string) *User {
 }
 
 type Institution struct {
-	ID 		 int 	  `json:"id"`
+	ID       int      `json:"id"`
 	Name     string   `json:"name"`
 	Email    string   `json:"email"`
 	Password string   `json:"password"`
 	CNPJ     string   `json:"cnpj"`
 	Events   []*Event `json:"events"`
+}
+
+type InstitutionCreateRequest struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	CNPJ     string `json:"cnpj"`
 }
 
 func NewInstitution(name, email, password, cnpj string) *Institution {

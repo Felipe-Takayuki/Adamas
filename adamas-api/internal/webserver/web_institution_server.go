@@ -11,27 +11,27 @@ import (
 	"github.com/go-chi/jwtauth"
 )
 
-type WebUserHandler struct {
-	UserService *service.UserService
+type WebInstitutionHandler struct {
+	institutionService *service.InstitutionService
 }
 
-var tokenString string
-
-func NewWebUserHandler(userService service.UserService) *WebUserHandler {
-	return &WebUserHandler{UserService: &userService}
+func NewWebInstiHandler(institutionService *service.InstitutionService) *WebInstitutionHandler {
+	return &WebInstitutionHandler{
+		institutionService: institutionService,
+	}
 }
 
-func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
-	var user *entity.User
+func (wih *WebInstitutionHandler) CreateInstitution(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
+	var institution *entity.InstitutionCreateRequest
 	w.Header().Set("Content-Type", "application/json")
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&institution)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	result, err := wub.UserService.CreateUser(user.Name, user.Email, user.Password)
+	result, err := wih.institutionService.CreateInstitution(institution.Name, institution.Email, institution.Password, institution.CNPJ)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -47,16 +47,17 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 
 }
 
-func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
-	var user entity.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+func (wih *WebInstitutionHandler) LoginInstitution(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
+	var login *entity.LoginRequest
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
-	}
-	result, err := wub.UserService.LoginUser(user.Email, user.Password)
+	} 
+	result, err := wih.institutionService.LoginInstitution(login.Email, login.Password)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -69,5 +70,4 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 			"token": tokenString,
 		})
 	}
-
 }

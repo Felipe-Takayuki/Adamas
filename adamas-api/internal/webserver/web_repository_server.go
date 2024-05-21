@@ -22,7 +22,6 @@ func NewRepoHandler(repoService *service.RepositoryService) *WebRepoHandler {
 
 func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
 	repoName := chi.URLParam(r, "repo")
-	w.Header().Set("Content-Type", "application/json")
 	if repoName == "" {
 		error := utils.ErrorMessage{Message: "id is required"}
 		w.WriteHeader(http.StatusBadRequest)

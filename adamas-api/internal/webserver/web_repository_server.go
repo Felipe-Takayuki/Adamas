@@ -3,7 +3,6 @@ package webserver
 import (
 	"encoding/json"
 	"net/http"
-
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
@@ -22,34 +21,29 @@ func NewRepoHandler(repoService *service.RepositoryService) *WebRepoHandler {
 }
 
 func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
-	repository := chi.URLParam(r, "repo")
-	if repository == "" {
+	repoName := chi.URLParam(r, "repo")
+	w.Header().Set("Content-Type", "application/json")
+	if repoName == "" {
 		error := utils.ErrorMessage{Message: "id is required"}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	repositories, err := wph.RepoService.GetRepositoriesByName(repository)
+	repositories, err := wph.RepoService.GetRepositoriesByName(repoName)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return
 
 	}
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"id":          repositories[0].ID,
-		"title":       repositories[0].Title,
-		"description": repositories[0].Description,
-	})
+	json.NewEncoder(w).Encode(repositories)
 
 }
 
 func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
-
+	w.Header().Set("Content-Type", "application/json")
 	flt64, ok := claims["id"].(float64)
 	if !ok {
 		http.Error(w, "id is not int!", http.StatusInternalServerError)
@@ -60,7 +54,6 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -68,7 +61,6 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	result, err := wph.RepoService.CreateRepo(req.Title, req.Description, int(userID))
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return

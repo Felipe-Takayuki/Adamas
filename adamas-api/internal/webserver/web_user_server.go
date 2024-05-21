@@ -23,11 +23,10 @@ func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 
 func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user *entity.User
-
+	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -35,7 +34,6 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 	result, err := wub.UserService.CreateUser(user.Name, user.Email, user.Password)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -51,10 +49,10 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var user entity.User
+	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -62,7 +60,6 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 	result, err := wub.UserService.LoginUser(user.Email, user.Password)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return

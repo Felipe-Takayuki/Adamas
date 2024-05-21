@@ -5,10 +5,10 @@ import (
 )
 
 type User struct {
-	Id           int `json:"id"`
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	Password     string `json:"password"`
+	Id           int           `json:"id"`
+	Name         string        `json:"name"`
+	Email        string        `json:"email"`
+	Password     string        `json:"password"`
 	Repositories []*Repository `json:"repositories"`
 }
 
@@ -21,19 +21,19 @@ func NewUser(name string, email string, password string) *User {
 }
 
 type Institution struct {
+	ID 		 int 	  `json:"id"`
 	Name     string   `json:"name"`
 	Email    string   `json:"email"`
 	Password string   `json:"password"`
 	CNPJ     string   `json:"cnpj"`
-	Events   []string `json:"events"`
+	Events   []*Event `json:"events"`
 }
 
-func NewInstitution(name, email, password, cnpj string, events []string) *Institution {
+func NewInstitution(name, email, password, cnpj string) *Institution {
 	return &Institution{
 		Name:     name,
 		Email:    email,
 		Password: password,
 		CNPJ:     cnpj,
-		Events:   events,
 	}
 }

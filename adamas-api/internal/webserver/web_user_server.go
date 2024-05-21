@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/jwtauth"
@@ -48,15 +49,15 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 }
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
-	var user entity.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var login reqs.LoginRequest
+	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	result, err := wub.UserService.LoginUser(user.Email, user.Password)
+	result, err := wub.UserService.LoginUser(login.Email, login.Password)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)

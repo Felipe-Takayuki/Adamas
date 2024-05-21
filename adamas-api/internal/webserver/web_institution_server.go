@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/jwtauth"
@@ -48,7 +49,7 @@ func (wih *WebInstitutionHandler) CreateInstitution(w http.ResponseWriter, r *ht
 }
 
 func (wih *WebInstitutionHandler) LoginInstitution(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
-	var login *entity.LoginRequest
+	var login *reqs.LoginRequest
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {

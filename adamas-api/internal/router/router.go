@@ -36,11 +36,11 @@ func Router(db *sql.DB) http.Handler {
 		webUserService.LoginUser(w, r, tokenAuth)
 	})
 
-	c.Post("create_institution", func(w http.ResponseWriter, r *http.Request) {
+	c.Post("/create_institution", func(w http.ResponseWriter, r *http.Request) {
 		webInstitutionService.CreateInstitution(w, r, tokenAuth)
 	})
-	c.Post("login_institution", func(w http.ResponseWriter, r *http.Request) {
-		
+	c.Post("/login_institution", func(w http.ResponseWriter, r *http.Request) {
+		webInstitutionService.LoginInstitution(w, r, tokenAuth)
 	})
 
 

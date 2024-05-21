@@ -23,7 +23,7 @@ func (idb *InstitutionDB) CreateInstitution(name, email, password, cnpj string) 
 	if err != nil {
 		return nil, err
 	}
-	err = idb.db.QueryRow("SELECT id FROM INSTITUTION_USER WHERE email = ?", &institution.Email).Scan(institution.ID)
+	err = idb.db.QueryRow("SELECT id FROM INSTITUTION_USER WHERE email = ?", email).Scan(&institution.ID)
 	if err != nil {
 		return nil, err
 	}

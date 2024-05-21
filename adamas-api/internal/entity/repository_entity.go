@@ -15,6 +15,11 @@ type Repository struct {
 	OwnerNames     []string    `json:"owners_name"`
 	Categories     []*Category `json:"categories"`
 }
+type ShowRepository struct {
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
 type RepositoryRequestFirst struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`

@@ -16,15 +16,15 @@ func NewRepoDB(rdb *sql.DB) *RepoDB {
 	}
 }
 
-func (rdb * RepoDB) GetRepositoriesByName(username string) ([]*entity.Repository, error) {
-	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id WHERE u.name = ?",username)
+func (rdb * RepoDB) GetRepositoriesByName(title string) ([]*entity.ShowRepository, error) {
+	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id WHERE r.title = ?",title)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var repositories []*entity.Repository 
+	var repositories []*entity.ShowRepository
 	for rows.Next() {
-		var repository entity.Repository
+		var repository entity.ShowRepository
 		err := rows.Scan(&repository.ID, &repository.Title, &repository.Description) 
 		if err != nil {
 			return nil, err

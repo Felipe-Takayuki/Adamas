@@ -14,7 +14,7 @@ func NewRepoService(repoDB database.RepoDB) *RepositoryService {
 		RepositoryDB: repoDB,
 	}
 }
-func (rs *RepositoryService) GetRepositoriesByName(name string) ([]*entity.Repository, error) {
+func (rs *RepositoryService) GetRepositoriesByName(name string) ([]*entity.ShowRepository, error) {
 	repositories, err := rs.RepositoryDB.GetRepositoriesByName(name)
 	if err != nil {
 		return nil, err

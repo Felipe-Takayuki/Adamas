@@ -16,10 +16,19 @@ POST http://localhost:3000/login
     "password": "12345678"
 }
 
+### 
+POST http://localhost:3000/create_institution 
+
+{
+    "name" : "ETEC",
+    "email": "etec@etec.com",
+    "password": "12345678",
+    "cnpj": "28301041000137"
+}
 
 ### 
 POST http://localhost:3000/repo
-Authorization: Bearer TOKEN
+Authorization: Bearer Token
 
 {
     "title": "Adamas",
@@ -32,51 +41,3 @@ Authorization: Bearer TOKEN
 GET  http://localhost:3000/search/Adamas
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ###
-# POST http://localhost:3000/login
-
-# {
-#     "email": "felipe@email.com",
-#     "password": "12345679"
-# }
-
-# ###
-# POST http://localhost:3000/repo
-# Authorization: Bearer 
-
-# {
-#     "title": "Adamas",
-#     "description": "uma rede social para projetos"
-# }
-
-# ###
-# GET http://localhost:3000/search/

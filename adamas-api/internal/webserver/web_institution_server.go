@@ -56,7 +56,7 @@ func (wih *WebInstitutionHandler) LoginInstitution(w http.ResponseWriter, r *htt
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
-	} 
+	}
 	result, err := wih.institutionService.LoginInstitution(login.Email, login.Password)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}

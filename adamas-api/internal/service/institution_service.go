@@ -15,7 +15,7 @@ func NewInstitutionService(institutionDB database.InstitutionDB) *InstitutionSer
 	}
 }
 
-func (is *InstitutionService) CreateInstitution (name, email, password, cnpj string) (*entity.Institution, error) {
+func (is *InstitutionService) CreateInstitution (name, email, password string, cnpj int) (*entity.InstitutionUserExtend, error) {
 	institution, err := is.InstitutionDB.CreateInstitution(name, email, password, cnpj)
 	if err != nil {
 		return nil, err 
@@ -23,7 +23,7 @@ func (is *InstitutionService) CreateInstitution (name, email, password, cnpj str
 	return institution, nil
 }
 
-func (is *InstitutionService) LoginInstitution (email, password string) (*entity.Institution, error) {
+func (is *InstitutionService) LoginInstitution (email, password string) (*entity.InstitutionUserExtend, error) {
 	institution, err := is.InstitutionDB.LoginInstitution(email, password) 
 	if err != nil {
 		return nil, err 

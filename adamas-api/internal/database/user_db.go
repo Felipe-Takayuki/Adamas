@@ -16,14 +16,14 @@ func NewUserDB (db *sql.DB) *UserDB {
 	}
 }
 
-func (ud *UserDB) CreateUser(name, email, password string) (*entity.User, error) {
-	user := entity.NewUser(name, email, password)
-	_, err := ud.db.Exec("INSERT INTO COMMON_USER(name, email, password) VALUES( ?, ?, ?)",  user.Name, user.Email, user.Password)
+func (ud *UserDB) CreateUser(name, email, password string) (*entity.CommonUserExtend, error) {
+	user := entity.NewCommonUserExtend(name, email, password)
+	_, err := ud.db.Exec("INSERT INTO COMMON_USER(name, email, password) VALUES( ?, ?, ?)",  user.USER.Name, user.USER.Email, user.USER.Password)
 	if err != nil {
 		return nil, err
 	}
 	err = ud.db.QueryRow("SELECT id FROM COMMON_USER WHERE email = ?", email).Scan(
-		&user.ID,    
+		&user.USER.ID,    
 	)
 	if err != nil {
 		return nil, err
@@ -32,10 +32,10 @@ func (ud *UserDB) CreateUser(name, email, password string) (*entity.User, error)
 	return user, nil
 }
 
-func (ud * UserDB) LoginUser(email, password string) (*entity.User, error) {
-	var user entity.User
+func (ud * UserDB) LoginUser(email, password string) (*entity.CommonUserExtend, error) {
+	var user entity.CommonUserExtend
 	err := ud.db.QueryRow("SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
-		&user.ID, &user.Name, &user.Email,
+		&user.USER.ID, &user.USER.Name, &user.USER.Email,
 	)
 	if err != nil {
 		return nil, err

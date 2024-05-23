@@ -14,6 +14,7 @@ type Repository struct {
 	OwnerIDs       []int       `json:"owners_id"`
 	OwnerNames     []string    `json:"owners_name"`
 	Categories     []*Category `json:"categories"`
+	Comments       []*Comment  `json:"comments"`
 }
 type ShowRepository struct {
 	ID          int    `json:"id"`
@@ -30,6 +31,7 @@ func NewRepository(title, description string, ownerID int) *Repository {
 	return &Repository{
 		Title:        title,
 		Description:  description,
+		
 		FirstOwnerID: ownerID,
 		OwnerIDs:     append(ownerIDs, ownerID),
 	}

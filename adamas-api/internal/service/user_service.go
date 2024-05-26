@@ -15,8 +15,6 @@ func NewUserService(userDB database.UserDB) *UserService {
 	}
 }
 
-
-
 func (us *UserService) CreateUser(name, email, password string) (*entity.CommonUserExtend, error) {
 	user, err := us.UserDB.CreateUser(name, email, password)
 	if err != nil {
@@ -27,8 +25,8 @@ func (us *UserService) CreateUser(name, email, password string) (*entity.CommonU
 
 func (us *UserService) LoginUser(email, password string) (*entity.CommonUserExtend, error) {
 	user, err := us.UserDB.LoginUser(email, password)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return user, nil
-} 
+}

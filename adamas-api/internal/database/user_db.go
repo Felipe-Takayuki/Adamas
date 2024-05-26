@@ -33,12 +33,14 @@ func (ud *UserDB) CreateUser(name, email, password string) (*entity.CommonUserEx
 }
 
 func (ud * UserDB) LoginUser(email, password string) (*entity.CommonUserExtend, error) {
-	var user entity.CommonUserExtend
-	err := ud.db.QueryRow("SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
-		&user.USER.ID, &user.USER.Name, &user.USER.Email,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
+    var user entity.CommonUserExtend
+    user.USER = &entity.UserTest{}
+
+    err := ud.db.QueryRow("SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
+        &user.USER.ID, &user.USER.Name, &user.USER.Email,
+    )
+    if err != nil {
+        return nil, err
+    }
+    return &user, nil
 }

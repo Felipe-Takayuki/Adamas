@@ -6,8 +6,6 @@ POST http://localhost:3000/create
     "password": "12345678"
 }
 
-
-
 ### 
 POST http://localhost:3000/login
 
@@ -23,9 +21,16 @@ POST http://localhost:3000/create_institution
     "name" : "ETEC",
     "email": "etec@etec.com",
     "password": "12345678",
-    "cnpj": "28301041000137"
+    "cnpj": 28301041000137
 }
 
+### 
+POST http://localhost:3000/login_institution
+
+{
+    "email": "etec@etec.com",
+    "password": "12345678"
+}
 ### 
 POST http://localhost:3000/repo
 Authorization: Bearer Token

@@ -1,11 +1,18 @@
 package entity
 
 type Event struct {
-	ID string 
+	ID int 
 	Name string
 	OwnerID string
 	OwnerName string
 	Repositories []*RepositoryInEvent
+}
+
+type RoomEvent struct{
+	ID int
+	Name string
+	QuantityRepositories int
+	Repositories *[9]Repository
 }
 
 type RepositoryInEvent struct {
@@ -19,3 +26,4 @@ type Comment struct {
 	UserName string
 	Comment string
 }
+

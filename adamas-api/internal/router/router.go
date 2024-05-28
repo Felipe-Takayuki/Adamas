@@ -44,7 +44,7 @@ func Router(db *sql.DB) http.Handler {
 	})
 
 
-	c.Get("/search/{repo}", webRepoService.GetRepositoriesByName)
+	c.Get("/repo/{repo}", webRepoService.GetRepositoriesByName)
 	c.Get("/repo", webRepoService.GetRepositories)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {

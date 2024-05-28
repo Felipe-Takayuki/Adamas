@@ -39,6 +39,17 @@ func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.
 	json.NewEncoder(w).Encode(repositories)
 
 }
+func (wph *WebRepoHandler) GetRepositories(w http.ResponseWriter, r *http.Request) {
+	repositories, err := wph.RepoService.GetRepositories()
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+
+	}
+	json.NewEncoder(w).Encode(repositories)
+}
 
 func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())

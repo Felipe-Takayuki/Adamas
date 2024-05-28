@@ -33,6 +33,22 @@ func (rdb * RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, e
 	}
 	return repositories, nil
 }
+func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
+	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description, o.owner_id, u.name FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var repositories []*entity.Repository
+	for rows.Next() {
+		var repository entity.Repository
+		if err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.FirstOwnerID, &repository.FirstOwnerName); err != nil{
+			return nil, err
+		}
+		repositories = append(repositories, &repository)
+	}	
+	return repositories, nil
+}
 
 func (rdb *RepoDB) CreateRepo(title, description string,ownerID int,) (*entity.Repository, error) {
 	repo := entity.NewRepository(title, description, ownerID)

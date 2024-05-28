@@ -49,8 +49,13 @@ CREATE TABLE EVENT(
 );
 
 CREATE TABLE ROOM_IN_EVENT(
-    id 
-)
+    id int auto_increment NOT NULL PRIMARY KEY,
+    event_id int NOT NULL,
+    name varchar(50) NOT NULL,
+    projects int NOT NULL,
+    FOREIGN KEY (event_id) REFERENCES EVENT(id) 
+);
+
 CREATE TABLE CATEGORY_REPO(
     category_id int NOT NULL,
     repository_id int NOT NULL,

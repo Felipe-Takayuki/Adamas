@@ -49,6 +49,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var login *reqs.LoginRequest
+	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}

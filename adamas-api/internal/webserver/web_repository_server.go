@@ -22,6 +22,7 @@ func NewRepoHandler(repoService *service.RepositoryService) *WebRepoHandler {
 
 func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
 	repoName := chi.URLParam(r, "repo")
+	w.Header().Set("Content-Type", "application/json")
 	if repoName == "" {
 		error := utils.ErrorMessage{Message: "id is required"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -41,6 +42,7 @@ func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.
 }
 func (wph *WebRepoHandler) GetRepositories(w http.ResponseWriter, r *http.Request) {
 	repositories, err := wph.RepoService.GetRepositories()
+	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)

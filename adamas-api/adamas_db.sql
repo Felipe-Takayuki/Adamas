@@ -26,7 +26,8 @@ CREATE TABLE COMMON_USER(
 CREATE TABLE REPOSITORY(
     id int auto_increment NOT NULL PRIMARY KEY,
     title varchar(255) NOT NULL,
-    description varchar(255) NOT NULL
+    description varchar(255) NOT NULL,
+    content varchar(255) NOT NULL
 );
 CREATE TABLE OWNERS_REPOSITORY(
     repository_id int NOT NULL REFERENCES REPOSITORY(id),

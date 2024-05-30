@@ -50,9 +50,9 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 	return repositories, nil
 }
 
-func (rdb *RepoDB) CreateRepo(title, description string,ownerID int,) (*entity.Repository, error) {
-	repo := entity.NewRepository(title, description, ownerID)
-	_, err := rdb.db.Exec("INSERT INTO REPOSITORY(title, description) VALUES (?,?)", &repo.Title, &repo.Description)
+func (rdb *RepoDB) CreateRepo(title, description, content string,ownerID int,) (*entity.Repository, error) {
+	repo := entity.NewRepository(title, description, content, ownerID)
+	_, err := rdb.db.Exec("INSERT INTO REPOSITORY(title, description,content) VALUES (?,?,?)", &repo.Title, &repo.Description, &repo.Content)
 	if err != nil {
 		return nil, err
 	}

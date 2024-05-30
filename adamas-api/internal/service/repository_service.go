@@ -28,8 +28,8 @@ func (rs *RepositoryService) GetRepositories()([]*entity.Repository, error) {
 	}
 	return repositories, nil
 }
-func (rs *RepositoryService) CreateRepo(title, description string, ownerID int) (*entity.Repository, error) {
-	repo, err := rs.RepositoryDB.CreateRepo(title, description, ownerID)
+func (rs *RepositoryService) CreateRepo(title, description, content string, ownerID int) (*entity.Repository, error) {
+	repo, err := rs.RepositoryDB.CreateRepo(title, description, content,ownerID)
 	if err != nil {
 		return nil, err
 	}

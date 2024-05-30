@@ -70,7 +70,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	result, err := wph.RepoService.CreateRepo(req.Title, req.Description, int(userID))
+	result, err := wph.RepoService.CreateRepo(req.Title, req.Description,req.Content, int(userID))
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)

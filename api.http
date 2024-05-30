@@ -33,16 +33,17 @@ POST http://localhost:3000/login_institution
 }
 ### 
 POST http://localhost:3000/repo
-Authorization: Bearer Token
+Authorization: Bearer TOKEN
 
 {
     "title": "Adamas",
-    "description": "uma rede social para projetos"
+    "description": "uma rede social para projetos",
+    "content": "###hello world!"
 }
 
 
 ### 
 
-GET  http://localhost:3000/search/Adamas
+GET  http://localhost:3000/repo/Adamas
 
 

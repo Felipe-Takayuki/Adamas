@@ -10,9 +10,9 @@ type RepoDB struct {
 	db *sql.DB
 }
 
-func NewRepoDB(rdb *sql.DB) *RepoDB {
+func NewRepoDB(db *sql.DB) *RepoDB {
 	return &RepoDB{
-		db: rdb,
+		db: db,
 	}
 }
 
@@ -52,13 +52,13 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 
 func (rdb *RepoDB) CreateRepo(title, description, content string,ownerID int,) (*entity.Repository, error) {
 	repo := entity.NewRepository(title, description, content, ownerID)
-	_, err := rdb.db.Exec("INSERT INTO REPOSITORY(title, description,content) VALUES (?,?,?)", &repo.Title, &repo.Description, &repo.Content)
+	result, err := rdb.db.Exec("INSERT INTO REPOSITORY(title, description,content) VALUES (?,?,?)", &repo.Title, &repo.Description, &repo.Content)
 	if err != nil {
 		return nil, err
 	}
-	err = rdb.db.QueryRow("SELECT id FROM REPOSITORY WHERE title = ? AND description = ?", repo.Title, repo.Description).Scan(&repo.ID)
+	repo.ID, err = result.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, err 
 	}
 	
 	err = rdb.db.QueryRow("SELECT name FROM COMMON_USER WHERE id = ?", repo.FirstOwnerID).Scan(&repo.FirstOwnerName)

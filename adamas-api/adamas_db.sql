@@ -42,13 +42,16 @@ CREATE TABLE OWNERS_REPOSITORY(
 -- );
 CREATE TABLE EVENT(
     id int auto_increment NOT NULL PRIMARY KEY,
-    institution_id int NOT NULL,
     name varchar(100) NOT NULL,
     address varchar(255) NOT NULL,
-    description varchar(255) NOT NULL,
-    FOREIGN KEY (institution_id) REFERENCES INSTITUTION_USER(id)
+    date TIMESTAMP NOT NULL,
+    description varchar(255) NOT NULL
 );
-
+CREATE TABLE OWNER_EVENT(
+    event_id int NOT NULL REFERENCES EVENT(id),
+    owner_id int NOT NULL REFERENCES INSTITUTION_USER(id),
+    PRIMARY KEY(event_id, owner_id)
+);
 CREATE TABLE ROOM_IN_EVENT(
     id int auto_increment NOT NULL PRIMARY KEY,
     event_id int NOT NULL,

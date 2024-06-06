@@ -14,17 +14,21 @@ import (
 
 func Router(db *sql.DB) http.Handler {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
+
 	userDB := database.NewUserDB(db)
-	userService := service.NewUserService(*userDB)
-	webUserService := webserver.NewWebUserHandler(*userService)
-
 	repoDB := database.NewRepoDB(db)
-	repoService := service.NewRepoService(*repoDB)
-	webRepoService := webserver.NewRepoHandler(repoService)
-
 	institutionDB := database.NewInstitutionDB(db)
+	eventDB := database.NewEventDB(db)
+
+	userService := service.NewUserService(*userDB)
+	repoService := service.NewRepoService(*repoDB)
 	institutionService := service.NewInstitutionService(*institutionDB)
+	eventService := service.NewEventService(eventDB)
+
+	webUserService := webserver.NewWebUserHandler(*userService)
+	webRepoService := webserver.NewRepoHandler(repoService)
 	webInstitutionService := webserver.NewWebInstiHandler(institutionService)
+	webEventService := webserver.NewWebEventHandler(eventService)
 
 	c := chi.NewRouter()
 	c.Use(middleware.Logger)
@@ -51,6 +55,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 		r.Post("/repo", webRepoService.CreateRepo)
+		r.Post("/event", webEventService.CreateEvent)
 	},
 	)
 

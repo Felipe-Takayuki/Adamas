@@ -78,3 +78,13 @@ corpo da requisição:
 
 - Obter Projetos `/repo GET`
 
+- Criação do Evento `/event POST`
+
+`Authorization: Bearer JWT_TOKEN`
+```json 
+{
+    "name": "Amostra de TCC",
+    "address" : "ETEC ANTONIO DEVISATE, avenida castro alves",
+    "date": "2020-12-02",
+    "description": "Uma amostra de tcc uai"
+}

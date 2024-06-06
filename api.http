@@ -43,7 +43,7 @@ Authorization: Bearer TOKEN
 
 ###
 POST http://localhost:3000/event
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0ZWNAZXRlYy5jb20iLCJleHAiOjE3MTc2MzQwNjksImlkIjoxLCJuYW1lIjoiRVRFQyIsInVzZXJfdHlwZSI6IiJ9.j3HVu5Zenw82kgjqOoooURwwcACSWucv4GIn-ydX_58
+Authorization: Bearer TOKEN
 
 {
     "name": "Amostra de TCC",

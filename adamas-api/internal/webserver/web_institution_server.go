@@ -38,7 +38,7 @@ func (wih *WebInstitutionHandler) CreateInstitution(w http.ResponseWriter, r *ht
 		json.NewEncoder(w).Encode(error)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.USER.ID, "name": result.USER.Name, "email": result.USER.Email, "exp": jwtauth.ExpireIn(time.Minute * 10)}
+		claims := map[string]interface{}{"id": result.USER.ID, "name": result.USER.Name, "email": result.USER.Email, "user_type": result.USER.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": tokenString,

@@ -1,21 +1,41 @@
 package entity
 
 type Event struct {
-	ID string 
-	Name string
-	OwnerID string
-	OwnerName string
-	Repositories []*RepositoryInEvent
+	ID              int64
+	Name            string
+	Address         string
+	Date            string
+	Description     string
+	InstitutionID   int
+	InstitutionName string
+	Rooms           *RoomEvent
+}
+
+func NewEvent(name, address, date, description string, institutionID int) *Event {
+	return &Event{
+		Name:          name,
+		Address:       address,
+		Date:          date,
+		Description:   description,
+		InstitutionID: institutionID,
+	}
+}
+
+type RoomEvent struct {
+	ID                   int
+	Name                 string
+	QuantityRepositories int
+	Repositories         *[9]Repository
 }
 
 type RepositoryInEvent struct {
-	ID string
+	ID         string
 	Repository *Repository
-	Locale string
+	Locale     string
 }
 
 type Comment struct {
-	UserID string
+	UserID   string
 	UserName string
-	Comment string
+	Comment  string
 }

@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -39,6 +40,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		return
 	} else {
 		claims := map[string]interface{}{"id": result.USER.ID, "name": result.USER.Name, "email": result.USER.Email, "user_type": result.USER.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
+		fmt.Println(result.USER.UserType)
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": tokenString,
@@ -49,6 +51,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
 	var login *reqs.LoginRequest
+	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}

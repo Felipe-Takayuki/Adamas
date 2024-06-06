@@ -19,7 +19,7 @@ func NewInstitutionDB(idb *sql.DB) *InstitutionDB {
 
 func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj int) (*entity.InstitutionUserExtend, error) {
 	institution := entity.NewInstitutionUserExtend(name, email, password, cnpj)
-	_, err := idb.db.Exec("INSERT INTO INSTITUTION_USER(name, email, password, cnpj) VALUES (?, ?, ?, ?)", &institution.USER.Name, &institution.USER.Email, &institution.USER.Password ,&institution.CNPJ)
+	_, err := idb.db.Exec("INSERT INTO INSTITUTION_USER(name, email, password, cnpj) VALUES (?, ?, ?, ?)", &institution.USER.Name, &institution.USER.Email, &institution.USER.Password, &institution.CNPJ)
 	if err != nil {
 		return nil, err
 	}
@@ -27,16 +27,19 @@ func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj i
 	if err != nil {
 		return nil, err
 	}
-	return institution, nil 
+	return institution, nil
 }
 
-func (idb *InstitutionDB) LoginInstitution(email, password string) (*entity.InstitutionUserExtend, error){
+func (idb *InstitutionDB) LoginInstitution(email, password string) (*entity.InstitutionUserExtend, error) {
 	var institution entity.InstitutionUserExtend
+	institution.USER = &entity.User{}
 	err := idb.db.QueryRow("SELECT id, name, email, cnpj FROM INSTITUTION_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
-		institution.USER.ID, institution.USER.Name, institution.USER.Email, institution.CNPJ,
+		&institution.USER.ID, &institution.USER.Name, &institution.USER.Email, &institution.CNPJ,
 	)
 	if err != nil {
 		return nil, err
 	}
 	return &institution, nil
-} 
+}
+
+func (idb *InstitutionDB) CreateEvent() {}

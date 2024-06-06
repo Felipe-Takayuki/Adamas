@@ -34,7 +34,7 @@ func (ud *UserDB) CreateUser(name, email, password string) (*entity.CommonUserEx
 
 func (ud * UserDB) LoginUser(email, password string) (*entity.CommonUserExtend, error) {
     var user entity.CommonUserExtend
-    user.USER = &entity.UserTest{}
+    user.USER = &entity.User{}
 
     err := ud.db.QueryRow("SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
         &user.USER.ID, &user.USER.Name, &user.USER.Email,

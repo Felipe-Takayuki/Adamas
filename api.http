@@ -6,8 +6,6 @@ POST http://localhost:3000/create
     "password": "12345678"
 }
 
-
-
 ### 
 POST http://localhost:3000/login
 
@@ -23,21 +21,39 @@ POST http://localhost:3000/create_institution
     "name" : "ETEC",
     "email": "etec@etec.com",
     "password": "12345678",
-    "cnpj": "28301041000137"
+    "cnpj": 28301041000137
 }
 
 ### 
+POST http://localhost:3000/login_institution
+
+{
+    "email": "etec@etec.com",
+    "password": "12345678"
+}
+### 
 POST http://localhost:3000/repo
-Authorization: Bearer Token
+Authorization: Bearer TOKEN
 
 {
     "title": "Adamas",
-    "description": "uma rede social para projetos"
+    "description": "uma rede social para projetos",
+    "content": "###hello world!"
 }
 
+###
+POST http://localhost:3000/event
+Authorization: Bearer TOKEN
 
+{
+    "name": "Amostra de TCC",
+    "address" : "ETEC ANTONIO DEVISATE, avenida castro alves",
+    "date": "2020-12-02",
+    "description": "Uma amostra de tcc uai"
+}
 ### 
-
-GET  http://localhost:3000/search/Adamas
+GET http://localhost:3000/repo
+### 
+GET  http://localhost:3000/repo/Adamas
 
 

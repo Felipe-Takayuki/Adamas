@@ -14,16 +14,22 @@ func NewRepoService(repoDB database.RepoDB) *RepositoryService {
 		RepositoryDB: repoDB,
 	}
 }
-func (rs *RepositoryService) GetRepositoriesByName(name string) ([]*entity.ShowRepository, error) {
+func (rs *RepositoryService) GetRepositoriesByName(name string) ([]*entity.Repository, error) {
 	repositories, err := rs.RepositoryDB.GetRepositoriesByName(name)
 	if err != nil {
 		return nil, err
 	}
 	return repositories, nil
 }
-
-func (rs *RepositoryService) CreateRepo(title, description string, ownerID int) (*entity.Repository, error) {
-	repo, err := rs.RepositoryDB.CreateRepo(title, description, ownerID)
+func (rs *RepositoryService) GetRepositories()([]*entity.Repository, error) {
+	repositories, err := rs.RepositoryDB.GetRepositories()
+	if err != nil {
+		return nil, err 
+	}
+	return repositories, nil
+}
+func (rs *RepositoryService) CreateRepo(title, description, content string, ownerID int) (*entity.Repository, error) {
+	repo, err := rs.RepositoryDB.CreateRepo(title, description, content,ownerID)
 	if err != nil {
 		return nil, err
 	}

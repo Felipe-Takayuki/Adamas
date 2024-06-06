@@ -9,6 +9,6 @@ COPY . .
 
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o app ./cmd/api
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD ["./app"]

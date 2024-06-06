@@ -10,8 +10,9 @@ CREATE TABLE INSTITUTION_USER(
     name varchar(255) NOT NULL,
     email varchar(255) NOT NULL UNIQUE,
     password varchar(64) NOT NULL,
-    cnpj int NOT NULL
+    cnpj bigint NOT NULL
 );
+
 CREATE TABLE COMMON_USER(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(255) NOT NULL,
@@ -25,18 +26,38 @@ CREATE TABLE COMMON_USER(
 CREATE TABLE REPOSITORY(
     id int auto_increment NOT NULL PRIMARY KEY,
     title varchar(255) NOT NULL,
-    description varchar(255) NOT NULL
+    description varchar(255) NOT NULL,
+    content varchar(255) NOT NULL
 );
 CREATE TABLE OWNERS_REPOSITORY(
     repository_id int NOT NULL REFERENCES REPOSITORY(id),
     owner_id int NOT NULL REFERENCES COMMON_USER(id),
     PRIMARY KEY(repository_id, owner_id)
 );
-CREATE TABLE BLOC_REPOSITORY(
-    id int NOT NULL auto_increment PRIMARY KEY,
-    repository_id varchar(36) NOT NULL,
-    subtitle varchar(255) NOT NULL,
-    content varchar(255) NOT NULL
+-- CREATE TABLE BLOC_REPOSITORY(
+--     id int NOT NULL auto_increment PRIMARY KEY,
+--     repository_id varchar(36) NOT NULL,
+--     subtitle varchar(255) NOT NULL,
+--     content varchar(255) NOT NULL
+-- );
+CREATE TABLE EVENT(
+    id int auto_increment NOT NULL PRIMARY KEY,
+    name varchar(100) NOT NULL,
+    address varchar(255) NOT NULL,
+    date TIMESTAMP NOT NULL,
+    description varchar(255) NOT NULL
+);
+CREATE TABLE OWNER_EVENT(
+    event_id int NOT NULL REFERENCES EVENT(id),
+    owner_id int NOT NULL REFERENCES INSTITUTION_USER(id),
+    PRIMARY KEY(event_id, owner_id)
+);
+CREATE TABLE ROOM_IN_EVENT(
+    id int auto_increment NOT NULL PRIMARY KEY,
+    event_id int NOT NULL,
+    name varchar(50) NOT NULL,
+    projects int NOT NULL,
+    FOREIGN KEY (event_id) REFERENCES EVENT(id) 
 );
 
 CREATE TABLE CATEGORY_REPO(

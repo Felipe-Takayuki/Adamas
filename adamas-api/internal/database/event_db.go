@@ -18,7 +18,7 @@ func NewEventDB(db *sql.DB) *EventDB {
 
 func (edb *EventDB) CreateEvent(name, address, date, description string, institutionID int) (*entity.Event, error) {
 	event := entity.NewEvent(name, address, date, description, institutionID)
-	result, err := edb.db.Exec("INSERT INTO EVENT(name, address, date, description, institution_id) FROM VALUES (?, ?, ?, ?, ?)", &event.Name, &event.Address, &event.Date, &event.Description, &institutionID)
+	result, err := edb.db.Exec("INSERT INTO EVENT(name, address, date, description) VALUES (?, ?, ?, ?)", &event.Name, &event.Address, &event.Date, &event.Description)
 	if err != nil {
 		return nil, err 
 	}

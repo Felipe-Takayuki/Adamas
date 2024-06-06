@@ -17,7 +17,7 @@ type InstitutionUserExtend struct {
 	Events []*Event `json:"events"` 
 }
 func NewInstitutionUserExtend( name, email, password string ,cnpj int) *InstitutionUserExtend {
-	user := &User{Name: name, Email: email, Password: utils.EncriptKey(password), UserType: "institution"}
+	user := &User{Name: name, Email: email, Password: utils.EncriptKey(password), UserType: "institution_user"}
 	return &InstitutionUserExtend{
 		USER: user,
 		CNPJ: cnpj,

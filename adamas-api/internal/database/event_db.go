@@ -32,3 +32,19 @@ func (edb *EventDB) CreateEvent(name, address, date, description string, institu
 	}
 	return event, nil
 }
+
+func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
+	rows, err := edb.db.Query("SELECT e.name, e.address, e.date, e.description, o.owner_id, i.owner_name, re.name, re.id, re.projects FROM EVENT e JOIN OWNER_EVENT o ON e.id = o.event_id JOIN INSTITUTION_USER i ON o.owner_id = u.id JOIN ROOM_IN_EVENT re ON e.id = re.event_id  WHERE e.name = ?")
+	if err != nil {
+		return nil, err 
+	}
+	defer rows.Close()
+	var events []*entity.Event
+	for rows.Next() {
+		var event entity.Event
+		// falta adicionar as salas
+		err = rows.Scan(&event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		events = append(events, &event)
+	}
+	return events, err 
+}

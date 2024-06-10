@@ -8,7 +8,7 @@ type Event struct {
 	Description     string
 	InstitutionID   int
 	InstitutionName string
-	Rooms           *RoomEvent
+	Rooms           *[]RoomEvent
 }
 
 func NewEvent(name, address, date, description string, institutionID int) *Event {

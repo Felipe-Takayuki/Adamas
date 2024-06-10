@@ -59,7 +59,11 @@ CREATE TABLE ROOM_IN_EVENT(
     projects int NOT NULL,
     FOREIGN KEY (event_id) REFERENCES EVENT(id) 
 );
-
+CREATE TABLE REPOSITORY_IN_ROOM(
+    repository_id int NOT NULL,
+    room_id int NOT NULL,
+    PRIMARY KEY(repository_id, room_id)
+);
 CREATE TABLE CATEGORY_REPO(
     category_id int NOT NULL,
     repository_id int NOT NULL,

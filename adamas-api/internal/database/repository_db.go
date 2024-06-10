@@ -17,7 +17,7 @@ func NewRepoDB(db *sql.DB) *RepoDB {
 }
 
 func (rdb * RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, error) {
-	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description, o.owner_id, u.name FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id WHERE r.title = ?",title)
+	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description, r.content, o.owner_id, u.name FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id WHERE r.title = ?",title)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (rdb * RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, e
 	var repositories []*entity.Repository
 	for rows.Next() {
 		var repository entity.Repository
-		err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.FirstOwnerID, &repository.FirstOwnerName) 
+		err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.Content ,&repository.FirstOwnerID, &repository.FirstOwnerName) 
 		if err != nil {
 			return nil, err
 		}
@@ -34,7 +34,7 @@ func (rdb * RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, e
 	return repositories, nil
 }
 func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
-	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description, o.owner_id, u.name FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id")
+	rows, err := rdb.db.Query("SELECT r.id, r.title, r.description,r.content, o.owner_id, u.name FROM REPOSITORY r JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id JOIN COMMON_USER u ON o.owner_id = u.id")
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 	var repositories []*entity.Repository
 	for rows.Next() {
 		var repository entity.Repository
-		if err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.FirstOwnerID, &repository.FirstOwnerName); err != nil{
+		if err := rows.Scan(&repository.ID, &repository.Title, &repository.Description,&repository.Content ,&repository.FirstOwnerID, &repository.FirstOwnerName); err != nil{
 			return nil, err
 		}
 		repositories = append(repositories, &repository)

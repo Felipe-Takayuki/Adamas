@@ -29,3 +29,10 @@ func (es *EventService) GetEventByName(name string) ([]*entity.Event, error) {
 	}
 	return events, nil 
 }
+func (es *EventService) GetEvents() ([]*entity.Event, error) {
+	events, err := es.EventDB.GetEvents()
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
+}

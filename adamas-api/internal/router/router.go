@@ -52,6 +52,7 @@ func Router(db *sql.DB) http.Handler {
 	c.Get("/repo", webRepoService.GetRepositories)
 
 	c.Get("/event/{event}", webEventService.GetEventByName)
+	c.Get("/event", webEventService.GetEvents)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))

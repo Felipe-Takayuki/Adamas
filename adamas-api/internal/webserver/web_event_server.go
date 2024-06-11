@@ -38,6 +38,16 @@ func (weh *WebEventHandler) GetEventByName(w http.ResponseWriter, r *http.Reques
 	}
 	json.NewEncoder(w).Encode(events)
 }
+func (weh *WebEventHandler) GetEvents(w http.ResponseWriter, r *http.Request) {
+	events, err := weh.eventService.EventDB.GetEvents()
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(events)
+}
 
 func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())

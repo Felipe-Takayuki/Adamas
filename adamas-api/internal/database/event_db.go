@@ -53,3 +53,21 @@ func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 	}
 	return events, err
 }
+
+func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
+	query := `SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
+	JOIN OWNER_EVENT o ON e.id = o.event_id
+	JOIN INSTITUTION_USER i ON o.owner_id = i.id`
+	rows, err := edb.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var events []*entity.Event
+	for rows.Next() {
+		var event entity.Event
+		err = rows.Scan(&event.ID ,&event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		events = append(events, &event)
+	}
+	return events, err
+}

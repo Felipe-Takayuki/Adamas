@@ -34,7 +34,7 @@ func (edb *EventDB) CreateEvent(name, address, date, description string, institu
 }
 
 func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
-	query := `SELECT e.name, e.address, e.date, e.description, o.owner_id, i.owner_name FROM EVENT e
+	query := `SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id
 	WHERE e.name = ?
@@ -48,14 +48,8 @@ func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 	var events []*entity.Event
 	for rows.Next() {
 		var event entity.Event
-		event.Rooms = &[]entity.RoomEvent{}
-		// falta adicionar as salas
-		err = rows.Scan(&event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName, &event.Rooms   )
+		err = rows.Scan(&event.ID ,&event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
 		events = append(events, &event)
 	}
-	query = `SELECT re.name, re.quantity_repos FROM ROOM_IN_EVENT re
-	JOIN REPOSITORY_IN_ROOM rr ON re.id = rr.room_id
-	JOIN REPOSITORY r ON r.id = rr.repository_id
-	`
 	return events, err
 }

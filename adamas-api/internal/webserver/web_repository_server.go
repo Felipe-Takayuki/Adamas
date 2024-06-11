@@ -25,7 +25,7 @@ func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.
 	repoName := chi.URLParam(r, "repo")
 	w.Header().Set("Content-Type", "application/json")
 	if repoName == "" {
-		error := utils.ErrorMessage{Message: "id is required"}
+		error := utils.ErrorMessage{Message: "title is required"}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return

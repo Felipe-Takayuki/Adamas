@@ -22,3 +22,10 @@ func (es *EventService) CreateEvent(name, address, date, description string, ins
 	}
 	return event,nil
 }
+func (es *EventService) GetEventByName(name string) ([]*entity.Event, error) {
+	events, err := es.EventDB.GetEventByName(name)
+	if err != nil {
+		return nil, err 
+	}
+	return events, nil 
+}

@@ -56,4 +56,5 @@ GET http://localhost:3000/repo
 ### 
 GET  http://localhost:3000/repo/Adamas
 
-
+###
+GET http://localhost:3000/event/Amostra de TCC

@@ -71,7 +71,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.Date, req.Description, int(flt64))
+		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.Date, req.Description, int64(flt64))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

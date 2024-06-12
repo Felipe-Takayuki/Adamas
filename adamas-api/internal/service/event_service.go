@@ -15,7 +15,7 @@ func NewEventService(eventDB *database.EventDB) *EventService {
 	}
 }
 
-func (es *EventService) CreateEvent(name, address, date, description string, institutionID int) (*entity.Event, error) {
+func (es *EventService) CreateEvent(name, address, date, description string, institutionID int64) (*entity.Event, error) {
 	event, err := es.EventDB.CreateEvent(name, address, date, description, institutionID)
 	if err != nil {
 		return nil, err 

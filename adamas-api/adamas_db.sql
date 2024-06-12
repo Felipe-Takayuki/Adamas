@@ -34,12 +34,7 @@ CREATE TABLE OWNERS_REPOSITORY(
     owner_id int NOT NULL REFERENCES COMMON_USER(id),
     PRIMARY KEY(repository_id, owner_id)
 );
--- CREATE TABLE BLOC_REPOSITORY(
---     id int NOT NULL auto_increment PRIMARY KEY,
---     repository_id varchar(36) NOT NULL,
---     subtitle varchar(255) NOT NULL,
---     content varchar(255) NOT NULL
--- );
+
 CREATE TABLE EVENT(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(100) NOT NULL,

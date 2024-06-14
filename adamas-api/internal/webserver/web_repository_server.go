@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
@@ -63,6 +64,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
 		return
 	}
+	fmt.Println(userType)
 	if userType == "common_user" {
 		flt64, ok := claims["id"].(float64)
 		if !ok {
@@ -87,7 +89,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode(result)
 	} else {
-		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão"}
+		error := utils.ErrorMessage{Message: userType}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
@@ -98,6 +100,7 @@ func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
+	fmt.Println(userType)
 	if !ok {
 		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
 		return

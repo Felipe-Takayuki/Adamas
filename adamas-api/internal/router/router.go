@@ -59,6 +59,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Use(jwtauth.Authenticator)
 		r.Post("/repo", webRepoService.CreateRepo)
 		r.Post("/event", webEventService.CreateEvent)
+		r.Post("/category", webRepoService.SetCategory)
 	},
 	)
 

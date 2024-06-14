@@ -60,9 +60,9 @@ CREATE TABLE REPOSITORY_IN_ROOM(
     PRIMARY KEY(repository_id, room_id)
 );
 CREATE TABLE CATEGORY_REPO(
-    category_id int NOT NULL,
+    category_id int NULL,
     repository_id int NOT NULL,
-    PRIMARY KEY(category_id, repository_id)
+    PRIMARY KEY(repository_id)
 );
 
 CREATE TABLE CATEGORY(

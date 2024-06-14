@@ -54,6 +54,7 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (*entity.Repository, error) {
 	repo := entity.NewRepository(title, description, content, ownerID)
 	result, err := rdb.db.Exec("INSERT INTO REPOSITORY(title, description,content) VALUES (?,?,?)", &repo.Title, &repo.Description, &repo.Content)
+
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +66,10 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 	err = rdb.db.QueryRow("SELECT name FROM COMMON_USER WHERE id = ?", repo.FirstOwnerID).Scan(&repo.FirstOwnerName)
 	if err != nil {
 		return nil, err
+	}
+	_, err = rdb.db.Exec("INSERT INTO CATEGORY_REPO(repository_id) VALUES (?)", &repo.ID)
+	if err != nil {
+		return nil, err 
 	}
 
 	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, owner_id) VALUES (?, ?)", &repo.ID, &repo.FirstOwnerID)

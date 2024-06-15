@@ -33,7 +33,7 @@ POST http://localhost:3000/login_institution
 }
 ### 
 POST http://localhost:3000/repo
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTgzNzg4MzYsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiIn0.HAhfNzq3XaMy-z41KIDqunKhakAgpcZUKzyI_nBTk5k
+Authorization: Bearer TOKEN
 
 {
     "title": "Adamas",
@@ -45,8 +45,8 @@ POST  http://localhost:3000/category
 Authorization: Bearer TOKEN
 
 {
-    "repository_id" : 1,
-    "category_name": "saude"
+    "repository_id" : 2,
+    "category_name": "agricultura"
 }
 
 ###

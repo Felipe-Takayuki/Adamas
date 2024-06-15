@@ -67,11 +67,6 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 	if err != nil {
 		return nil, err
 	}
-	// _, err = rdb.db.Exec("INSERT INTO CATEGORY_REPO(repository_id) VALUES (?)", &repo.ID)
-	// if err != nil {
-	// 	return nil, err 
-	// }
-
 	_, err = rdb.db.Exec("INSERT INTO OWNERS_REPOSITORY(repository_id, owner_id) VALUES (?, ?)", &repo.ID, &repo.FirstOwnerID)
 	if err != nil {
 		return nil, err
@@ -83,10 +78,7 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 }
 
 func (rdb *RepoDB) SetCategory(category_name string, repository_id int64) (error) {
-	query := `
-	UPDATE CATEGORY_REPO
-	SET category_id = ?
-	WHERE repository_id = ?`
+	query := `INSERT INTO CATEGORY_REPO(category_id, repository_id) VALUES (?,?) `
 	_, err := rdb.db.Exec(query,utils.Categories[category_name], repository_id)
 	if err != nil {
 		return err 

@@ -42,5 +42,7 @@ func (ud * UserDB) LoginUser(email, password string) (*entity.CommonUserExtend, 
     if err != nil {
         return nil, err
     }
+	user.USER.UserType = "common_user"
+
     return &user, nil
 }

@@ -35,3 +35,11 @@ func (rs *RepositoryService) CreateRepo(title, description, content string, owne
 	}
 	return repo, nil
 }
+
+func (rs *RepositoryService) SetCategory(categoryName string, repoID int64) (error) {
+	err := rs.RepositoryDB.SetCategory(categoryName, repoID)
+	if err != nil {
+		return err
+	}
+	return err 
+}

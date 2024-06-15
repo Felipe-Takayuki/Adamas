@@ -6,12 +6,12 @@ type Event struct {
 	Address         string
 	Date            string
 	Description     string
-	InstitutionID   int
+	InstitutionID   int64
 	InstitutionName string
-	Rooms           *RoomEvent
+	Rooms           []*RoomEvent
 }
 
-func NewEvent(name, address, date, description string, institutionID int) *Event {
+func NewEvent(name, address, date, description string, institutionID int64) *Event {
 	return &Event{
 		Name:          name,
 		Address:       address,
@@ -25,7 +25,7 @@ type RoomEvent struct {
 	ID                   int
 	Name                 string
 	QuantityRepositories int
-	Repositories         *[9]Repository
+	Repositories         []*Repository
 }
 
 type RepositoryInEvent struct {

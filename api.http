@@ -40,6 +40,14 @@ Authorization: Bearer TOKEN
     "description": "uma rede social para projetos",
     "content": "###hello world!"
 }
+###
+POST  http://localhost:3000/category
+Authorization: Bearer TOKEN
+
+{
+    "repository_id" : 2,
+    "category_name": "agricultura"
+}
 
 ###
 POST http://localhost:3000/event
@@ -56,4 +64,5 @@ GET http://localhost:3000/repo
 ### 
 GET  http://localhost:3000/repo/Adamas
 
-
+###
+GET http://localhost:3000/event/Amostra de TCC

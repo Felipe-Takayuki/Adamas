@@ -39,7 +39,7 @@ func (idb *InstitutionDB) LoginInstitution(email, password string) (*entity.Inst
 	if err != nil {
 		return nil, err
 	}
+	institution.USER.UserType = "institution_user"
 	return &institution, nil
 }
 
-func (idb *InstitutionDB) CreateEvent() {}

@@ -64,7 +64,6 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(userType)
 	if userType == "common_user" {
 		flt64, ok := claims["id"].(float64)
 		if !ok {

@@ -19,7 +19,7 @@ services:
           cpus: '0.50'
           memory: 512M  
   db:
-    image: mysql:latest
+    image: mariadb:10.5.8-focal
     container_name: adamas-db
     restart: always
     environment: 

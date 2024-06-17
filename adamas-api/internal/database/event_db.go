@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
 
 type EventDB struct {
@@ -18,7 +19,7 @@ func NewEventDB(db *sql.DB) *EventDB {
 
 func (edb *EventDB) CreateEvent(name, address, date, description string, institutionID int64 ) (*entity.Event, error) {
 	event := entity.NewEvent(name, address, date, description, institutionID)
-	result, err := edb.db.Exec("INSERT INTO EVENT(name, address, date, description) VALUES (?, ?, ?, ?)", &event.Name, &event.Address, &event.Date, &event.Description)
+	result, err := edb.db.Exec(queries.CREATE_EVENT, &event.Name, &event.Address, &event.Date, &event.Description)
 	if err != nil {
 		return nil, err
 	}
@@ -26,43 +27,15 @@ func (edb *EventDB) CreateEvent(name, address, date, description string, institu
 	if err != nil {
 		return nil, err
 	}
-	_, err = edb.db.Exec("INSERT INTO OWNER_EVENT(event_id, owner_id) VALUES (?, ?)", &event.ID, &event.InstitutionID)
+	_, err = edb.db.Exec(queries.SET_OWNER_EVENT, &event.ID, &event.InstitutionID)
 	if err != nil {
 		return nil, err
 	}
 	return event, nil
 }
 
-// func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
-// 	query := `SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
-// 	JOIN OWNER_EVENT o ON e.id = o.event_id
-// 	JOIN INSTITUTION_USER i ON o.owner_id = i.id
-// 	WHERE e.name = ?
-// 	`
-	
-// 	rows, err := edb.db.Query(query, name)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-// 	var events []*entity.Event
-// 	for rows.Next() {
-// 		var event entity.Event
-// 		err = rows.Scan(&event.ID ,&event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
-// 		events = append(events, &event)
-// 	}
-// 	return events, err
-// }
-
 func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
-	queryEvent := `
-		SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name 
-		FROM EVENT e
-		JOIN OWNER_EVENT o ON e.id = o.event_id
-		JOIN INSTITUTION_USER i ON o.owner_id = i.id
-		WHERE e.name = ?
-	`
-	rows, err := edb.db.Query(queryEvent, name)
+	rows, err := edb.db.Query(queries.GET_EVENT_BY_NAME, name)
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +59,7 @@ func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 }
 
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {
-	queryRooms := `
-		SELECT r.id, r.name, r.quantity_repos 
-		FROM ROOM_IN_EVENT r 
-		WHERE r.event_id = ?
-	`
-	rows, err := edb.db.Query(queryRooms, eventID)
+	rows, err := edb.db.Query(queries.GET_ROOMS_BY_EVENT_ID, eventID)
 	if err != nil {
 		return nil, err
 	}
@@ -115,14 +83,7 @@ func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error
 }
 
 func (edb *EventDB) getRepositoriesByRoomID(roomID int) ([]*entity.Repository, error) {
-	queryRepos := `
-		SELECT r.id, r.title, r.description, r.content, u.id, u.name 
-		FROM REPOSITORY r
-		JOIN REPOSITORY_IN_ROOM rr ON r.id = rr.repository_id
-		JOIN INSTITUTION_USER u ON r.owner_id = u.id
-		WHERE rr.room_id = ?
-	`
-	rows, err := edb.db.Query(queryRepos, roomID)
+	rows, err := edb.db.Query(queries.GET_REPOSITORIES_BY_ROOM_ID, roomID)
 	if err != nil {
 		return nil, err
 	}
@@ -142,10 +103,7 @@ func (edb *EventDB) getRepositoriesByRoomID(roomID int) ([]*entity.Repository, e
 
 
 func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
-	query := `SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
-	JOIN OWNER_EVENT o ON e.id = o.event_id
-	JOIN INSTITUTION_USER i ON o.owner_id = i.id`
-	rows, err := edb.db.Query(query)
+	rows, err := edb.db.Query(queries.GET_EVENTS)
 	if err != nil {
 		return nil, err
 	}

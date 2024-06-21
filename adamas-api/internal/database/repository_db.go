@@ -29,10 +29,15 @@ func (rdb *RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, er
 		var repository entity.Repository
 		err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.Content, &repository.FirstOwnerID, &repository.FirstOwnerName)
 		if err != nil {
+			return nil, err 
+		}
+		repository.Categories, err =  rdb.getCategoriesByRepoID(repository.ID)
+		if err != nil {
 			return nil, err
 		}
 		repositories = append(repositories, &repository)
 	}
+
 	return repositories, nil
 }
 func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
@@ -74,10 +79,24 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 	}
 	var ownerNames []string
 	repo.OwnerNames = append(ownerNames, repo.FirstOwnerName)
-
 	return repo, nil
 }
-
+func (rdb *RepoDB) getCategoriesByRepoID (repositoryID int64) ([]*entity.Category, error) {
+	rows, err:= rdb.db.Query(queries.GET_CATEGORIES_BY_REPO, repositoryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var categories []*entity.Category
+	for rows.Next() {
+		var category entity.Category
+		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+			return nil, err 
+		}
+		categories = append(categories, &category)
+	}
+	return categories, nil
+}
 func (rdb *RepoDB) SetCategory(category_name string, repository_id int64) (error) {
 	_, err := rdb.db.Exec(queries.SET_CATEGORY,utils.Categories[category_name], repository_id)
 	if err != nil {

@@ -10,6 +10,12 @@ const GET_REPOSITORIES = `
 	JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id 
 	JOIN COMMON_USER u ON o.owner_id = u.id `
 
+const GET_CATEGORIES_BY_REPO = `
+	SELECT c.id, c.name FROM CATEGORIES_REPO cr
+	JOIN CATEGORY c ON cr.category_id = c.id
+	JOIN REPOSITORY r ON cr.repository_id = r.id
+	WHERE cr.repository_id = ?
+`
 const CREATE_REPOSITORY ="INSERT INTO REPOSITORY(title, description,content) VALUES (?,?,?)"
 
 const GET_OWNER_NAME_BY_ID = "SELECT name FROM COMMON_USER WHERE id = ?"

@@ -128,3 +128,43 @@ func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (wph *WebRepoHandler) SetComment(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	fmt.Println(userType)
+	if !ok {
+		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "common_user" {
+		flt64, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		userID := flt64
+		var reqs *reqs.SetCommentRequest
+		err := json.NewDecoder(r.Body).Decode(&reqs)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		err = wph.RepoService.SetComment(int64(userID), reqs.RepositoryID, reqs.Comment)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{"Comment":reqs.Comment})
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}

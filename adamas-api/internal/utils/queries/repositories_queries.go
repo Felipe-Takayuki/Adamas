@@ -24,5 +24,11 @@ const GET_CATEGORIES_BY_REPO = `
 	JOIN REPOSITORY r ON cr.repository_id = r.id
 	WHERE cr.repository_id = ?
 `
-
+const GET_COMMENTS_BY_REPO = `
+	SELECT u.id, u.name, r.title FROM COMMENT com
+	JOIN REPOSITORY r ON com.repository_id = r.id
+	JOIN COMMON_USER u ON com.owner_id = u.id
+	WHERE com.repository_id = ?
+`
 const SET_COMMENT = "INSERT INTO COMMENT (owner_id, repository_id, comment) VALUES (?, ?, ?)"
+

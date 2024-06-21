@@ -35,6 +35,10 @@ func (rdb *RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, er
 		if err != nil {
 			return nil, err
 		}
+		repository.Comments, err = rdb.getCommentsByRepoID(repository.ID)
+		if err != nil {
+			return nil, err
+		} 
 		repositories = append(repositories, &repository)
 	}
 
@@ -53,6 +57,10 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 			return nil, err
 		}
 		repository.Categories, err = rdb.getCategoriesByRepoID(repository.ID)
+		if err != nil {
+			return nil, err
+		} 
+		repository.Comments, err = rdb.getCommentsByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
 		}  
@@ -115,4 +123,22 @@ func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) (erro
 		return err 
 	}
 	return nil 
+}
+
+func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, error) {
+	rows, err:= rdb.db.Query(queries.GET_COMMENTS_BY_REPO, repositoryID) 
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var comments []*entity.Comment
+	for rows.Next() {
+		var comment entity.Comment
+		if err := rows.Scan(&comment.UserID, &comment.UserName, &comment.Comment); err != nil {
+			return nil, err 
+		}
+		comments = append(comments, &comment)
+	}
+	return comments, nil
+
 }

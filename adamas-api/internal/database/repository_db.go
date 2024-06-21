@@ -52,6 +52,10 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 		if err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.Content, &repository.FirstOwnerID, &repository.FirstOwnerName); err != nil {
 			return nil, err
 		}
+		repository.Categories, err = rdb.getCategoriesByRepoID(repository.ID)
+		if err != nil {
+			return nil, err
+		}  
 		repositories = append(repositories, &repository)
 	}
 	return repositories, nil
@@ -90,17 +94,25 @@ func (rdb *RepoDB) getCategoriesByRepoID (repositoryID int64) ([]*entity.Categor
 	var categories []*entity.Category
 	for rows.Next() {
 		var category entity.Category
-		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+		if err := rows.Scan(&category); err != nil {
 			return nil, err 
 		}
 		categories = append(categories, &category)
 	}
 	return categories, nil
 }
-func (rdb *RepoDB) SetCategory(category_name string, repository_id int64) (error) {
-	_, err := rdb.db.Exec(queries.SET_CATEGORY,utils.Categories[category_name], repository_id)
+func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) (error) {
+	_, err := rdb.db.Exec(queries.SET_CATEGORY,utils.Categories[categoryName], repositoryID)
 	if err != nil {
 		return err 
 	} 
 	return nil
+}
+
+func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) (error) {
+	_, err := rdb.db.Exec(queries.SET_COMMENT,ownerID, repositoryID, comment)
+	if err != nil {
+		return err 
+	}
+	return nil 
 }

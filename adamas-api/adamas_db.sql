@@ -86,6 +86,7 @@ CREATE TABLE CATEGORY(
     name varchar(200) NOT NULL
 ); 
 
+
 INSERT INTO CATEGORY(name) values 
 ("Saúde"),
 ("Agricultura"),
@@ -95,4 +96,12 @@ INSERT INTO CATEGORY(name) values
 ("Marketing"),
 ("Mecânica");
 
+CREATE TABLE COMMENT(
+    id int auto_increment NOT NULL PRIMARY KEY,
+    owner_id int NOT NULL,
+    repository_id int NOT NULL,
+    comment varchar(255) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES COMMON_USER(id),
+    FOREIGN KEY (repository_id) REFERENCES REPOSITORY(id)
+);
                                                                                                                      

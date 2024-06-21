@@ -43,3 +43,11 @@ func (rs *RepositoryService) SetCategory(categoryName string, repoID int64) (err
 	}
 	return err 
 }
+
+func (rs *RepositoryService) SetComment(ownerID, repositoryID int64, comment string) (error) {
+	err := rs.RepositoryDB.SetComment(repositoryID, ownerID, comment) 
+	if err != nil {
+		return err 
+	}
+	return nil
+}

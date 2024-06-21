@@ -73,13 +73,21 @@ corpo da requisição:
   "content": "### Olá" // deve ser em markdown
 }
 ```
+- Adicionar Categoria ao Projeto `/category`
+
+`Authorization: Bearer JWT_TOKEN`
+```json
+{
+  "repository_id": 1,
+  "category_name": "ti"
+}
+``` 
 
 - Busca de Projeto `/repo/{title} GET`
 
 - Obter Projetos `/repo GET`
-
+---
 - Criação do Evento `/event POST`
-
 `Authorization: Bearer JWT_TOKEN`
 ```json 
 {
@@ -88,3 +96,5 @@ corpo da requisição:
     "date": "2020-12-02",
     "description": "Uma amostra de tcc uai"
 }
+```
+- Obter Evento `/event/Amostra de TCC`

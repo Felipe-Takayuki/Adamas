@@ -1,9 +1,6 @@
 package entity
 
-type Category struct {
-	ID   int
-	Name string
-}
+type Category string
 
 type Repository struct {
 	ID             int64         `json:"id"`
@@ -26,6 +23,12 @@ type RepositoryRequestFirst struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Content 	string 	`json:"content"`
+}
+
+type Comment struct {
+	UserID   string `json:"user_id"`
+	UserName string `json:"user_name"`
+	Comment  string	`json:"comment"`    
 }
 
 func NewRepository(title, description, content string, ownerID int) *Repository {

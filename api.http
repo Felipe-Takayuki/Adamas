@@ -45,8 +45,17 @@ POST  http://localhost:3000/category
 Authorization: Bearer TOKEN
 
 {
-    "repository_id" : 2,
+    "repository_id" : 1,
     "category_name": "agricultura"
+}
+
+###
+POST http://localhost:3000/comment
+Authorization: Bearer TOKEN
+
+{
+    "repository_id": 1,
+    "comment": "muito brabo"
 }
 
 ###

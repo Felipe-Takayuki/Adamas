@@ -80,7 +80,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 		}
 		json.NewEncoder(w).Encode(result)
 	} else {
-		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão"}
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return

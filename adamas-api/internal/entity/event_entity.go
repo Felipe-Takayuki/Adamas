@@ -34,8 +34,4 @@ type RepositoryInEvent struct {
 	Locale     string
 }
 
-type Comment struct {
-	UserID   string
-	UserName string
-	Comment  string
-}
+

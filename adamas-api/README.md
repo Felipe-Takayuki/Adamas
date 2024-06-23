@@ -3,7 +3,7 @@
 ### Como rodar a API ?
 
 ```          
-git clone https://github.com/Adamas-Projects/Adamas-BackEnd.git 
+git clone https://github.com/Adamas-Projects/Adamas-BackEnd.git
 
 cd Adamas/adamas-api
 

@@ -1,8 +1,8 @@
 POST http://localhost:3000/create
 
 {
-    "name" : "Ed",
-    "email": "ed@email.com",
+    "name" : "Felipe",
+    "email": "felipe@email.com",
     "password": "12345678"
 }
 
@@ -10,7 +10,7 @@ POST http://localhost:3000/create
 POST http://localhost:3000/login
 
 {
-    "email": "ed@email.com",
+    "email": "felipe@email.com",
     "password": "12345678"
 }
 
@@ -33,7 +33,7 @@ POST http://localhost:3000/login_institution
 }
 ### 
 POST http://localhost:3000/repo
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTkyNTA4NTIsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.w8-425WuPt-xIrwkL6VAWgHqZYmrQChPsHqUKY1Kv7A
+Authorization: Bearer TOKEN
 
 {
     "title": "Adamas",
@@ -44,7 +44,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZ
 
 ###
 PUT http://localhost:3000/repo
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTkyNTA4NTIsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.w8-425WuPt-xIrwkL6VAWgHqZYmrQChPsHqUKY1Kv7A
+Authorization: Bearer TOKEN
 
 {
     "repository_id":1,
@@ -62,7 +62,7 @@ Authorization: Bearer TOKEN
 
 ###
 POST http://localhost:3000/comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVkQGVtYWlsLmNvbSIsImV4cCI6MTcxOTI1MTYyMiwiaWQiOjIsIm5hbWUiOiJFZCIsInVzZXJfdHlwZSI6ImNvbW1vbl91c2VyIn0.6OBtC6muHJnIsMw0YUSqo-zcssdS-QtDwRsj7e3BFJE
+Authorization: Bearer TOKEN
 
 {
     "repository_id": 1,
@@ -71,7 +71,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVkQGVtY
 
 ###
 DELETE  http://localhost:3000/comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVkQGVtYWlsLmNvbSIsImV4cCI6MTcxOTI1MTYyMiwiaWQiOjIsIm5hbWUiOiJFZCIsInVzZXJfdHlwZSI6ImNvbW1vbl91c2VyIn0.6OBtC6muHJnIsMw0YUSqo-zcssdS-QtDwRsj7e3BFJE
+Authorization: Bearer TOKEN
 
 {
     "repository_id" : 1,

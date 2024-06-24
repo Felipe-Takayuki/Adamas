@@ -14,21 +14,18 @@ type Repository struct {
 	Categories     []*Category `json:"categories"`
 	Comments       []*Comment  `json:"comments"`
 }
-type ShowRepository struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-}
-type RepositoryRequestFirst struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Content 	string 	`json:"content"`
-}
 
 type Comment struct {
 	UserID   string `json:"user_id"`
 	UserName string `json:"user_name"`
 	Comment  string	`json:"comment"`    
+}
+
+type RepositoryBasic struct {
+	ID          int    `json:"repository_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Content 	string 	`json:"content"`
 }
 
 func NewRepository(title, description, content string, ownerID int) *Repository {

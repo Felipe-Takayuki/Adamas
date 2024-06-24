@@ -29,16 +29,16 @@ func (rdb *RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, er
 		var repository entity.Repository
 		err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.Content, &repository.FirstOwnerID, &repository.FirstOwnerName)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
-		repository.Categories, err =  rdb.getCategoriesByRepoID(repository.ID)
+		repository.Categories, err = rdb.getCategoriesByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
 		}
 		repository.Comments, err = rdb.getCommentsByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
-		} 
+		}
 		repositories = append(repositories, &repository)
 	}
 
@@ -59,11 +59,11 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 		repository.Categories, err = rdb.getCategoriesByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
-		} 
+		}
 		repository.Comments, err = rdb.getCommentsByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
-		}  
+		}
 		repositories = append(repositories, &repository)
 	}
 	return repositories, nil
@@ -93,8 +93,8 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 	repo.OwnerNames = append(ownerNames, repo.FirstOwnerName)
 	return repo, nil
 }
-func (rdb *RepoDB) getCategoriesByRepoID (repositoryID int64) ([]*entity.Category, error) {
-	rows, err:= rdb.db.Query(queries.GET_CATEGORIES_BY_REPO, repositoryID)
+func (rdb *RepoDB) getCategoriesByRepoID(repositoryID int64) ([]*entity.Category, error) {
+	rows, err := rdb.db.Query(queries.GET_CATEGORIES_BY_REPO, repositoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -103,30 +103,30 @@ func (rdb *RepoDB) getCategoriesByRepoID (repositoryID int64) ([]*entity.Categor
 	for rows.Next() {
 		var category entity.Category
 		if err := rows.Scan(&category); err != nil {
-			return nil, err 
+			return nil, err
 		}
 		categories = append(categories, &category)
 	}
 	return categories, nil
 }
-func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) (error) {
-	_, err := rdb.db.Exec(queries.SET_CATEGORY,utils.Categories[categoryName], repositoryID)
+func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) error {
+	_, err := rdb.db.Exec(queries.SET_CATEGORY, utils.Categories[categoryName], repositoryID)
 	if err != nil {
-		return err 
-	} 
+		return err
+	}
 	return nil
 }
 
-func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) (error) {
-	_, err := rdb.db.Exec(queries.SET_COMMENT,ownerID, repositoryID, comment)
+func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) error {
+	_, err := rdb.db.Exec(queries.SET_COMMENT, ownerID, repositoryID, comment)
 	if err != nil {
-		return err 
+		return err
 	}
-	return nil 
+	return nil
 }
 
 func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, error) {
-	rows, err:= rdb.db.Query(queries.GET_COMMENTS_BY_REPO, repositoryID) 
+	rows, err := rdb.db.Query(queries.GET_COMMENTS_BY_REPO, repositoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -135,10 +135,36 @@ func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, e
 	for rows.Next() {
 		var comment entity.Comment
 		if err := rows.Scan(&comment.UserID, &comment.UserName, &comment.Comment); err != nil {
-			return nil, err 
+			return nil, err
 		}
 		comments = append(comments, &comment)
 	}
 	return comments, nil
 
+}
+
+func (rdb *RepoDB) EditRepo(title, description, content string, repository_id int64) (*entity.RepositoryBasic, error) {
+
+	if title != "" {
+		_, err := rdb.db.Exec(queries.UPDATE_TITLE_REPOSITORY, title, repository_id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if description != "" {
+		_, err := rdb.db.Exec(queries.UPDATE_DESCRIPTION_REPOSITORY, description, repository_id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if content != "" {
+		_, err := rdb.db.Exec(queries.UPDATE_CONTENT_REPOSITORY, content, repository_id)
+		if err != nil {
+			return nil, err
+		}
+	}
+	repository := entity.RepositoryBasic{ID: int(repository_id), Title: title, Description: description, Content: content}
+	return &repository, nil
 }

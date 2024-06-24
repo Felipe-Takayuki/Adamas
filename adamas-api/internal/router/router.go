@@ -58,6 +58,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 		r.Post("/repo", webRepoService.CreateRepo)
+		r.Put("/repo", webRepoService.EditRepo)
 		r.Post("/event", webEventService.CreateEvent)
 		r.Post("/category", webRepoService.SetCategory)
 		r.Post("/comment", webRepoService.SetComment)

@@ -71,7 +71,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		userID := flt64
-		var req *entity.RepositoryRequestFirst
+		var req *reqs.RepositoryRequestFirst
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -94,6 +94,39 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func (wph *WebRepoHandler) EditRepo(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "common_user" {
+		var req *entity.RepositoryBasic
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		result, err := wph.RepoService.EditRepo(req.Title, req.Description, req.Content, int64(req.ID))
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(result)
+	}else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
 }
 func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
@@ -120,7 +153,7 @@ func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"category":reqs.CategoryName})
+		json.NewEncoder(w).Encode(map[string]interface{}{"category": reqs.CategoryName})
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -160,7 +193,7 @@ func (wph *WebRepoHandler) SetComment(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"Comment":reqs.Comment})
+		json.NewEncoder(w).Encode(map[string]interface{}{"Comment": reqs.Comment})
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)

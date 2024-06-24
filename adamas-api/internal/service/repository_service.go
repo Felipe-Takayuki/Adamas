@@ -36,6 +36,14 @@ func (rs *RepositoryService) CreateRepo(title, description, content string, owne
 	return repo, nil
 }
 
+func (rs *RepositoryService) EditRepo(title, description, content string, repository_id int64) (*entity.RepositoryBasic, error) {
+	repo, err := rs.RepositoryDB.EditRepo(title, description, content, repository_id) 
+	if err != nil {
+		return nil, err
+	}
+	return repo, nil
+}
+
 func (rs *RepositoryService) SetCategory(categoryName string, repoID int64) (error) {
 	err := rs.RepositoryDB.SetCategory(categoryName, repoID)
 	if err != nil {
@@ -51,3 +59,4 @@ func (rs *RepositoryService) SetComment(ownerID, repositoryID int64, comment str
 	}
 	return nil
 }
+

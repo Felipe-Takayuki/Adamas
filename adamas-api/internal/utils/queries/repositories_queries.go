@@ -38,7 +38,7 @@ const GET_CATEGORIES_BY_REPO = `
 	WHERE cr.repository_id = ?
 `
 const GET_COMMENTS_BY_REPO = `
-	SELECT u.id, u.name, com.comment FROM COMMENT com
+	SELECT com.id, u.id, u.name, com.comment FROM COMMENT com
 	JOIN REPOSITORY r ON com.repository_id = r.id
 	JOIN COMMON_USER u ON com.owner_id = u.id
 	WHERE com.repository_id = ?

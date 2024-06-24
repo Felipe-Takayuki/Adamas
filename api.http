@@ -1,8 +1,8 @@
 POST http://localhost:3000/create
 
 {
-    "name" : "Felipe",
-    "email": "felipe@email.com",
+    "name" : "Ed",
+    "email": "ed@email.com",
     "password": "12345678"
 }
 
@@ -10,7 +10,7 @@ POST http://localhost:3000/create
 POST http://localhost:3000/login
 
 {
-    "email": "felipe@email.com",
+    "email": "ed@email.com",
     "password": "12345678"
 }
 
@@ -33,16 +33,18 @@ POST http://localhost:3000/login_institution
 }
 ### 
 POST http://localhost:3000/repo
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTkyNTA4NTIsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.w8-425WuPt-xIrwkL6VAWgHqZYmrQChPsHqUKY1Kv7A
 
 {
     "title": "Adamas",
     "description": "uma rede social para projetos",
     "content": "###hello world!"
 }
+
+
 ###
 PUT http://localhost:3000/repo
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTkyNTA4NTIsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.w8-425WuPt-xIrwkL6VAWgHqZYmrQChPsHqUKY1Kv7A
 
 {
     "repository_id":1,
@@ -60,13 +62,21 @@ Authorization: Bearer TOKEN
 
 ###
 POST http://localhost:3000/comment
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVkQGVtYWlsLmNvbSIsImV4cCI6MTcxOTI1MTYyMiwiaWQiOjIsIm5hbWUiOiJFZCIsInVzZXJfdHlwZSI6ImNvbW1vbl91c2VyIn0.6OBtC6muHJnIsMw0YUSqo-zcssdS-QtDwRsj7e3BFJE
 
 {
     "repository_id": 1,
     "comment": "muito brabo"
 }
 
+###
+DELETE  http://localhost:3000/comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVkQGVtYWlsLmNvbSIsImV4cCI6MTcxOTI1MTYyMiwiaWQiOjIsIm5hbWUiOiJFZCIsInVzZXJfdHlwZSI6ImNvbW1vbl91c2VyIn0.6OBtC6muHJnIsMw0YUSqo-zcssdS-QtDwRsj7e3BFJE
+
+{
+    "repository_id" : 1,
+    "comment_id" : 2
+}
 ###
 POST http://localhost:3000/event
 Authorization: Bearer TOKEN

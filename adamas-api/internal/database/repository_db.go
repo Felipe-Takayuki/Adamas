@@ -140,7 +140,7 @@ func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, e
 	var comments []*entity.Comment
 	for rows.Next() {
 		var comment entity.Comment
-		if err := rows.Scan(&comment.UserID, &comment.UserName, &comment.Comment); err != nil {
+		if err := rows.Scan(&comment.CommentID, &comment.UserID, &comment.UserName, &comment.Comment); err != nil {
 			return nil, err
 		}
 		comments = append(comments, &comment)

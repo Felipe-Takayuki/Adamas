@@ -124,7 +124,13 @@ func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) error
 	}
 	return nil
 }
-
+func (rdb *RepoDB) DeleteComment(repository_id, comment_id int64) error {
+	_, err := rdb.db.Exec("DELETE FROM COMMENT WHERE id = ? and repository_id = ? ", comment_id, repository_id)
+	if err != nil {
+		return err 
+	}
+	return nil
+}
 func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, error) {
 	rows, err := rdb.db.Query(queries.GET_COMMENTS_BY_REPO, repositoryID)
 	if err != nil {

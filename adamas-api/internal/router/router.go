@@ -62,6 +62,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/event", webEventService.CreateEvent)
 		r.Post("/category", webRepoService.SetCategory)
 		r.Post("/comment", webRepoService.SetComment)
+		r.Delete("/comment", webRepoService.DeleteComment)
 	},
 	)
 

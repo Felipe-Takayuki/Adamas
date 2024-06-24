@@ -41,6 +41,15 @@ Authorization: Bearer TOKEN
     "content": "###hello world!"
 }
 ###
+PUT http://localhost:3000/repo
+Authorization: Bearer TOKEN
+
+{
+    "repository_id":1,
+    "description": "uma rede social para a divulgação de projetos e eventos",
+    "content": "###hello world 2"
+}
+###
 POST  http://localhost:3000/category
 Authorization: Bearer TOKEN
 

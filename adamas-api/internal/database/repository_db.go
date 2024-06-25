@@ -125,7 +125,7 @@ func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) error
 	return nil
 }
 func (rdb *RepoDB) DeleteComment(repository_id, comment_id int64) error {
-	_, err := rdb.db.Exec("DELETE FROM COMMENT WHERE id = ? and repository_id = ? ", comment_id, repository_id)
+	_, err := rdb.db.Exec(queries.DELETE_COMMENT, comment_id, repository_id)
 	if err != nil {
 		return err 
 	}
@@ -173,4 +173,12 @@ func (rdb *RepoDB) EditRepo(title, description, content string, repository_id in
 	}
 	repository := entity.RepositoryBasic{ID: int(repository_id), Title: title, Description: description, Content: content}
 	return &repository, nil
+}
+
+func (rdb *RepoDB) DeleteRepo(email, password string, repo_id int64) error {
+	_, err := rdb.db.Exec(queries.DELETE_REPOSITORY, repo_id, email, utils.EncriptKey(password))
+	if err != nil {
+		return err
+	}
+	return nil
 }

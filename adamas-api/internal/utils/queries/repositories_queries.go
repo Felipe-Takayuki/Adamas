@@ -25,6 +25,15 @@ const UPDATE_DESCRIPTION_REPOSITORY = `
 	SET description = ? 
 	WHERE id = ?`
 
+const DELETE_REPOSITORY = `
+	DELETE FROM REPOSITORY WHERE 
+	(SELECT r.id FROM REPOSITORY r 
+	JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id
+	JOIN COMMON_USER u ON u.id = o.owner_id
+	WHERE r.id = ? and u.email = ? and u.password = ?
+	)
+	`
+
 const GET_OWNER_NAME_BY_ID = "SELECT name FROM COMMON_USER WHERE id = ?"
 
 const SET_OWNER = "INSERT INTO OWNERS_REPOSITORY(repository_id, owner_id) VALUES (?, ?)" 
@@ -44,3 +53,5 @@ const GET_COMMENTS_BY_REPO = `
 	WHERE com.repository_id = ?
 `
 const SET_COMMENT = "INSERT INTO COMMENT (owner_id, repository_id, comment) VALUES (?, ?, ?)"
+
+const DELETE_COMMENT = "DELETE FROM COMMENT WHERE id = ? and repository_id = ?"

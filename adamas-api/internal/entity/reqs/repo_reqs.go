@@ -16,7 +16,4 @@ type RepositoryRequestFirst struct {
 	Content 	string 	`json:"content"`
 }
 
-type DeleteCommentRequest struct {
-	CommentID int64 `json:"comment_id"`
-	RepositoryID int64 `json:"repository_id"`
-}
+type CommentID int64

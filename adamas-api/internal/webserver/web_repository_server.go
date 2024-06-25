@@ -208,22 +208,23 @@ func (wph *WebRepoHandler) DeleteComment(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if userType == "common_user" {
-		var reqs *reqs.DeleteCommentRequest
-		err := json.NewDecoder(r.Body).Decode(&reqs)
+		var commentID *reqs.CommentID
+		repositoryID := chi.URLParam(r, "repository_id")
+		err := json.NewDecoder(r.Body).Decode(&commentID)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.RepoService.DeleteComment(reqs.CommentID, reqs.RepositoryID)
+		err = wph.RepoService.DeleteComment(int64(*commentID),int64(repositoryID) )
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"message":"deletado!"})
+		json.NewEncoder(w).Encode(map[string]interface{}{""})
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)

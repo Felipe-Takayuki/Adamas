@@ -40,10 +40,10 @@ func Router(db *sql.DB) http.Handler {
 		webUserService.LoginUser(w, r, tokenAuth)
 	})
 
-	c.Post("/create_institution", func(w http.ResponseWriter, r *http.Request) {
+	c.Post("/create/institution", func(w http.ResponseWriter, r *http.Request) {
 		webInstitutionService.CreateInstitution(w, r, tokenAuth)
 	})
-	c.Post("/login_institution", func(w http.ResponseWriter, r *http.Request) {
+	c.Post("/login/institution", func(w http.ResponseWriter, r *http.Request) {
 		webInstitutionService.LoginInstitution(w, r, tokenAuth)
 	})
 
@@ -58,7 +58,8 @@ func Router(db *sql.DB) http.Handler {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 		r.Post("/repo", webRepoService.CreateRepo)
-		r.Put("/repo", webRepoService.EditRepo)
+		r.Put("/repo/{repository_id}", webRepoService.EditRepo)
+		r.Delete("/repo/{repository_id}", webRepoService.DeleteRepo)
 		r.Post("/event", webEventService.CreateEvent)
 		r.Post("/repo/{repository_id}/category", webRepoService.SetCategory)
 		r.Post("/repo/{repository_id}/comment", webRepoService.SetComment)

@@ -3,7 +3,7 @@ package webserver
 import (
 	"encoding/json"
 	"net/http"
-
+	"strconv"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
@@ -144,7 +144,12 @@ func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.RepoService.SetCategory(reqs.CategoryName, reqs.RepositoryID)
+		repoID, err := strconv.Atoi(chi.URLParam(r, "repository_id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = wph.RepoService.SetCategory(reqs.CategoryName, int64(repoID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -175,15 +180,22 @@ func (wph *WebRepoHandler) SetComment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		userID := flt64
+
+		repositoryID := chi.URLParam(r, "repository_id")
+		repoID , err := strconv.Atoi(repositoryID)
+		if err != nil {
+			http.Error(w, "repository_id is not string!", http.StatusInternalServerError)
+			return
+		}
 		var reqs *reqs.SetCommentRequest
-		err := json.NewDecoder(r.Body).Decode(&reqs)
+		err = json.NewDecoder(r.Body).Decode(&reqs)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.RepoService.SetComment(int64(userID), reqs.RepositoryID, reqs.Comment)
+		err = wph.RepoService.SetComment(int64(userID), int64(repoID), reqs.Comment)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -210,21 +222,26 @@ func (wph *WebRepoHandler) DeleteComment(w http.ResponseWriter, r *http.Request)
 	if userType == "common_user" {
 		var commentID *reqs.CommentID
 		repositoryID := chi.URLParam(r, "repository_id")
-		err := json.NewDecoder(r.Body).Decode(&commentID)
+		repoID, err := strconv.Atoi(repositoryID)
+		if err != nil {
+			http.Error(w, "repository_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		err = json.NewDecoder(r.Body).Decode(&commentID)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.RepoService.DeleteComment(int64(*commentID),int64(repositoryID) )
+		err = wph.RepoService.DeleteComment(int64(commentID.CommentID),int64(repoID) )
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{""})
+		json.NewEncoder(w).Encode(map[string]interface{}{"deleted_comment":repoID})
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)

@@ -33,7 +33,7 @@ POST http://localhost:3000/login/institution
 }
 ### 
 POST http://localhost:3000/repo
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTk0MDc4MjgsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.tzoml73Hdi-Ta-E1c2A_MF2XJtu3FwRRNgJFQMqEMuU
 
 {
     "title": "Adamas",
@@ -54,7 +54,7 @@ Authorization: Bearer TOKEN
 
 ###
 DELETE  http://localhost:3000/repo/1
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MTk0MDg1MTgsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.70TqU4g-Y2lPtl4NqsxIfd2G5796V57Zl_ik0O0GC1Q
 
 {
     "email": "felipe@email.com",

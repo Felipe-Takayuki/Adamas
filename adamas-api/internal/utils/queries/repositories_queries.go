@@ -26,12 +26,17 @@ const UPDATE_DESCRIPTION_REPOSITORY = `
 	WHERE id = ?`
 
 const DELETE_REPOSITORY = `
-	DELETE FROM REPOSITORY WHERE 
-	(SELECT r.id FROM REPOSITORY r 
-	JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id
-	JOIN COMMON_USER u ON u.id = o.owner_id
-	WHERE r.id = ? and u.email = ? and u.password = ?
-	)
+DELETE FROM REPOSITORY
+WHERE id = ? 
+AND id IN (
+    SELECT r.id
+    FROM REPOSITORY r
+    JOIN OWNERS_REPOSITORY o ON r.id = o.repository_id
+    JOIN COMMON_USER u ON u.id = o.owner_id
+    WHERE r.id = ?
+    AND u.email = ?
+    AND u.password = ?
+);
 	`
 
 const GET_OWNER_NAME_BY_ID = "SELECT name FROM COMMON_USER WHERE id = ?"

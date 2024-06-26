@@ -144,7 +144,7 @@ func (rdb *RepoDB) EditRepo(title, description, content string, repository_id in
 }
 
 func (rdb *RepoDB) DeleteRepo(email, password string, repoID int64) error {
-	_, err := rdb.db.Exec(queries.DELETE_REPOSITORY, repoID, email, utils.EncriptKey(password))
+	_, err := rdb.db.Exec(queries.DELETE_REPOSITORY, repoID,repoID,email, utils.EncriptKey(password))
 	if err != nil {
 		return err
 	}

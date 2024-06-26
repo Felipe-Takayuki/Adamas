@@ -61,21 +61,19 @@ Authorization: Bearer TOKEN
 }
 
 ###
-POST http://localhost:3000/comment
+POST http://localhost:3000/repo/1/comment
 Authorization: Bearer TOKEN
 
 {
-    "repository_id": 1,
     "comment": "muito brabo"
 }
 
 ###
-DELETE  http://localhost:3000/comment
+DELETE  http://localhost:3000/repo/1/comment
 Authorization: Bearer TOKEN
 
 {
-    "repository_id" : 1,
-    "comment_id" : 2
+    "comment_id" : 1
 }
 ###
 POST http://localhost:3000/event

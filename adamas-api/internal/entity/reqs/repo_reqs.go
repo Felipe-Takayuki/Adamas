@@ -1,12 +1,10 @@
 package reqs
 
 type SetCategoryRequest struct {
-	RepositoryID int64 `json:"repository_id"`
 	CategoryName   string `json:"category_name"`
 }
 
 type SetCommentRequest struct {
-	RepositoryID int64 `json:"repository_id"`
 	Comment string `json:"comment"` 
 }
 
@@ -16,4 +14,6 @@ type RepositoryRequestFirst struct {
 	Content 	string 	`json:"content"`
 }
 
-type CommentID int64
+type CommentID struct {
+	CommentID int64 `json:"comment_id"`
+}

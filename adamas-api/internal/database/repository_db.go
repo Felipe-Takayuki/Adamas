@@ -124,8 +124,8 @@ func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) error
 	}
 	return nil
 }
-func (rdb *RepoDB) DeleteComment(repository_id, comment_id int64) error {
-	_, err := rdb.db.Exec(queries.DELETE_COMMENT, comment_id, repository_id)
+func (rdb *RepoDB) DeleteComment(repositoryID, commentID int64) error {
+	_, err := rdb.db.Exec(queries.DELETE_COMMENT, commentID, repositoryID)
 	if err != nil {
 		return err 
 	}

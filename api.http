@@ -43,11 +43,11 @@ Authorization: Bearer TOKEN
 
 
 ###
-PUT http://localhost:3000/repo
+PUT http://localhost:3000/repo/1
 Authorization: Bearer TOKEN
 
 {
-    "repository_id":1,
+    "title": "Adamas-Projects",
     "description": "uma rede social para a divulgação de projetos e eventos",
     "content": "###hello world 2"
 }

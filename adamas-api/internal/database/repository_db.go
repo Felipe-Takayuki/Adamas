@@ -117,7 +117,7 @@ func (rdb *RepoDB) EditRepo(title, description, content string, repository_id in
 			return nil, err
 		}
 	}
-	repository := entity.RepositoryBasic{ID: int(repository_id), Title: title, Description: description, Content: content}
+	repository := entity.RepositoryBasic{Title: title, Description: description, Content: content}
 	return &repository, nil
 }
 

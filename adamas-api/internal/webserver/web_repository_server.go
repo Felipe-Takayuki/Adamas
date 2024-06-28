@@ -138,15 +138,20 @@ func (wph *WebRepoHandler) EditRepo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if userType == "common_user" {
+		repoID, err := strconv.Atoi(chi.URLParam(r, "repository_id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		var req *entity.RepositoryBasic
-		err := json.NewDecoder(r.Body).Decode(&req)
+		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.RepoService.EditRepo(req.Title, req.Description, req.Content, int64(req.ID))
+		result, err := wph.RepoService.EditRepo(req.Title, req.Description, req.Content, int64(repoID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

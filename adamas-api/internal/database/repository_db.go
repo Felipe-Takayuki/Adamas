@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
@@ -93,29 +94,6 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 	repo.OwnerNames = append(ownerNames, repo.FirstOwnerName)
 	return repo, nil
 }
-func (rdb *RepoDB) getCategoriesByRepoID(repositoryID int64) ([]*entity.Category, error) {
-	rows, err := rdb.db.Query(queries.GET_CATEGORIES_BY_REPO, repositoryID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var categories []*entity.Category
-	for rows.Next() {
-		var category entity.Category
-		if err := rows.Scan(&category); err != nil {
-			return nil, err
-		}
-		categories = append(categories, &category)
-	}
-	return categories, nil
-}
-func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) error {
-	_, err := rdb.db.Exec(queries.SET_CATEGORY, utils.Categories[categoryName], repositoryID)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 
 func (rdb *RepoDB) EditRepo(title, description, content string, repository_id int64) (*entity.RepositoryBasic, error) {
 
@@ -144,7 +122,58 @@ func (rdb *RepoDB) EditRepo(title, description, content string, repository_id in
 }
 
 func (rdb *RepoDB) DeleteRepo(email, password string, repoID int64) error {
-	_, err := rdb.db.Exec(queries.DELETE_REPOSITORY, repoID,repoID,email, utils.EncriptKey(password))
+	userID, err := rdb.validateUser(email, password)
+	if err != nil {
+		return err
+	}
+
+	if !rdb.isRepositoryOwner(userID, repoID) {
+		return fmt.Errorf("usuário não possui o repositório")
+	}
+
+	err = rdb.deleteOwnerRepository(userID, repoID)
+	if err != nil {
+		return err
+	}
+
+	err = rdb.deleteCommentsByRepoID(repoID)
+	if err != nil {
+		return err
+	}
+
+	err = rdb.deleteCategoriesByRepoID(repoID)
+	if err != nil {
+		return err
+	}
+
+	_, err = rdb.db.Exec(queries.DELETE_REPOSITORY, repoID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rdb *RepoDB) validateUser(email, password string) (int64, error) {
+	var userID int64
+	err := rdb.db.QueryRow(queries.VALIDATE_USER, email, utils.EncriptKey(password)).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+func (rdb *RepoDB) isRepositoryOwner(userID, repoID int64) bool {
+	var count int
+	err := rdb.db.QueryRow(queries.CHECK_REPOSITORY_OWNER, userID, repoID).Scan(&count)
+	if err != nil {
+		return false
+	}
+	return count > 0
+}
+
+func (rdb *RepoDB) deleteOwnerRepository(userID, repoID int64) error {
+	_, err := rdb.db.Exec(queries.DELETE_OWNER_REPO, userID, repoID)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
@@ -29,16 +30,16 @@ func (rdb *RepoDB) GetRepositoriesByName(title string) ([]*entity.Repository, er
 		var repository entity.Repository
 		err := rows.Scan(&repository.ID, &repository.Title, &repository.Description, &repository.Content, &repository.FirstOwnerID, &repository.FirstOwnerName)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
-		repository.Categories, err =  rdb.getCategoriesByRepoID(repository.ID)
+		repository.Categories, err = rdb.getCategoriesByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
 		}
 		repository.Comments, err = rdb.getCommentsByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
-		} 
+		}
 		repositories = append(repositories, &repository)
 	}
 
@@ -59,11 +60,11 @@ func (rdb *RepoDB) GetRepositories() ([]*entity.Repository, error) {
 		repository.Categories, err = rdb.getCategoriesByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
-		} 
+		}
 		repository.Comments, err = rdb.getCommentsByRepoID(repository.ID)
 		if err != nil {
 			return nil, err
-		}  
+		}
 		repositories = append(repositories, &repository)
 	}
 	return repositories, nil
@@ -93,52 +94,88 @@ func (rdb *RepoDB) CreateRepo(title, description, content string, ownerID int) (
 	repo.OwnerNames = append(ownerNames, repo.FirstOwnerName)
 	return repo, nil
 }
-func (rdb *RepoDB) getCategoriesByRepoID (repositoryID int64) ([]*entity.Category, error) {
-	rows, err:= rdb.db.Query(queries.GET_CATEGORIES_BY_REPO, repositoryID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var categories []*entity.Category
-	for rows.Next() {
-		var category entity.Category
-		if err := rows.Scan(&category); err != nil {
-			return nil, err 
+
+func (rdb *RepoDB) EditRepo(title, description, content string, repository_id int64) (*entity.RepositoryBasic, error) {
+
+	if title != "" {
+		_, err := rdb.db.Exec(queries.UPDATE_TITLE_REPOSITORY, title, repository_id)
+		if err != nil {
+			return nil, err
 		}
-		categories = append(categories, &category)
 	}
-	return categories, nil
+
+	if description != "" {
+		_, err := rdb.db.Exec(queries.UPDATE_DESCRIPTION_REPOSITORY, description, repository_id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if content != "" {
+		_, err := rdb.db.Exec(queries.UPDATE_CONTENT_REPOSITORY, content, repository_id)
+		if err != nil {
+			return nil, err
+		}
+	}
+	repository := entity.RepositoryBasic{ID: int(repository_id), Title: title, Description: description, Content: content}
+	return &repository, nil
 }
-func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) (error) {
-	_, err := rdb.db.Exec(queries.SET_CATEGORY,utils.Categories[categoryName], repositoryID)
+
+func (rdb *RepoDB) DeleteRepo(email, password string, repoID int64) error {
+	userID, err := rdb.validateUser(email, password)
 	if err != nil {
-		return err 
-	} 
+		return err
+	}
+
+	if !rdb.isRepositoryOwner(userID, repoID) {
+		return fmt.Errorf("usuário não possui o repositório")
+	}
+
+	err = rdb.deleteOwnerRepository(userID, repoID)
+	if err != nil {
+		return err
+	}
+
+	err = rdb.deleteCommentsByRepoID(repoID)
+	if err != nil {
+		return err
+	}
+
+	err = rdb.deleteCategoriesByRepoID(repoID)
+	if err != nil {
+		return err
+	}
+
+	_, err = rdb.db.Exec(queries.DELETE_REPOSITORY, repoID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) (error) {
-	_, err := rdb.db.Exec(queries.SET_COMMENT,ownerID, repositoryID, comment)
+func (rdb *RepoDB) validateUser(email, password string) (int64, error) {
+	var userID int64
+	err := rdb.db.QueryRow(queries.VALIDATE_USER, email, utils.EncriptKey(password)).Scan(&userID)
 	if err != nil {
-		return err 
+		return 0, err
 	}
-	return nil 
+	return userID, nil
 }
 
-func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, error) {
-	rows, err:= rdb.db.Query(queries.GET_COMMENTS_BY_REPO, repositoryID) 
+func (rdb *RepoDB) isRepositoryOwner(userID, repoID int64) bool {
+	var count int
+	err := rdb.db.QueryRow(queries.CHECK_REPOSITORY_OWNER, userID, repoID).Scan(&count)
 	if err != nil {
-		return nil, err
+		return false
 	}
-	defer rows.Close()
-	var comments []*entity.Comment
-	for rows.Next() {
-		var comment entity.Comment
-		if err := rows.Scan(&comment.UserID, &comment.UserName, &comment.Comment); err != nil {
-			return nil, err 
-		}
-		comments = append(comments, &comment)
-	}
-	return comments, nil
+	return count > 0
+}
 
+func (rdb *RepoDB) deleteOwnerRepository(userID, repoID int64) error {
+	_, err := rdb.db.Exec(queries.DELETE_OWNER_REPO, userID, repoID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

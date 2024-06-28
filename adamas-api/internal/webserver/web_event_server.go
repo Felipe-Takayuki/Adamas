@@ -7,6 +7,7 @@ import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
+	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 )
 
@@ -20,10 +21,38 @@ func NewWebEventHandler(eventService *service.EventService) *WebEventHandler {
 	}
 }
 
+func (weh *WebEventHandler) GetEventByName(w http.ResponseWriter, r *http.Request) {
+	eventName := chi.URLParam(r, "event")
+	if eventName == "" {
+		error := utils.ErrorMessage{Message: "name event is required"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	events, err := weh.eventService.GetEventByName(eventName)
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(events)
+}
+func (weh *WebEventHandler) GetEvents(w http.ResponseWriter, r *http.Request) {
+	events, err := weh.eventService.EventDB.GetEvents()
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(events)
+}
+
 func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
-	userType, ok := claims["user_type"].(string) 
+	userType, ok := claims["user_type"].(string)
 	if !ok {
 		http.Error(w, "id is not exists!", http.StatusInternalServerError)
 		return
@@ -42,7 +71,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-        result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.Date, req.Description, int(flt64))
+		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.Date, req.Description, int64(flt64))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -51,12 +80,9 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 		}
 		json.NewEncoder(w).Encode(result)
 	} else {
-		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão"}
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-		
-
-
 }

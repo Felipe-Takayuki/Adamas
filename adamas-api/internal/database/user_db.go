@@ -5,6 +5,7 @@ import (
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
 
 type UserDB struct {
@@ -18,17 +19,16 @@ func NewUserDB (db *sql.DB) *UserDB {
 
 func (ud *UserDB) CreateUser(name, email, password string) (*entity.CommonUserExtend, error) {
 	user := entity.NewCommonUserExtend(name, email, password)
-	_, err := ud.db.Exec("INSERT INTO COMMON_USER(name, email, password) VALUES( ?, ?, ?)",  user.USER.Name, user.USER.Email, user.USER.Password)
+	result, err := ud.db.Exec(queries.CREATE_USER,  user.USER.Name, user.USER.Email, user.USER.Password)
 	if err != nil {
 		return nil, err
 	}
-	err = ud.db.QueryRow("SELECT id FROM COMMON_USER WHERE email = ?", email).Scan(
-		&user.USER.ID,    
-	)
+	id, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
+	} else { 
+		user.USER.ID = id
 	}
-
 	return user, nil
 }
 
@@ -36,11 +36,13 @@ func (ud * UserDB) LoginUser(email, password string) (*entity.CommonUserExtend, 
     var user entity.CommonUserExtend
     user.USER = &entity.User{}
 
-    err := ud.db.QueryRow("SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?", email, utils.EncriptKey(password)).Scan(
+    err := ud.db.QueryRow(queries.LOGIN_USER, email, utils.EncriptKey(password)).Scan(
         &user.USER.ID, &user.USER.Name, &user.USER.Email,
     )
     if err != nil {
         return nil, err
     }
+	user.USER.UserType = "common_user"
+
     return &user, nil
 }

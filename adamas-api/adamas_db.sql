@@ -34,12 +34,7 @@ CREATE TABLE OWNERS_REPOSITORY(
     owner_id int NOT NULL REFERENCES COMMON_USER(id),
     PRIMARY KEY(repository_id, owner_id)
 );
--- CREATE TABLE BLOC_REPOSITORY(
---     id int NOT NULL auto_increment PRIMARY KEY,
---     repository_id varchar(36) NOT NULL,
---     subtitle varchar(255) NOT NULL,
---     content varchar(255) NOT NULL
--- );
+
 CREATE TABLE EVENT(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(100) NOT NULL,
@@ -56,20 +51,41 @@ CREATE TABLE ROOM_IN_EVENT(
     id int auto_increment NOT NULL PRIMARY KEY,
     event_id int NOT NULL,
     name varchar(50) NOT NULL,
-    projects int NOT NULL,
+    quantity_repos int NOT NULL,
     FOREIGN KEY (event_id) REFERENCES EVENT(id) 
 );
-
+CREATE TABLE REPOSITORY_IN_ROOM(
+    repository_id int NOT NULL,
+    room_id int NOT NULL,
+    PRIMARY KEY(repository_id, room_id)
+);
 CREATE TABLE CATEGORY_REPO(
     category_id int NOT NULL,
     repository_id int NOT NULL,
-    PRIMARY KEY(category_id, repository_id)
+    PRIMARY KEY(category_id,repository_id)
 );
+
+DELIMITER $$
+CREATE TRIGGER limit_category_count
+BEFORE INSERT ON CATEGORY_REPO
+FOR EACH ROW
+BEGIN
+    DECLARE category_count INT;
+    SELECT COUNT(*) INTO category_count 
+    FROM CATEGORY_REPO 
+    WHERE repository_id = NEW.repository_id;
+    IF category_count >= 3 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Limite de 3 categorias por repositório atingido';
+    END IF;
+END$$
+DELIMITER ;
 
 CREATE TABLE CATEGORY(
     id int auto_increment NOT NULL PRIMARY KEY,
     name varchar(200) NOT NULL
 ); 
+
 
 INSERT INTO CATEGORY(name) values 
 ("Saúde"),
@@ -80,4 +96,12 @@ INSERT INTO CATEGORY(name) values
 ("Marketing"),
 ("Mecânica");
 
+CREATE TABLE COMMENT(
+    id int auto_increment NOT NULL PRIMARY KEY,
+    owner_id int NOT NULL,
+    repository_id int NOT NULL,
+    comment varchar(255) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES COMMON_USER(id),
+    FOREIGN KEY (repository_id) REFERENCES REPOSITORY(id)
+);
                                                                                                                      

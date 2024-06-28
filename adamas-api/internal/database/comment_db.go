@@ -37,3 +37,11 @@ func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, e
 	return comments, nil
 
 }
+
+func (rdb *RepoDB) deleteCommentsByRepoID(repositoryID int64) error {
+	_, err := rdb.db.Exec("DELETE FROM COMMENT WHERE repository_id = ?", repositoryID)
+	if err != nil {
+		return err 
+	}
+	return nil
+}

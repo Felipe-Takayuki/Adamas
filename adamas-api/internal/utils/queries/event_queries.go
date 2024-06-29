@@ -11,7 +11,7 @@ const GET_EVENT_BY_NAME = `
 	WHERE e.name = ?`
 
 const GET_ROOMS_BY_EVENT_ID = `
-	SELECT r.id, r.name, r.quantity_repos FROM ROOM_IN_EVENT r 
+	SELECT r.id, r.name, r.quantity_projects FROM ROOM_IN_EVENT r 
 	WHERE r.event_id = ?`
 
 const GET_REPOSITORIES_BY_ROOM_ID = `

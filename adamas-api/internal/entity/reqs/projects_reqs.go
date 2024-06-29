@@ -8,7 +8,7 @@ type SetCommentRequest struct {
 	Comment string `json:"comment"` 
 }
 
-type RepositoryRequestFirst struct {
+type ProjectRequestFirst struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Content 	string 	`json:"content"`

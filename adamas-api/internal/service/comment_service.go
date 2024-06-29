@@ -1,6 +1,6 @@
 package service
 
-func (rs *RepositoryService) SetComment(ownerID, repositoryID int64, comment string) (error) {
+func (rs *ProjectService) SetComment(ownerID, repositoryID int64, comment string) (error) {
 	err := rs.RepositoryDB.SetComment(repositoryID, ownerID, comment) 
 	if err != nil {
 		return err 
@@ -8,7 +8,7 @@ func (rs *RepositoryService) SetComment(ownerID, repositoryID int64, comment str
 	return nil
 }
 
-func (rs *RepositoryService) DeleteComment(comment_id, repository_id int64) (error) {
+func (rs *ProjectService) DeleteComment(comment_id, repository_id int64) (error) {
 	err := rs.RepositoryDB.DeleteComment(repository_id, comment_id)
 	if err != nil {
 		return err 

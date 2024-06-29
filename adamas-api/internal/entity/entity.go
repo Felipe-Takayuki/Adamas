@@ -26,7 +26,7 @@ func NewInstitutionUserExtend( name, email, password string ,cnpj int) *Institut
 }
 type CommonUserExtend struct {
 	USER         *User
-	Repositories []*Repository `json:"repositories"`
+	Repositories []*Project `json:"projects"`
 }
 
 func NewCommonUserExtend(name, email, password string ) *CommonUserExtend {

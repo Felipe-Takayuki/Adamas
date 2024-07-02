@@ -10,7 +10,7 @@ CREATE TABLE INSTITUTION_USER(
   name varchar(255) NOT NULL,
   email varchar(255) NOT NULL UNIQUE,
   password varchar(64) NOT NULL,
-  cnpj bigint NOT NULL
+  cnpj char(14) NOT NULL
 );
 
 CREATE TABLE COMMON_USER(

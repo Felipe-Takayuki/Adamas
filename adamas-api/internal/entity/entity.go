@@ -13,10 +13,10 @@ type User struct {
 }
 type InstitutionUserExtend struct {
 	USER   *User
-	CNPJ   int      `json:"cnpj"`
+	CNPJ   string      `json:"cnpj"`
 	Events []*Event `json:"events"` 
 }
-func NewInstitutionUserExtend( name, email, password string ,cnpj int) *InstitutionUserExtend {
+func NewInstitutionUserExtend( name, email, password string ,cnpj string) *InstitutionUserExtend {
 	user := &User{Name: name, Email: email, Password: utils.EncriptKey(password), UserType: "institution_user"}
 	return &InstitutionUserExtend{
 		USER: user,

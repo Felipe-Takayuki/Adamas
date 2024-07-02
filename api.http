@@ -21,7 +21,7 @@ POST http://localhost:3000/create/institution
     "name" : "ETEC",
     "email": "etec@etec.com",
     "password": "12345678",
-    "cnpj": 28301041000137
+    "cnpj": "28301041000137"
 }
 
 ### 

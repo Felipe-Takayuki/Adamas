@@ -72,26 +72,26 @@ func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error
 		if err != nil {
 			return nil, err
 		}
-		repositories, err := edb.getRepositoriesByRoomID(room.ID)
+		repositories, err := edb.getProjectsByRoomID(room.ID)
 		if err != nil {
 			return nil, err
 		}
-		room.Repositories = repositories
+		room.Projects = repositories
 		rooms = append(rooms, &room)
 	}
 	return rooms, nil
 }
 
-func (edb *EventDB) getRepositoriesByRoomID(roomID int) ([]*entity.Repository, error) {
+func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
 	rows, err := edb.db.Query(queries.GET_REPOSITORIES_BY_ROOM_ID, roomID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var repositories []*entity.Repository
+	var repositories []*entity.Project
 	for rows.Next() {
-		var repo entity.Repository
+		var repo entity.Project
 		err = rows.Scan(&repo.ID, &repo.Title, &repo.Description, &repo.Content, &repo.FirstOwnerID, &repo.FirstOwnerName)
 		if err != nil {
 			return nil, err

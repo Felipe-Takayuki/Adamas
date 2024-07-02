@@ -5,23 +5,23 @@ import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
 
-func (rdb *RepoDB) SetComment(repositoryID, ownerID int64, comment string) error {
-	_, err := rdb.db.Exec(queries.SET_COMMENT, ownerID, repositoryID, comment)
+func (rdb *ProjectDB) SetComment(projectID, ownerID int64, comment string) error {
+	_, err := rdb.db.Exec(queries.SET_COMMENT, ownerID, projectID, comment)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func (rdb *RepoDB) DeleteComment(repositoryID, commentID int64) error {
-	_, err := rdb.db.Exec(queries.DELETE_COMMENT, commentID, repositoryID)
+func (rdb *ProjectDB) DeleteComment(projectID, commentID int64) error {
+	_, err := rdb.db.Exec(queries.DELETE_COMMENT, commentID, projectID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, error) {
-	rows, err := rdb.db.Query(queries.GET_COMMENTS_BY_REPO, repositoryID)
+func (rdb *ProjectDB) getCommentsByRepoID(projectID int64) ([]*entity.Comment, error) {
+	rows, err := rdb.db.Query(queries.GET_COMMENTS_BY_PROJECT, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -38,8 +38,8 @@ func (rdb *RepoDB) getCommentsByRepoID(repositoryID int64) ([]*entity.Comment, e
 
 }
 
-func (rdb *RepoDB) deleteCommentsByRepoID(repositoryID int64) error {
-	_, err := rdb.db.Exec("DELETE FROM COMMENT WHERE repository_id = ?", repositoryID)
+func (rdb *ProjectDB) deleteCommentsByProjectID(projectID int64) error {
+	_, err := rdb.db.Exec("DELETE FROM COMMENT WHERE repository_id = ?", projectID)
 	if err != nil {
 		return err 
 	}

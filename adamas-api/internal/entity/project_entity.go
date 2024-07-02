@@ -2,7 +2,7 @@ package entity
 
 type Category string
 
-type Repository struct {
+type Project struct {
 	ID             int64       `json:"id"`
 	Title          string      `json:"title"`
 	Description    string      `json:"description"`
@@ -22,16 +22,15 @@ type Comment struct {
 	Comment   string `json:"comment"`
 }
 
-type RepositoryBasic struct {
-	ID          int    `json:"repository_id"`
+type ProjectBasic struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Content     string `json:"content"`
 }
 
-func NewRepository(title, description, content string, ownerID int) *Repository {
+func NewProject(title, description, content string, ownerID int) *Project {
 	var ownerIDs []int
-	return &Repository{
+	return &Project{
 		Title:        title,
 		Description:  description,
 		Content:      content,

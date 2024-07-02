@@ -25,12 +25,12 @@ type RoomEvent struct {
 	ID                   int
 	Name                 string
 	QuantityRepositories int
-	Repositories         []*Repository
+	Projects         []*Project
 }
 
 type RepositoryInEvent struct {
 	ID         string
-	Repository *Repository
+	Project *Project
 	Locale     string
 }
 

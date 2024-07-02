@@ -16,12 +16,12 @@ func Router(db *sql.DB) http.Handler {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 
 	userDB := database.NewUserDB(db)
-	repoDB := database.NewRepoDB(db)
+	projectDB := database.NewProjectDB(db)
 	institutionDB := database.NewInstitutionDB(db)
 	eventDB := database.NewEventDB(db)
 
 	userService := service.NewUserService(*userDB)
-	repoService := service.NewRepoService(*repoDB)
+	repoService := service.NewProjectService(*projectDB)
 	institutionService := service.NewInstitutionService(*institutionDB)
 	eventService := service.NewEventService(eventDB)
 
@@ -48,8 +48,8 @@ func Router(db *sql.DB) http.Handler {
 	})
 
 
-	c.Get("/repo/{repo}", webRepoService.GetRepositoriesByName)
-	c.Get("/repo", webRepoService.GetRepositories)
+	c.Get("/project/{project_title}", webRepoService.GetProjectsByName)
+	c.Get("/project", webRepoService.GetProjects)
 
 	c.Get("/event/{event}", webEventService.GetEventByName)
 	c.Get("/event", webEventService.GetEvents)
@@ -57,13 +57,13 @@ func Router(db *sql.DB) http.Handler {
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
-		r.Post("/repo", webRepoService.CreateRepo)
-		r.Put("/repo/{repository_id}", webRepoService.EditRepo)
-		r.Delete("/repo/{repository_id}", webRepoService.DeleteRepo)
+		r.Post("/project", webRepoService.CreateProject)
+		r.Put("/project/{project_id}", webRepoService.EditProject)
+		r.Delete("/project/{project_id}", webRepoService.DeleteProject)
 		r.Post("/event", webEventService.CreateEvent)
-		r.Post("/repo/{repository_id}/category", webRepoService.SetCategory)
-		r.Post("/repo/{repository_id}/comment", webRepoService.SetComment)
-		r.Delete("/repo/{repository_id}/comment", webRepoService.DeleteComment)
+		r.Post("/project/{project_id}/category", webRepoService.SetCategory)
+		r.Post("/project/{project_id}/comment", webRepoService.SetComment)
+		r.Delete("/project/{project_id}/comment", webRepoService.DeleteComment)
 	},
 	)
 

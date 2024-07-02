@@ -18,7 +18,7 @@ func NewInstitutionDB(idb *sql.DB) *InstitutionDB {
 	}
 }
 
-func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj int) (*entity.InstitutionUserExtend, error) {
+func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj string) (*entity.InstitutionUserExtend, error) {
 	institution := entity.NewInstitutionUserExtend(name, email, password, cnpj)
 	result, err := idb.db.Exec(queries.CREATE_INSTITUTION, &institution.USER.Name, &institution.USER.Email, &institution.USER.Password, &institution.CNPJ)
 	if err != nil {

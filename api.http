@@ -21,7 +21,7 @@ POST http://localhost:3000/create/institution
     "name" : "ETEC",
     "email": "etec@etec.com",
     "password": "12345678",
-    "cnpj": 28301041000137
+    "cnpj": "28301041000137"
 }
 
 ### 
@@ -32,7 +32,7 @@ POST http://localhost:3000/login/institution
     "password": "12345678"
 }
 ### 
-POST http://localhost:3000/repo
+POST http://localhost:3000/project
 Authorization: Bearer TOKEN
 
 {
@@ -43,7 +43,7 @@ Authorization: Bearer TOKEN
 
 
 ###
-PUT http://localhost:3000/repo/1
+PUT http://localhost:3000/project/1
 Authorization: Bearer TOKEN
 
 {
@@ -53,7 +53,7 @@ Authorization: Bearer TOKEN
 }
 
 ###
-DELETE  http://localhost:3000/repo/1
+DELETE  http://localhost:3000/project/1
 Authorization: Bearer TOKEN
 
 {
@@ -61,16 +61,16 @@ Authorization: Bearer TOKEN
     "password":"12345678"
 }
 ###
-POST  http://localhost:3000/category
+POST  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
 
 {
     "repository_id" : 1,
-    "category_name": "agricultura"
+    "category_name": "ti"
 }
 
 ###
-POST http://localhost:3000/repo/1/comment
+POST http://localhost:3000/project/1/comment
 Authorization: Bearer TOKEN
 
 {
@@ -78,7 +78,7 @@ Authorization: Bearer TOKEN
 }
 
 ###
-DELETE  http://localhost:3000/repo/1/comment
+DELETE  http://localhost:3000/project/1/comment
 Authorization: Bearer TOKEN
 
 {
@@ -95,9 +95,9 @@ Authorization: Bearer TOKEN
     "description": "Uma amostra de tcc uai"
 }
 ### 
-GET http://localhost:3000/repo
+GET http://localhost:3000/project
 ### 
-GET  http://localhost:3000/repo/Adamas
+GET  http://localhost:3000/project/Adamas
 
 ###
 GET http://localhost:3000/event/Amostra de TCC

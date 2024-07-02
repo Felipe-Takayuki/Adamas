@@ -1,6 +1,5 @@
-## ADAMAS-API
 
-### Como rodar a API ?
+# Como rodar a API ?
 
 ```          
 git clone https://github.com/Adamas-Projects/Adamas-BackEnd.git

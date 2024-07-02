@@ -20,113 +20,168 @@ go run .
 ### E iniciar o banco de dados manualmente
 ##
 
-```http://localhost:3000```
 
+# Documentação da API
 
-- Cadastro de Usuários `/create POST`
+## Endpoints
 
-corpo da requisição:  
+### Criar Usuário
 
-```json
-{ 
-  "name" : "felipe-takayuki",
-  "email" : "felipe@gmail.com",
-  "password" : "felipe123" // a senha é criptografada
-}
-/// a requisição retorna um token jwt que será usado em outros endpoints 
-```
+**POST** `http://localhost:3000/create`
 
-- Login de Usuários `/login POST`
-```json
-{ 
-  "email" : "felipe@gmail.com",
-  "password" : "felipe123" // a senha é criptografada
-}
-/// a requisição retorna um token jwt que será usado em outros endpoints 
-```
----
-- Cadastro de Instituição `/create/institution POST`
 ```json
 {
-    "name" : "ETEC",
+    "name": "Felipe",
+    "email": "felipe@email.com",
+    "password": "12345678"
+}
+
+```
+
+### Login de Usuário
+
+**POST** `http://localhost:3000/login`
+
+```json
+{
+    "email": "felipe@email.com",
+    "password": "12345678"
+}
+
+```
+
+### Criar Instituição
+
+**POST** `http://localhost:3000/create/institution`
+
+```json
+{
+    "name": "ETEC",
     "email": "etec@etec.com",
-    "password": "12345678", // a senha é criptografada
-    "cnpj": 28301041000137
+    "password": "12345678",
+    "cnpj": "28301041000137"
 }
-/// a requisição retorna um token jwt que será usado em outros endpoints
+
 ```
 
-- Login de Instituição `/login/institution POST`
+### Login de Instituição
+
+**POST** `http://localhost:3000/login/institution`
+
 ```json
 {
     "email": "etec@etec.com",
-    "password": "12345678" // a senha é criptografada
+    "password": "12345678"
 }
-/// a requisição retorna um token jwt que será usado em outros endpoints
-```
----
-- Criação de Projeto `/repo POST`
 
-`Authorization: Bearer JWT_TOKEN`
+```
+
+### Criar Projeto
+
+**POST** `http://localhost:3000/project`**Authorization**: Bearer TOKEN
 
 ```json
 {
-  "title" : "Adamas",
-  "description": "uma rede social para projetos" ,
-  "content": "### Olá" // deve ser em markdown
+    "title": "Adamas",
+    "description": "uma rede social para projetos",
+    "content": "###hello world!"
 }
-```
----
-- Adicionar Categoria ao Projeto `/repo/{repo_id}/category`
 
-`Authorization: Bearer JWT_TOKEN`
+```
+
+### Atualizar Projeto
+
+**PUT** `http://localhost:3000/project/1`
+
+**Authorization**: Bearer TOKEN
+
 ```json
 {
-  "category_name": "ti"
-}
-``` 
----
-
-- Busca de Projeto `/repo/{title} GET`
-
-- Obter Projetos `/repo GET`
----
-
-- Deletar Projetos `/repo/{repo_id}`
-
-`Authorization: Bearer JWT_TOKEN`
-```json 
-{
-  "email":"felipe@email.com",
-  "password":"12345678", // a senha é criptografada
-}
-```
----
-- Atualizar Projeto `/repo/{repo_id} PUT`
-
-`Authorization: Bearer JWT_TOKEN`
-```json 
-
-{
-  "title": "Adamas-Projects",
-  "description": "uma rede social para a divulgação de projetos e eventos",
-  "content": "###hello world 2"
+    "title": "Adamas-Projects",
+    "description": "uma rede social para a divulgação de projetos e eventos",
+    "content": "###hello world 2"
 }
 
 ```
 
+### Deletar Projeto
 
----
-- Criação do Evento `/event POST`
+**DELETE** `http://localhost:3000/project/1`
 
-`Authorization: Bearer JWT_TOKEN`
-```json 
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "email": "felipe@email.com",
+    "password": "12345678"
+}
+
+```
+
+### Adicionar Categoria ao Projeto
+
+**POST** `http://localhost:3000/project/1/category`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "repository_id": 1,
+    "category_name": "ti"
+}
+
+```
+
+### Adicionar Comentário ao Projeto
+
+**POST** `http://localhost:3000/project/1/comment`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "comment": "muito brabo"
+}
+
+```
+
+### Deletar Comentário do Projeto
+
+**DELETE** `http://localhost:3000/project/1/comment`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "comment_id": 1
+}
+
+```
+
+### Criar Evento
+
+**POST** `http://localhost:3000/event`
+
+**Authorization**: Bearer TOKEN
+
+```json
 {
     "name": "Amostra de TCC",
-    "address" : "ETEC ANTONIO DEVISATE, avenida castro alves",
+    "address": "ETEC ANTONIO DEVISATE, avenida castro alves",
     "date": "2020-12-02",
     "description": "Uma amostra de tcc uai"
 }
+
 ```
----
-- Obter Evento `/event/Amostra de TCC`
+
+### Listar Projetos
+
+**GET** `http://localhost:3000/project`
+
+### Obter Projeto Específico
+
+**GET** `http://localhost:3000/project/Adamas`
+
+### Obter Evento Específico
+
+**GET** `http://localhost:3000/event/Amostra de TCC`

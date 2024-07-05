@@ -86,7 +86,7 @@ Authorization: Bearer TOKEN
 }
 ###
 POST http://localhost:3000/event
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0ZWNAZXRlYy5jb20iLCJleHAiOjE3MjAxOTMwNzgsImlkIjoxLCJuYW1lIjoiRVRFQyIsInVzZXJfdHlwZSI6Imluc3RpdHV0aW9uX3VzZXIifQ.lALBjQoDnw6l7f4UWo3SwLfOw6orh_tke9v6Ro6UzrU
+Authorization: Bearer TOKEN
 
 {
     "name": "Amostra de TCC",
@@ -97,7 +97,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0ZWNAZ
 
 ###
 POST http://localhost:3000/event/subscribe/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MjAxOTMyODIsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.3Oc_yXgyx535w2yQa2b08cyRbey4_Cf2IxCZL7b2wxQ
+Authorization: Bearer TOKEN
 
 ### 
 GET http://localhost:3000/search/project

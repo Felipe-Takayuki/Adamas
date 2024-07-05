@@ -173,6 +173,12 @@ go run .
 
 ```
 
+### Inscrição no Evento
+
+**POST** `http://localhost:3000/event/subscribe/1`
+
+**Authorization**: Bearer TOKEN
+
 ### Listar Projetos
 
 **GET** `http://localhost:3000/project`

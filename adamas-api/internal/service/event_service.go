@@ -36,3 +36,10 @@ func (es *EventService) GetEvents() ([]*entity.Event, error) {
 	}
 	return events, nil
 }
+func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
+	events, err := es.EventDB.EventRegistration(eventID,userID)
+	if err != nil {
+		return nil, err 
+	}
+	return events, nil
+}

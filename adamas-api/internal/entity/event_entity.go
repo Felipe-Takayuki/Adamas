@@ -6,6 +6,7 @@ type Event struct {
 	Address         string
 	Date            string
 	Description     string
+	Subscribers 	[]*CommonUserBasic
 	InstitutionID   int64
 	InstitutionName string
 	Rooms           []*RoomEvent

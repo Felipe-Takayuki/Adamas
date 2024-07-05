@@ -17,7 +17,7 @@ func NewEventDB(db *sql.DB) *EventDB {
 	}
 }
 
-func (edb *EventDB) CreateEvent(name, address, date, description string, institutionID int64 ) (*entity.Event, error) {
+func (edb *EventDB) CreateEvent(name, address, date, description string, institutionID int64) (*entity.Event, error) {
 	event := entity.NewEvent(name, address, date, description, institutionID)
 	result, err := edb.db.Exec(queries.CREATE_EVENT, &event.Name, &event.Address, &event.Date, &event.Description)
 	if err != nil {
@@ -101,7 +101,6 @@ func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
 	return repositories, nil
 }
 
-
 func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 	rows, err := edb.db.Query(queries.GET_EVENTS)
 	if err != nil {
@@ -111,8 +110,68 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 	var events []*entity.Event
 	for rows.Next() {
 		var event entity.Event
-		err = rows.Scan(&event.ID ,&event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
 		events = append(events, &event)
 	}
 	return events, err
+}
+
+func (edb *EventDB) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
+	_, err := edb.db.Exec("INSERT INTO SUBSCRIBERS_EVENT(event_id, user_id) VALUES (?, ?)", eventID, userID)
+	if err != nil {
+		return nil, err
+	}
+	event, err := edb.getEventByID(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return event, nil
+}
+
+func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
+	rows, err := edb.db.Query(queries.GET_EVENT_BY_ID, eventID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var events []*entity.Event
+	for rows.Next() {
+		var event entity.Event
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		if err != nil {
+			return nil, err
+		}
+		rooms, err := edb.getRoomsByEventID(event.ID)
+		if err != nil {
+			return nil, err
+		}
+		subscribers, err := edb.getSubscribersByEventID(eventID)
+		if err != nil {
+			return nil, err 
+		}
+		event.Subscribers = subscribers
+		event.Rooms = rooms
+		events = append(events, &event)
+	}
+	return events, err
+}
+
+func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.CommonUserBasic, error){
+	rows, err := edb.db.Query(queries.GET_SUBSCRIBERS_BY_EVENT_ID, eventID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var subscribers []*entity.CommonUserBasic
+	for rows.Next() {
+		var subscriber entity.CommonUserBasic
+		err = rows.Scan(&subscriber.ID, &subscriber.Name)
+		if err != nil {
+			return nil, err
+		}
+		subscribers = append(subscribers, &subscriber)
+	}
+	return subscribers, nil
 }

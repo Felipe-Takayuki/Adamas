@@ -50,6 +50,18 @@ CREATE TABLE OWNER_EVENT(
   PRIMARY KEY(event_id, owner_id)
 );
 
+CREATE TABLE SUBSCRIBERS_EVENT(
+  event_id int NOT NULL REFERENCES EVENT(id),
+  user_id  int NOT NULL REFERENCES COMMON_USER(id),
+  PRIMARY KEY(event_id, user_id)
+);
+
+CREATE TABLE PARTICIPANTS_EVENT(
+  event_id int NOT NULL REFERENCES EVENT(id),
+  user_id  int NOT NULL REFERENCES COMMON_USER(id),
+  PRIMARY KEY(event_id, user_id)
+);
+
 CREATE TABLE ROOM_IN_EVENT(
   id int auto_increment NOT NULL PRIMARY KEY,
   event_id int NOT NULL,

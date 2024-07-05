@@ -48,11 +48,11 @@ func Router(db *sql.DB) http.Handler {
 	})
 
 
-	c.Get("/project/{project_title}", webRepoService.GetProjectsByName)
-	c.Get("/project", webRepoService.GetProjects)
+	c.Get("/project/search/{project_title}", webRepoService.GetProjectsByName)
+	c.Get("/project/search", webRepoService.GetProjects)
 
-	c.Get("/event/{event}", webEventService.GetEventByName)
-	c.Get("/event", webEventService.GetEvents)
+	c.Get("/event/search/{event}", webEventService.GetEventByName)
+	c.Get("/event/search", webEventService.GetEvents)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -61,6 +61,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Put("/project/{project_id}", webRepoService.EditProject)
 		r.Delete("/project/{project_id}", webRepoService.DeleteProject)
 		r.Post("/event", webEventService.CreateEvent)
+		r.Post("/event/subscribe/{event_id}",webEventService.EventRegistration)
 		r.Post("/project/{project_id}/category", webRepoService.SetCategory)
 		r.Post("/project/{project_id}/comment", webRepoService.SetComment)
 		r.Delete("/project/{project_id}/comment", webRepoService.DeleteComment)

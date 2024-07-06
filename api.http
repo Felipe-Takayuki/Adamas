@@ -103,6 +103,7 @@ Authorization: Bearer TOKEN
 GET http://localhost:3000/project/search
 ### 
 GET  http://localhost:3000/project/search/Adamas
-
+###
+GET http://localhost:3000/project/user/1
 ###
 GET http://localhost:3000/event/search/Amostra de TCC

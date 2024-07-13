@@ -10,6 +10,12 @@ const GET_PROJECTS = `
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON o.owner_id = u.id `
 
+const GET_PROJECTS_BY_USER = `
+ SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 
+ JOIN OWNERS_PROJECT o ON p.id = o.project_id 
+ JOIN COMMON_USER u ON o.owner_id = u.id
+ WHERE u.id = ?
+`
 const CREATE_PROJECT = "INSERT INTO PROJECT(title, description,content) VALUES (?,?,?)"
 
 const UPDATE_CONTENT_PROJECT = `
@@ -60,6 +66,13 @@ const GET_CATEGORIES_BY_PROJECT = `
 	JOIN PROJECT p ON cp.project_id = p.id
 	WHERE cp.project_id = ?
 `
+
+const GET_OWNERS_BY_PROJECT = `
+	SELECT op.owner_id, u.name FROM OWNERS_PROJECT op
+	JOIN COMMON_USER u ON op.owner_id = u.id
+	WHERE op.project_id = ?
+`
+
 const GET_COMMENTS_BY_PROJECT = `
  SELECT com.id, u.id, u.name, com.comment FROM COMMENT com
  JOIN PROJECT r ON com.project_id = r.id

@@ -95,6 +95,14 @@ Authorization: Bearer TOKEN
     "description": "Uma amostra de tcc uai"
 }
 
+### 
+POST http://localhost:3000/event/1/room
+Authorization:  Bearer TOKEN
+
+{
+    "name": "Sala 5",
+    "quantity_projects": 10
+}
 ###
 POST http://localhost:3000/event/subscribe/1
 Authorization: Bearer TOKEN
@@ -107,3 +115,6 @@ GET  http://localhost:3000/project/search/Adamas
 GET http://localhost:3000/project/user/1
 ###
 GET http://localhost:3000/event/search/Amostra de TCC
+
+###
+GET http://localhost:3000/event/search

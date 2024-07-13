@@ -43,3 +43,11 @@ func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Even
 	}
 	return events, nil
 }
+
+func (es *EventService) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+	rooms, err := es.EventDB.AddRoomInEvent(eventID, roomName, quantityProjects)
+	if err != nil {
+		return nil, err 
+	}
+	return rooms, nil 
+}

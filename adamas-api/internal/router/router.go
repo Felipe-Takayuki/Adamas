@@ -21,12 +21,12 @@ func Router(db *sql.DB) http.Handler {
 	eventDB := database.NewEventDB(db)
 
 	userService := service.NewUserService(*userDB)
-	repoService := service.NewProjectService(*projectDB)
+	projectService := service.NewProjectService(*projectDB)
 	institutionService := service.NewInstitutionService(*institutionDB)
 	eventService := service.NewEventService(eventDB)
 
 	webUserService := webserver.NewWebUserHandler(*userService)
-	webRepoService := webserver.NewRepoHandler(repoService)
+	webProjectService := webserver.NewProjectHandler(projectService)
 	webInstitutionService := webserver.NewWebInstiHandler(institutionService)
 	webEventService := webserver.NewWebEventHandler(eventService)
 
@@ -47,9 +47,9 @@ func Router(db *sql.DB) http.Handler {
 		webInstitutionService.LoginInstitution(w, r, tokenAuth)
 	})
 
-
-	c.Get("/project/search/{project_title}", webRepoService.GetProjectsByName)
-	c.Get("/project/search", webRepoService.GetProjects)
+	c.Get("/project/user/{user_id}", webProjectService.GetProjectsByUser)
+	c.Get("/project/search/{project_title}", webProjectService.GetProjectsByName)
+	c.Get("/project/search", webProjectService.GetProjects)
 
 	c.Get("/event/search/{event}", webEventService.GetEventByName)
 	c.Get("/event/search", webEventService.GetEvents)
@@ -57,14 +57,15 @@ func Router(db *sql.DB) http.Handler {
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
-		r.Post("/project", webRepoService.CreateProject)
-		r.Put("/project/{project_id}", webRepoService.EditProject)
-		r.Delete("/project/{project_id}", webRepoService.DeleteProject)
+		r.Post("/project", webProjectService.CreateProject)
+		r.Put("/project/{project_id}", webProjectService.EditProject)
+		r.Delete("/project/{project_id}", webProjectService.DeleteProject)
 		r.Post("/event", webEventService.CreateEvent)
-		r.Post("/event/subscribe/{event_id}",webEventService.EventRegistration)
-		r.Post("/project/{project_id}/category", webRepoService.SetCategory)
-		r.Post("/project/{project_id}/comment", webRepoService.SetComment)
-		r.Delete("/project/{project_id}/comment", webRepoService.DeleteComment)
+		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
+		r.Post("/event/{event_id}/subscribe",webEventService.EventRegistration)
+		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
+		r.Post("/project/{project_id}/comment", webProjectService.SetComment)
+		r.Delete("/project/{project_id}/comment", webProjectService.DeleteComment)
 	},
 	)
 

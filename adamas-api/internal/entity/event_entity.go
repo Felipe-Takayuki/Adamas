@@ -6,7 +6,7 @@ type Event struct {
 	Address         string
 	Date            string
 	Description     string
-	Subscribers 	[]*CommonUserBasic
+	Subscribers     []*CommonUserBasic
 	InstitutionID   int64
 	InstitutionName string
 	Rooms           []*RoomEvent
@@ -23,16 +23,14 @@ func NewEvent(name, address, date, description string, institutionID int64) *Eve
 }
 
 type RoomEvent struct {
-	ID                   int
-	Name                 string
-	QuantityRepositories int
-	Projects         []*Project
+	ID               int        `json:"id"`
+	Name             string     `json:"name"`
+	QuantityProjects int        `json:"quantity_projects"`
+	Projects         []*Project `json:"projects"`
 }
 
 type RepositoryInEvent struct {
-	ID         string
+	ID      string
 	Project *Project
-	Locale     string
+	Locale  string
 }
-
-

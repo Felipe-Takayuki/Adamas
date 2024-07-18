@@ -118,7 +118,6 @@ func (edb *EventDB) EventParticipation(eventID, userID, projectID int64) (*entit
 	if err != nil {
 		return nil, err 
 	}
-	fmt.Printf(project.Title)
 	return project, nil 
 }
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {

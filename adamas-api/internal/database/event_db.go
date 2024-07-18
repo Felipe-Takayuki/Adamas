@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
@@ -34,9 +35,9 @@ func (edb *EventDB) CreateEvent(name, address, date, description string, institu
 	return event, nil
 }
 func (edb *EventDB) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
-	_, err := edb.db.Exec("INSERT INTO ROOM_IN_EVENT(event_id, name,quantity_projects) VALUES (?, ?, ?)", eventID, roomName, quantityProjects)
+	_, err := edb.db.Exec(queries.AddRoomInEvent, eventID, roomName, quantityProjects)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	rooms, err := edb.getRoomsByEventID(eventID)
 	if err != nil {
@@ -82,6 +83,11 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 		if err != nil {
 			return nil, err
 		}
+		subscribers, err := edb.getSubscribersByEventID(event.ID)
+		if err != nil {
+			return nil, err
+		}
+		event.Subscribers = subscribers
 		event.Rooms = rooms
 		events = append(events, &event)
 	}
@@ -95,9 +101,25 @@ func (edb *EventDB) EventRegistration(eventID, userID int64) ([]*entity.Event, e
 	}
 	event, err := edb.getEventByID(eventID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	return event, nil
+}
+func (edb *EventDB) EventParticipation(eventID, userID, projectID int64) (*entity.Project, error) {
+	pdb := NewProjectDB(edb.db)
+	if !pdb.isProjectOwner(userID, projectID) {
+		return nil, fmt.Errorf("usuário não possui o repositório")
+	}
+	_, err := edb.db.Exec("INSERT INTO PENDING_PROJECT(event_id, project_id) VALUES (?, ?)", eventID, projectID)
+	if err != nil {
+		return nil, err 
+	}
+	project, err := pdb.getProjectByID(projectID)
+	if err != nil {
+		return nil, err 
+	}
+	fmt.Printf(project.Title)
+	return project, nil 
 }
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {
 	rows, err := edb.db.Query(queries.GET_ROOMS_BY_EVENT_ID, eventID)
@@ -142,8 +164,6 @@ func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
 	return repositories, nil
 }
 
-
-
 func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 	rows, err := edb.db.Query(queries.GET_EVENT_BY_ID, eventID)
 	if err != nil {
@@ -164,7 +184,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 		}
 		subscribers, err := edb.getSubscribersByEventID(eventID)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
 		event.Subscribers = subscribers
 		event.Rooms = rooms
@@ -173,7 +193,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 	return events, err
 }
 
-func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.CommonUserBasic, error){
+func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.CommonUserBasic, error) {
 	rows, err := edb.db.Query(queries.GET_SUBSCRIBERS_BY_EVENT_ID, eventID)
 	if err != nil {
 		return nil, err
@@ -191,4 +211,3 @@ func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.CommonUser
 	}
 	return subscribers, nil
 }
-

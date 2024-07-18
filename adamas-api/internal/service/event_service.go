@@ -44,6 +44,14 @@ func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Even
 	return events, nil
 }
 
+func (es *EventService) EventParticipation(eventID,userID, projectID int64) (*entity.Project, error){
+	project, err := es.EventDB.EventParticipation(eventID,userID,projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil
+}
+
 func (es *EventService) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
 	rooms, err := es.EventDB.AddRoomInEvent(eventID, roomName, quantityProjects)
 	if err != nil {

@@ -4,6 +4,8 @@ const CREATE_EVENT = "INSERT INTO EVENT(name, address, date, description) VALUES
 
 const SET_OWNER_EVENT = "INSERT INTO OWNER_EVENT(event_id, owner_id) VALUES (?, ?)"
 
+const AddRoomInEvent = "INSERT INTO ROOM_IN_EVENT(event_id, name,quantity_projects) VALUES (?, ?, ?)"
+
 const GET_EVENT_BY_NAME = `
 	SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id

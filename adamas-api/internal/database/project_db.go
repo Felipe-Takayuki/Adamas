@@ -180,7 +180,7 @@ func (rdb *ProjectDB) DeleteProject(email, password string, projectID int64) err
 }
 
 func (rdb *ProjectDB) AddNewUserProject(projectID, userID int64) ([]*entity.CommonUserBasic, error) {
-	_, err := rdb.db.Exec("INSERTw INTO OWNERS_PROJECT(project_id, user_id) VALUES (?, ?)",projectID,userID)
+	_, err := rdb.db.Exec("INSERT INTO OWNERS_PROJECT(project_id, user_id) VALUES (?, ?)",projectID,userID)
 	if err != nil {
 		return nil, err
 	}
@@ -207,6 +207,26 @@ func (rdb *ProjectDB) isProjectOwner(userID, projectID int64) bool {
 		return false
 	}
 	return count > 0
+}
+
+func (rdb *ProjectDB) getProjectByID(projectID int64) (*entity.Project, error) {
+	project := &entity.Project{}
+	err := rdb.db.QueryRow(queries.GET_PROJECT_BY_ID, projectID).Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID,&project.FirstOwnerName)
+	if err != nil {
+		return nil, err 
+	}
+	categories, err := rdb.getCategoriesByRepoID(projectID)
+	if err != nil {
+		return nil, err 
+	}
+	comments, err := rdb.getCommentsByRepoID(projectID)
+	if err != nil {
+		return nil, err 
+	}
+	project.Comments = comments
+	project.Categories = categories 
+
+	return project, nil
 }
 
 func (rdb *ProjectDB) deleteOwnerProject(userID, projectID int64) error {

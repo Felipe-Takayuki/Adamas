@@ -65,7 +65,6 @@ POST  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
 
 {
-    "repository_id" : 1,
     "category_name": "ti"
 }
 
@@ -107,6 +106,13 @@ Authorization:  Bearer TOKEN
 POST http://localhost:3000/event/subscribe/1
 Authorization: Bearer TOKEN
 
+###
+POST  http://localhost:3000/event/1/participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1
+}
 ### 
 GET http://localhost:3000/project/search
 ### 

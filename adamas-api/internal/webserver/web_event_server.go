@@ -181,7 +181,7 @@ func (weh *WebEventHandler) EventParticipation(w http.ResponseWriter, r *http.Re
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		var req *reqs.AddProjectRequest
+		var req *reqs.AddPendingProjectRequest
 		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}

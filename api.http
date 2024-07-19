@@ -107,6 +107,9 @@ POST http://localhost:3000/event/subscribe/1
 Authorization: Bearer TOKEN
 
 ###
+GET http://localhost:3000/event/1/subscribers
+Authorization: Bearer TOKEN
+###
 POST  http://localhost:3000/event/1/participation
 Authorization: Bearer TOKEN
 

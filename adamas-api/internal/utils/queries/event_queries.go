@@ -28,6 +28,13 @@ const GET_SUBSCRIBERS_BY_EVENT_ID = `
 	WHERE u.id = ?
 `
 
+const CHECK_EVENT_OWNER = `
+ SELECT COUNT(*) 
+ FROM OWNER_EVENT 
+ WHERE owner_id = ? 
+ AND event_id = ?
+`
+
 const GET_REPOSITORIES_BY_ROOM_ID = `
 	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
 	JOIN PROJECT_IN_ROOM pr ON p.id = pr.project_id

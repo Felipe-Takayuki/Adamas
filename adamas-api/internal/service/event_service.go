@@ -36,6 +36,15 @@ func (es *EventService) GetEvents() ([]*entity.Event, error) {
 	}
 	return events, nil
 }
+
+func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+	subscribers, err := es.EventDB.GetSubscribersByEventID(eventID, ownerID)
+	if err != nil {
+		return nil, err 
+	}
+	return subscribers, nil
+} 
+
 func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
 	events, err := es.EventDB.EventRegistration(eventID,userID)
 	if err != nil {

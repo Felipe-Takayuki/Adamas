@@ -63,6 +63,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/event", webEventService.CreateEvent)
 		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
 		r.Post("/event/{event_id}/subscribe",webEventService.EventRegistration)
+		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
 		r.Post("/event/{event_id}/participation",webEventService.EventParticipation)
 		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
 		r.Post("/project/{project_id}/comment", webProjectService.SetComment)

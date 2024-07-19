@@ -83,7 +83,7 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 		if err != nil {
 			return nil, err
 		}
-		subscribers, err := edb.getSubscribersByEventID(event.ID)
+		subscribers, err := edb.GetSubscribersByEventID(event.ID, event.InstitutionID)
 		if err != nil {
 			return nil, err
 		}
@@ -112,14 +112,15 @@ func (edb *EventDB) EventParticipation(eventID, userID, projectID int64) (*entit
 	}
 	_, err := edb.db.Exec("INSERT INTO PENDING_PROJECT(event_id, project_id) VALUES (?, ?)", eventID, projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	project, err := pdb.getProjectByID(projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	return project, nil 
+	return project, nil
 }
+
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {
 	rows, err := edb.db.Query(queries.GET_ROOMS_BY_EVENT_ID, eventID)
 	if err != nil {
@@ -181,7 +182,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 		if err != nil {
 			return nil, err
 		}
-		subscribers, err := edb.getSubscribersByEventID(eventID)
+		subscribers, err := edb.GetSubscribersByEventID(eventID, event.InstitutionID)
 		if err != nil {
 			return nil, err
 		}
@@ -192,7 +193,13 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 	return events, err
 }
 
-func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.CommonUserBasic, error) {
+func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+
+	isOwner := edb.isEventOwner(eventID, ownerID)
+	if !isOwner {
+		return nil, fmt.Errorf("a instituição não possui o evento")
+	}
+
 	rows, err := edb.db.Query(queries.GET_SUBSCRIBERS_BY_EVENT_ID, eventID)
 	if err != nil {
 		return nil, err
@@ -209,4 +216,14 @@ func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.CommonUser
 		subscribers = append(subscribers, &subscriber)
 	}
 	return subscribers, nil
+}
+
+func (edb *EventDB) isEventOwner(eventID, ownerID int64) bool {
+	var count int
+	err := edb.db.QueryRow(queries.CHECK_EVENT_OWNER, ownerID, eventID).Scan(&count)
+	if err != nil {
+		return false
+	}
+	return count > 0
+
 }

@@ -116,6 +116,14 @@ Authorization: Bearer TOKEN
 {
     "project_id": 1
 }
+###
+POST http://localhost:3000/event/1/approve-participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1,
+    "room_id": 1
+}
 ### 
 GET http://localhost:3000/project/search
 ### 

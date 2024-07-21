@@ -105,7 +105,7 @@ func (edb *EventDB) EventRegistration(eventID, userID int64) ([]*entity.Event, e
 	}
 	return event, nil
 }
-func (edb *EventDB) EventParticipation(eventID, userID, projectID int64) (*entity.Project, error) {
+func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) (*entity.Project, error) {
 	pdb := NewProjectDB(edb.db)
 	if !pdb.isProjectOwner(userID, projectID) {
 		return nil, fmt.Errorf("usuário não possui o repositório")
@@ -119,6 +119,27 @@ func (edb *EventDB) EventParticipation(eventID, userID, projectID int64) (*entit
 		return nil, err
 	}
 	return project, nil
+}
+
+func (edb * EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
+	isOwner := edb.isEventOwner(eventID, ownerID )
+	if !isOwner {
+		return nil, fmt.Errorf("a instituição não possui o evento")
+	}
+	_, err := edb.db.Exec("INSERT INTO PROJECT_IN_ROOM(room_id, project_id) VALUES (?, ?)", roomID, projectID)
+	if err != nil {
+		return nil, err 
+	}
+	_, err  = edb.db.Exec("DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?",eventID, projectID)
+	if err != nil {
+		return nil, err 
+	}
+
+	projects, err  := edb.getProjectsByRoomID(int(roomID))
+	if err != nil {
+		return nil, err 
+	}
+	return projects,nil
 }
 
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {

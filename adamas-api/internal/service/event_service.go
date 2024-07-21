@@ -53,8 +53,16 @@ func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Even
 	return events, nil
 }
 
-func (es *EventService) EventParticipation(eventID,userID, projectID int64) (*entity.Project, error){
-	project, err := es.EventDB.EventParticipation(eventID,userID,projectID)
+func (es *EventService) EventRequestParticipation(eventID,userID, projectID int64) (*entity.Project, error){
+	project, err := es.EventDB.EventRequestParticipation(eventID,userID,projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil
+}
+
+func (es *EventService) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
+	project, err := es.EventDB.ApproveParticipation(projectID, ownerID, eventID,roomID)
 	if err != nil {
 		return nil, err 
 	}

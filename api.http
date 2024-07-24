@@ -90,7 +90,8 @@ Authorization: Bearer TOKEN
 {
     "name": "Amostra de TCC",
     "address" : "ETEC ANTONIO DEVISATE, avenida castro alves",
-    "date": "2020-12-02",
+    "start_date": "2020-12-02 10:00:00",
+    "end_date": "2020-12-02 14:00:00",
     "description": "Uma amostra de tcc uai"
 }
 

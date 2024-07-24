@@ -13,26 +13,26 @@ import (
 	"github.com/go-chi/jwtauth"
 )
 
-type WebRepoHandler struct {
-	RepoService *service.RepositoryService
+type WebProjectHandler struct {
+	ProjectService *service.ProjectService
 }
 
-func NewRepoHandler(repoService *service.RepositoryService) *WebRepoHandler {
-	return &WebRepoHandler{
-		RepoService: repoService,
+func NewProjectHandler(projectService *service.ProjectService) *WebProjectHandler {
+	return &WebProjectHandler{
+		ProjectService: projectService,
 	}
 }
 
-func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.Request) {
-	repoName := chi.URLParam(r, "repo")
+func (wph *WebProjectHandler) GetProjectsByName(w http.ResponseWriter, r *http.Request) {
+	projectName := chi.URLParam(r, "project_title")
 	w.Header().Set("Content-Type", "application/json")
-	if repoName == "" {
+	if projectName == "" {
 		error := utils.ErrorMessage{Message: "title is required"}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	repositories, err := wph.RepoService.GetRepositoriesByName(repoName)
+	projects, err := wph.ProjectService.GetProjectsByName(projectName)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -40,11 +40,11 @@ func (wph *WebRepoHandler) GetRepositoriesByName(w http.ResponseWriter, r *http.
 		return
 
 	}
-	json.NewEncoder(w).Encode(repositories)
+	json.NewEncoder(w).Encode(projects)
 
 }
-func (wph *WebRepoHandler) GetRepositories(w http.ResponseWriter, r *http.Request) {
-	repositories, err := wph.RepoService.GetRepositories()
+func (wph *WebProjectHandler) GetProjects(w http.ResponseWriter, r *http.Request) {
+	projects, err := wph.ProjectService.GetProjects()
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
@@ -53,10 +53,27 @@ func (wph *WebRepoHandler) GetRepositories(w http.ResponseWriter, r *http.Reques
 		return
 
 	}
-	json.NewEncoder(w).Encode(repositories)
+	json.NewEncoder(w).Encode(projects)
+}
+func (wph *WebProjectHandler) GetProjectsByUser(w http.ResponseWriter, r *http.Request) {
+	userID,err := strconv.Atoi(chi.URLParam(r, "user_id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	projects, err := wph.ProjectService.GetProjectsByUser(int64(userID))
+	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+
+	}
+	json.NewEncoder(w).Encode(projects)
 }
 
-func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
+func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
@@ -71,7 +88,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		userID := flt64
-		var req *reqs.RepositoryRequestFirst
+		var req *reqs.ProjectRequestFirst
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -79,7 +96,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.RepoService.CreateRepo(req.Title, req.Description, req.Content, int(userID))
+		result, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -95,7 +112,7 @@ func (wph *WebRepoHandler) CreateRepo(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-func (wph *WebRepoHandler) DeleteRepo(w http.ResponseWriter, r *http.Request) {
+func (wph *WebProjectHandler) DeleteProject(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
@@ -105,7 +122,7 @@ func (wph *WebRepoHandler) DeleteRepo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if userType == "common_user" {
-		repoID, err := strconv.Atoi(chi.URLParam(r, "repository_id"))
+		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -118,18 +135,18 @@ func (wph *WebRepoHandler) DeleteRepo(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.RepoService.DeleteRepo(reqs.Email, reqs.Password, int64(repoID))
+		err = wph.ProjectService.DeleteProject(reqs.Email, reqs.Password, int64(projectID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"deleted_repository":repoID})
+		json.NewEncoder(w).Encode(map[string]interface{}{"deleted_project":projectID})
 	}
 }
 
-func (wph *WebRepoHandler) EditRepo(w http.ResponseWriter, r *http.Request) {
+func (wph *WebProjectHandler) EditProject(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
@@ -138,15 +155,20 @@ func (wph *WebRepoHandler) EditRepo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if userType == "common_user" {
-		var req *entity.RepositoryBasic
-		err := json.NewDecoder(r.Body).Decode(&req)
+		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		var req *entity.ProjectBasic
+		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.RepoService.EditRepo(req.Title, req.Description, req.Content, int64(req.ID))
+		result, err := wph.ProjectService.EditProject(req.Title, req.Description, req.Content, int64(projectID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -161,7 +183,7 @@ func (wph *WebRepoHandler) EditRepo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
+func (wph *WebProjectHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
@@ -178,12 +200,12 @@ func (wph *WebRepoHandler) SetCategory(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		repoID, err := strconv.Atoi(chi.URLParam(r, "repository_id"))
+		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = wph.RepoService.SetCategory(reqs.CategoryName, int64(repoID))
+		err = wph.ProjectService.SetCategory(reqs.CategoryName, int64(projectID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

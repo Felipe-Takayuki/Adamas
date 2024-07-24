@@ -6,8 +6,8 @@ import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
 
-func (rdb *RepoDB) getCategoriesByRepoID(repositoryID int64) ([]*entity.Category, error) {
-	rows, err := rdb.db.Query(queries.GET_CATEGORIES_BY_REPO, repositoryID)
+func (rdb *ProjectDB) getCategoriesByRepoID(repositoryID int64) ([]*entity.Category, error) {
+	rows, err := rdb.db.Query(queries.GET_CATEGORIES_BY_PROJECT, repositoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func (rdb *RepoDB) getCategoriesByRepoID(repositoryID int64) ([]*entity.Category
 	}
 	return categories, nil
 }
-func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) error {
+func (rdb *ProjectDB) SetCategory(categoryName string, repositoryID int64) error {
 	_, err := rdb.db.Exec(queries.SET_CATEGORY, utils.Categories[categoryName], repositoryID)
 	if err != nil {
 		return err
@@ -30,8 +30,8 @@ func (rdb *RepoDB) SetCategory(categoryName string, repositoryID int64) error {
 	return nil
 }
 
-func (rdb *RepoDB) deleteCategoriesByRepoID(repoID int64) error {
-	_, err := rdb.db.Exec("DELETE FROM CATEGORY_REPO WHERE repository_id = ?", repoID)
+func (rdb *ProjectDB) deleteCategoriesByRepoID(repoID int64) error {
+	_, err := rdb.db.Exec("DELETE FROM CATEGORY_PROJECT WHERE project_id = ?", repoID)
 	if err != nil {
 		return err 
 	}

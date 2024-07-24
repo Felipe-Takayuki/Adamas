@@ -16,17 +16,17 @@ func Router(db *sql.DB) http.Handler {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 
 	userDB := database.NewUserDB(db)
-	repoDB := database.NewRepoDB(db)
+	projectDB := database.NewProjectDB(db)
 	institutionDB := database.NewInstitutionDB(db)
 	eventDB := database.NewEventDB(db)
 
 	userService := service.NewUserService(*userDB)
-	repoService := service.NewRepoService(*repoDB)
+	projectService := service.NewProjectService(*projectDB)
 	institutionService := service.NewInstitutionService(*institutionDB)
 	eventService := service.NewEventService(eventDB)
 
 	webUserService := webserver.NewWebUserHandler(*userService)
-	webRepoService := webserver.NewRepoHandler(repoService)
+	webProjectService := webserver.NewProjectHandler(projectService)
 	webInstitutionService := webserver.NewWebInstiHandler(institutionService)
 	webEventService := webserver.NewWebEventHandler(eventService)
 
@@ -47,23 +47,28 @@ func Router(db *sql.DB) http.Handler {
 		webInstitutionService.LoginInstitution(w, r, tokenAuth)
 	})
 
+	c.Get("/project/user/{user_id}", webProjectService.GetProjectsByUser)
+	c.Get("/project/search/{project_title}", webProjectService.GetProjectsByName)
+	c.Get("/project/search", webProjectService.GetProjects)
 
-	c.Get("/repo/{repo}", webRepoService.GetRepositoriesByName)
-	c.Get("/repo", webRepoService.GetRepositories)
-
-	c.Get("/event/{event}", webEventService.GetEventByName)
-	c.Get("/event", webEventService.GetEvents)
+	c.Get("/event/search/{event}", webEventService.GetEventByName)
+	c.Get("/event/search", webEventService.GetEvents)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
-		r.Post("/repo", webRepoService.CreateRepo)
-		r.Put("/repo/{repository_id}", webRepoService.EditRepo)
-		r.Delete("/repo/{repository_id}", webRepoService.DeleteRepo)
+		r.Post("/project", webProjectService.CreateProject)
+		r.Put("/project/{project_id}", webProjectService.EditProject)
+		r.Delete("/project/{project_id}", webProjectService.DeleteProject)
 		r.Post("/event", webEventService.CreateEvent)
-		r.Post("/repo/{repository_id}/category", webRepoService.SetCategory)
-		r.Post("/repo/{repository_id}/comment", webRepoService.SetComment)
-		r.Delete("/repo/{repository_id}/comment", webRepoService.DeleteComment)
+		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
+		r.Post("/event/{event_id}/subscribe",webEventService.EventRegistration)
+		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
+		r.Post("/event/{event_id}/participation",webEventService.EventRequestParticipation)
+		r.Post("/event/{event_id}/approve-participation",webEventService.ApproveParticipation)
+		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
+		r.Post("/project/{project_id}/comment", webProjectService.SetComment)
+		r.Delete("/project/{project_id}/comment", webProjectService.DeleteComment)
 	},
 	)
 

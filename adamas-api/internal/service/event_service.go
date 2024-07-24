@@ -15,8 +15,8 @@ func NewEventService(eventDB *database.EventDB) *EventService {
 	}
 }
 
-func (es *EventService) CreateEvent(name, address, date, description string, institutionID int64) (*entity.Event, error) {
-	event, err := es.EventDB.CreateEvent(name, address, date, description, institutionID)
+func (es *EventService) CreateEvent(name, address, startDate, endDate, description string, institutionID int64) (*entity.Event, error) {
+	event, err := es.EventDB.CreateEvent(name, address, startDate, endDate, description, institutionID)
 	if err != nil {
 		return nil, err 
 	}
@@ -35,4 +35,44 @@ func (es *EventService) GetEvents() ([]*entity.Event, error) {
 		return nil, err
 	}
 	return events, nil
+}
+
+func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+	subscribers, err := es.EventDB.GetSubscribersByEventID(eventID, ownerID)
+	if err != nil {
+		return nil, err 
+	}
+	return subscribers, nil
+} 
+
+func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
+	events, err := es.EventDB.EventRegistration(eventID,userID)
+	if err != nil {
+		return nil, err 
+	}
+	return events, nil
+}
+
+func (es *EventService) EventRequestParticipation(eventID,userID, projectID int64) (*entity.Project, error){
+	project, err := es.EventDB.EventRequestParticipation(eventID,userID,projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil
+}
+
+func (es *EventService) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
+	project, err := es.EventDB.ApproveParticipation(projectID, ownerID, eventID,roomID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil
+}
+
+func (es *EventService) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+	rooms, err := es.EventDB.AddRoomInEvent(eventID, roomName, quantityProjects)
+	if err != nil {
+		return nil, err 
+	}
+	return rooms, nil 
 }

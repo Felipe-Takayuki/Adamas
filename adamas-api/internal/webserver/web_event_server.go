@@ -3,6 +3,7 @@ package webserver
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
@@ -49,6 +50,40 @@ func (weh *WebEventHandler) GetEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(events)
 }
 
+func (weh *WebEventHandler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "institution_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		institutionID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		result, err := weh.eventService.GetSubscribersByEventID(int64(eventID), int64(institutionID)) 
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(result)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
 func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
@@ -58,7 +93,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	if userType == "institution_user" {
-		flt64, ok := claims["id"].(float64)
+		institutionID, ok := claims["id"].(float64)
 		if !ok {
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
@@ -71,12 +106,172 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.Date, req.Description, int64(flt64))
+		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.StartDate, req.EndDate, req.Description, int64(institutionID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
+		}
+		json.NewEncoder(w).Encode(result)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
+func (weh *WebEventHandler) AddRoomInEvent(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "institution_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var req *reqs.AddRoomRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		result, err := weh.eventService.AddRoomInEvent(int64(eventID), req.Name, req.QuantityProjects)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(result)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
+func (weh *WebEventHandler) EventRegistration(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "common_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		result, err := weh.eventService.EventRegistration(int64(eventID), int64(userID))
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(result)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
+func (weh *WebEventHandler) EventRequestParticipation(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+
+	if userType == "common_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var req *reqs.AddPendingProjectRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		result, err := weh.eventService.EventRequestParticipation(int64(eventID), int64(userID), req.ProjectID)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return 
+		}
+		json.NewEncoder(w).Encode(result)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
+func (weh *WebEventHandler) ApproveParticipation (w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "institution_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var req *reqs.ApproveProjectRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		result, err := weh.eventService.ApproveParticipation(req.ProjectID,int64(userID), int64(eventID), req.RoomID) 
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return 
 		}
 		json.NewEncoder(w).Encode(result)
 	} else {

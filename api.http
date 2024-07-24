@@ -21,7 +21,7 @@ POST http://localhost:3000/create/institution
     "name" : "ETEC",
     "email": "etec@etec.com",
     "password": "12345678",
-    "cnpj": 28301041000137
+    "cnpj": "28301041000137"
 }
 
 ### 
@@ -32,7 +32,7 @@ POST http://localhost:3000/login/institution
     "password": "12345678"
 }
 ### 
-POST http://localhost:3000/repo
+POST http://localhost:3000/project
 Authorization: Bearer TOKEN
 
 {
@@ -43,7 +43,7 @@ Authorization: Bearer TOKEN
 
 
 ###
-PUT http://localhost:3000/repo/1
+PUT http://localhost:3000/project/1
 Authorization: Bearer TOKEN
 
 {
@@ -53,7 +53,7 @@ Authorization: Bearer TOKEN
 }
 
 ###
-DELETE  http://localhost:3000/repo/1
+DELETE  http://localhost:3000/project/1
 Authorization: Bearer TOKEN
 
 {
@@ -61,16 +61,15 @@ Authorization: Bearer TOKEN
     "password":"12345678"
 }
 ###
-POST  http://localhost:3000/category
+POST  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
 
 {
-    "repository_id" : 1,
-    "category_name": "agricultura"
+    "category_name": "ti"
 }
 
 ###
-POST http://localhost:3000/repo/1/comment
+POST http://localhost:3000/project/1/comment
 Authorization: Bearer TOKEN
 
 {
@@ -78,7 +77,7 @@ Authorization: Bearer TOKEN
 }
 
 ###
-DELETE  http://localhost:3000/repo/1/comment
+DELETE  http://localhost:3000/project/1/comment
 Authorization: Bearer TOKEN
 
 {
@@ -91,13 +90,49 @@ Authorization: Bearer TOKEN
 {
     "name": "Amostra de TCC",
     "address" : "ETEC ANTONIO DEVISATE, avenida castro alves",
-    "date": "2020-12-02",
+    "start_date": "2020-12-02 10:00:00",
+    "end_date": "2020-12-02 14:00:00",
     "description": "Uma amostra de tcc uai"
 }
+
 ### 
-GET http://localhost:3000/repo
-### 
-GET  http://localhost:3000/repo/Adamas
+POST http://localhost:3000/event/1/room
+Authorization:  Bearer TOKEN
+
+{
+    "name": "Sala 5",
+    "quantity_projects": 10
+}
+###
+POST http://localhost:3000/event/1/subscribe
+Authorization: Bearer TOKEN
 
 ###
-GET http://localhost:3000/event/Amostra de TCC
+GET http://localhost:3000/event/1/subscribers
+Authorization: Bearer TOKEN
+###
+POST  http://localhost:3000/event/1/participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1
+}
+###
+POST http://localhost:3000/event/1/approve-participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1,
+    "room_id": 1
+}
+### 
+GET http://localhost:3000/project/search
+### 
+GET  http://localhost:3000/project/search/Adamas
+###
+GET http://localhost:3000/project/user/1
+###
+GET http://localhost:3000/event/search/Amostra de TCC
+
+###
+GET http://localhost:3000/event/search

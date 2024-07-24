@@ -31,7 +31,7 @@ func (rdb *ProjectDB) SetCategory(categoryName string, repositoryID int64) error
 }
 
 func (rdb *ProjectDB) deleteCategoriesByRepoID(repoID int64) error {
-	_, err := rdb.db.Exec("DELETE FROM CATEGORY_REPO WHERE repository_id = ?", repoID)
+	_, err := rdb.db.Exec("DELETE FROM CATEGORY_PROJECT WHERE project_id = ?", repoID)
 	if err != nil {
 		return err 
 	}

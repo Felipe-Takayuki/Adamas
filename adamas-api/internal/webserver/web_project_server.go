@@ -17,7 +17,7 @@ type WebProjectHandler struct {
 	ProjectService *service.ProjectService
 }
 
-func NewRepoHandler(projectService *service.ProjectService) *WebProjectHandler {
+func NewProjectHandler(projectService *service.ProjectService) *WebProjectHandler {
 	return &WebProjectHandler{
 		ProjectService: projectService,
 	}
@@ -44,7 +44,7 @@ func (wph *WebProjectHandler) GetProjectsByName(w http.ResponseWriter, r *http.R
 
 }
 func (wph *WebProjectHandler) GetProjects(w http.ResponseWriter, r *http.Request) {
-	repositories, err := wph.ProjectService.GetProjects()
+	projects, err := wph.ProjectService.GetProjects()
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
@@ -53,7 +53,24 @@ func (wph *WebProjectHandler) GetProjects(w http.ResponseWriter, r *http.Request
 		return
 
 	}
-	json.NewEncoder(w).Encode(repositories)
+	json.NewEncoder(w).Encode(projects)
+}
+func (wph *WebProjectHandler) GetProjectsByUser(w http.ResponseWriter, r *http.Request) {
+	userID,err := strconv.Atoi(chi.URLParam(r, "user_id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	projects, err := wph.ProjectService.GetProjectsByUser(int64(userID))
+	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+
+	}
+	json.NewEncoder(w).Encode(projects)
 }
 
 func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {

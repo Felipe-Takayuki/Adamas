@@ -104,7 +104,7 @@ Authorization:  Bearer TOKEN
     "quantity_projects": 10
 }
 ###
-POST http://localhost:3000/event/subscribe/1
+POST http://localhost:3000/event/1/subscribe
 Authorization: Bearer TOKEN
 
 ###

@@ -93,7 +93,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	if userType == "institution_user" {
-		flt64, ok := claims["id"].(float64)
+		institutionID, ok := claims["id"].(float64)
 		if !ok {
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
@@ -106,7 +106,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.Date, req.Description, int64(flt64))
+		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.StartDate, req.EndDate, req.Description, int64(institutionID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

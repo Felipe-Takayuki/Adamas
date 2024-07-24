@@ -40,7 +40,8 @@ CREATE TABLE EVENT(
   id int auto_increment NOT NULL PRIMARY KEY,
   name varchar(100) NOT NULL,
   address varchar(255) NOT NULL,
-  date TIMESTAMP NOT NULL,
+  start_date TIMESTAMP NOT NULL,
+  end_date  TIMESTAMP NOT NULL,
   description varchar(255) NOT NULL
 );
 
@@ -59,7 +60,7 @@ CREATE TABLE SUBSCRIBERS_EVENT(
 CREATE TABLE ROOM_IN_EVENT(
   id int auto_increment NOT NULL PRIMARY KEY,
   event_id int NOT NULL,
-  name varchar(50) NOT NULL,
+  name varchar(50) NOT NULL UNIQUE,
   quantity_projects int NOT NULL,
   FOREIGN KEY (event_id) REFERENCES EVENT(id) 
 );

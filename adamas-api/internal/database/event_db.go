@@ -18,9 +18,9 @@ func NewEventDB(db *sql.DB) *EventDB {
 	}
 }
 
-func (edb *EventDB) CreateEvent(name, address, date, description string, institutionID int64) (*entity.Event, error) {
-	event := entity.NewEvent(name, address, date, description, institutionID)
-	result, err := edb.db.Exec(queries.CREATE_EVENT, &event.Name, &event.Address, &event.Date, &event.Description)
+func (edb *EventDB) CreateEvent(name, address, startDate, endDate, description string, institutionID int64) (*entity.Event, error) {
+	event := entity.NewEvent(name, address, startDate,endDate, description, institutionID)
+	result, err := edb.db.Exec(queries.CREATE_EVENT, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 	var events []*entity.Event
 	for rows.Next() {
 		var event entity.Event
-		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
 		if err != nil {
 			return nil, err
 		}
@@ -78,7 +78,7 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 	var events []*entity.Event
 	for rows.Next() {
 		var event entity.Event
-		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
 		rooms, err := edb.getRoomsByEventID(event.ID)
 		if err != nil {
 			return nil, err
@@ -206,7 +206,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 	var events []*entity.Event
 	for rows.Next() {
 		var event entity.Event
-		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.Date, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate,&event.Description, &event.InstitutionID, &event.InstitutionName)
 		if err != nil {
 			return nil, err
 		}

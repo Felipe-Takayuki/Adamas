@@ -1,19 +1,19 @@
 package queries
 
-const CREATE_EVENT = "INSERT INTO EVENT(name, address, date, description) VALUES (?, ?, ?, ?)"
+const CREATE_EVENT = "INSERT INTO EVENT(name, address, start_date, end_date, description) VALUES (?, ?, ?, ?, ?)"
 
 const SET_OWNER_EVENT = "INSERT INTO OWNER_EVENT(event_id, owner_id) VALUES (?, ?)"
 
 const AddRoomInEvent = "INSERT INTO ROOM_IN_EVENT(event_id, name,quantity_projects) VALUES (?, ?, ?)"
 
 const GET_EVENT_BY_NAME = `
-	SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
+	SELECT e.id, e.name, e.address, e.start_date, e.end_date, e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id
 	WHERE e.name = ?`
 
-	const GET_EVENT_BY_ID = `
-	SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
+const GET_EVENT_BY_ID = `
+	SELECT e.id, e.name, e.address, e.start_date, e.end_date , e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id
 	WHERE e.id = ?`
@@ -43,7 +43,7 @@ const GET_REPOSITORIES_BY_ROOM_ID = `
 	WHERE pr.room_id = ?`
 
 const GET_EVENTS = `
-	SELECT e.id, e.name, e.address, e.date, e.description, o.owner_id, i.name FROM EVENT e
+	SELECT e.id, e.name, e.address, e.start_date, e.end_date, e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id`
 

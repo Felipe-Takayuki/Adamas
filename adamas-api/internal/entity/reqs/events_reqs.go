@@ -3,7 +3,8 @@ package reqs
 type CreateEventRequest struct {
 	Name        string `json:"name"`
 	Address     string `json:"address"`
-	Date        string `json:"date"`
+	StartDate   string `json:"start_date"`
+	EndDate     string `json:"end_date"`
 	Description string `json:"description"`
 }
 
@@ -13,10 +14,10 @@ type AddRoomRequest struct {
 }
 
 type AddPendingProjectRequest struct {
-	ProjectID 	int64 `json:"project_id"`
+	ProjectID int64 `json:"project_id"`
 }
 
 type ApproveProjectRequest struct {
-	ProjectID 	int64 `json:"project_id"`
-	RoomID 		int64 `json:"room_id"`
+	ProjectID int64 `json:"project_id"`
+	RoomID    int64 `json:"room_id"`
 }

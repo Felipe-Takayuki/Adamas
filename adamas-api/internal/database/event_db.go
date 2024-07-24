@@ -126,11 +126,11 @@ func (edb * EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID in
 	if !isOwner {
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
-	_, err := edb.db.Exec("INSERT INTO PROJECT_IN_ROOM(room_id, project_id) VALUES (?, ?)", roomID, projectID)
+	_, err := edb.db.Exec(queries.APPROVE_PARTICIPATION, roomID, projectID)
 	if err != nil {
 		return nil, err 
 	}
-	_, err  = edb.db.Exec("DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?",eventID, projectID)
+	_, err  = edb.db.Exec(queries.DELETE_PENDING_PARTICIPATION,eventID, projectID)
 	if err != nil {
 		return nil, err 
 	}
@@ -174,12 +174,23 @@ func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
 	defer rows.Close()
 
 	var repositories []*entity.Project
+	projectDB := NewProjectDB(edb.db)
 	for rows.Next() {
 		var repo entity.Project
 		err = rows.Scan(&repo.ID, &repo.Title, &repo.Description, &repo.Content, &repo.FirstOwnerID, &repo.FirstOwnerName)
 		if err != nil {
 			return nil, err
 		}
+		categories, err := projectDB.getCategoriesByRepoID(repo.ID)
+		if err != nil {
+			return nil, err 
+		}
+		comments, err := projectDB.getCommentsByRepoID(repo.ID)
+		if err != nil {
+			return nil, err 
+		}
+		repo.Categories = categories
+		repo.Comments = comments
 		repositories = append(repositories, &repo)
 	}
 	return repositories, nil

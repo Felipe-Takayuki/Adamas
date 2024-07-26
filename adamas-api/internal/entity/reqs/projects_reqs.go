@@ -1,17 +1,21 @@
 package reqs
 
 type SetCategoryRequest struct {
-	CategoryName   string `json:"category_name"`
+	CategoryName string `json:"category_name"`
 }
 
 type SetCommentRequest struct {
-	Comment string `json:"comment"` 
+	Comment string `json:"comment"`
 }
 
+type EditCommentRequest struct {
+	ID      int64  `json:"comment_id"`
+	Comment string `json:"comment"`
+}
 type ProjectRequestFirst struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Content 	string 	`json:"content"`
+	Content     string `json:"content"`
 }
 
 type CommentID struct {

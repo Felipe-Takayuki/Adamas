@@ -36,6 +36,11 @@ const UPDATE_DESCRIPTION_PROJECT = `
  SET description = ? 
  WHERE id = ?`
 
+const UPDATE_COMMENT = `
+ UPDATE COMMENT
+ SET comment = ? 
+ WHERE id = ?
+`
 const DELETE_PROJECT = `
  DELETE FROM PROJECT 
  WHERE id = ?
@@ -59,6 +64,13 @@ const CHECK_PROJECT_OWNER = `
  AND project_id = ?
 `
 
+const CHECK_COMMENT_OWNER = `
+ SELECT COUNT(*) 
+ FROM COMMENT 
+ WHERE owner_id = ? 
+ AND id = ?
+`
+
 const GET_OWNER_NAME_BY_ID = "SELECT name FROM COMMON_USER WHERE id = ?"
 
 const SET_OWNER = "INSERT INTO OWNERS_PROJECT(project_id, owner_id) VALUES (?, ?)"
@@ -77,7 +89,12 @@ const GET_OWNERS_BY_PROJECT = `
 	JOIN COMMON_USER u ON op.owner_id = u.id
 	WHERE op.project_id = ?
 `
-
+const GET_COMMENT_BY_ID = `
+ SELECT com.id, u.id, u.name, com.comment FROM COMMENT com
+ JOIN PROJECT r ON com.project_id = r.id
+ JOIN COMMON_USER u ON com.owner_id = u.id
+ WHERE com.id = ?
+`
 const GET_COMMENTS_BY_PROJECT = `
  SELECT com.id, u.id, u.name, com.comment FROM COMMENT com
  JOIN PROJECT r ON com.project_id = r.id

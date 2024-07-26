@@ -20,12 +20,11 @@ func (wph *WebProjectHandler) SetComment(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if userType == "common_user" {
-		flt64, ok := claims["id"].(float64)
+		userID, ok := claims["id"].(float64)
 		if !ok {
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		userID := flt64
 		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
 		if err != nil {
 			http.Error(w, "project_id is not int!", http.StatusInternalServerError)
@@ -55,6 +54,38 @@ func (wph *WebProjectHandler) SetComment(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (wph *WebProjectHandler) EditComment(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userID, ok := claims["id"].(float64)
+	if !ok {
+		http.Error(w, "id is not int!", http.StatusInternalServerError)
+		return
+	}
+	projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
+	if err != nil {
+		http.Error(w, "project_id is not int!", http.StatusInternalServerError)
+		return
+	}
+	var reqs *reqs.EditCommentRequest
+	err = json.NewDecoder(r.Body).Decode(&reqs)
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	comment,err := wph.ProjectService.EditComment(reqs.Comment,int64(projectID),reqs.ID, int64(userID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(comment) 
+
+
+}
 func (wph *WebProjectHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")

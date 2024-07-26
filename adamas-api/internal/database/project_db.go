@@ -73,7 +73,7 @@ func (rdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 func (rdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error) {
 	rows, err := rdb.db.Query(queries.GET_PROJECTS_BY_USER, userID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	defer rows.Close()
 	var projects []*entity.Project
@@ -93,7 +93,7 @@ func (rdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error)
 		projects = append(projects, &project)
 	}
 	return projects, nil
-} 
+}
 
 func (rdb *ProjectDB) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
 	project := entity.NewProject(title, description, content, ownerID)
@@ -120,8 +120,11 @@ func (rdb *ProjectDB) CreateProject(title, description, content string, ownerID 
 	return project, nil
 }
 
-func (rdb *ProjectDB) EditProject(title, description, content string, projectID int64) (*entity.ProjectBasic, error) {
+func (rdb *ProjectDB) EditProject(title, description, content string, projectID, ownerID int64) (*entity.ProjectBasic, error) {
 
+	if !rdb.isProjectOwner(projectID, ownerID) {
+		return nil, fmt.Errorf("usuário não possui o repositório")
+	}
 	if title != "" {
 		_, err := rdb.db.Exec(queries.UPDATE_TITLE_PROJECT, title, projectID)
 		if err != nil {
@@ -180,13 +183,13 @@ func (rdb *ProjectDB) DeleteProject(email, password string, projectID int64) err
 }
 
 func (rdb *ProjectDB) AddNewUserProject(projectID, userID int64) ([]*entity.CommonUserBasic, error) {
-	_, err := rdb.db.Exec("INSERT INTO OWNERS_PROJECT(project_id, user_id) VALUES (?, ?)",projectID,userID)
+	_, err := rdb.db.Exec("INSERT INTO OWNERS_PROJECT(project_id, user_id) VALUES (?, ?)", projectID, userID)
 	if err != nil {
 		return nil, err
 	}
 	participants, err := rdb.getOwnersByProjectID(projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	return participants, nil
 }
@@ -211,20 +214,20 @@ func (rdb *ProjectDB) isProjectOwner(userID, projectID int64) bool {
 
 func (rdb *ProjectDB) getProjectByID(projectID int64) (*entity.Project, error) {
 	project := &entity.Project{}
-	err := rdb.db.QueryRow(queries.GET_PROJECT_BY_ID, projectID).Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID,&project.FirstOwnerName)
+	err := rdb.db.QueryRow(queries.GET_PROJECT_BY_ID, projectID).Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	categories, err := rdb.getCategoriesByRepoID(projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	comments, err := rdb.getCommentsByRepoID(projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	project.Comments = comments
-	project.Categories = categories 
+	project.Categories = categories
 
 	return project, nil
 }
@@ -240,7 +243,7 @@ func (rdb *ProjectDB) deleteOwnerProject(userID, projectID int64) error {
 func (rdb *ProjectDB) getOwnersByProjectID(projectID int64) ([]*entity.CommonUserBasic, error) {
 	rows, err := rdb.db.Query(queries.GET_OWNERS_BY_PROJECT, projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	defer rows.Close()
 

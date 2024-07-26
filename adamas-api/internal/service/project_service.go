@@ -36,8 +36,8 @@ func (rs *ProjectService) CreateProject(title, description, content string, owne
 	return repo, nil
 }
 
-func (rs *ProjectService) EditProject(title, description, content string, projectID int64) (*entity.ProjectBasic, error) {
-	repo, err := rs.ProjectDB.EditProject(title, description, content, projectID) 
+func (rs *ProjectService) EditProject(title, description, content string, projectID, ownerID int64) (*entity.ProjectBasic, error) {
+	repo, err := rs.ProjectDB.EditProject(title, description, content, projectID, ownerID) 
 	if err != nil {
 		return nil, err
 	}

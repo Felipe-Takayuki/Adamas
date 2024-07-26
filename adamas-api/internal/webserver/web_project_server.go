@@ -82,12 +82,12 @@ func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	if userType == "common_user" {
-		flt64, ok := claims["id"].(float64)
+		userID, ok := claims["id"].(float64)
 		if !ok {
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		userID := flt64
+
 		var req *reqs.ProjectRequestFirst
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
@@ -155,6 +155,11 @@ func (wph *WebProjectHandler) EditProject(w http.ResponseWriter, r *http.Request
 		return
 	}
 	if userType == "common_user" {
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
 		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -168,7 +173,7 @@ func (wph *WebProjectHandler) EditProject(w http.ResponseWriter, r *http.Request
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.ProjectService.EditProject(req.Title, req.Description, req.Content, int64(projectID))
+		result, err := wph.ProjectService.EditProject(req.Title, req.Description, req.Content, int64(projectID), int64(userID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

@@ -2,6 +2,7 @@ POST http://localhost:3000/create
 
 {
     "name" : "Felipe",
+    "nickname": "felipe",
     "email": "felipe@email.com",
     "password": "12345678"
 }
@@ -74,6 +75,15 @@ Authorization: Bearer TOKEN
 
 {
     "comment": "muito brabo"
+}
+
+###
+PUT http://localhost:3000/project/1/comment
+Authorization: Bearer TOKEN
+
+{
+    "comment_id": 1,
+    "comment": "muito brabo, eu sei"
 }
 
 ###

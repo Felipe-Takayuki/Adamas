@@ -5,11 +5,13 @@ import (
 )
 
 type User struct {
-	ID       int64  `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	UserType string `json:"user_type"`
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	NickName    string `json:"nickname"`
+	Description string `json:"description"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	UserType    string `json:"user_type"`
 }
 type InstitutionUserExtend struct {
 	USER   *User
@@ -35,8 +37,8 @@ type CommonUserBasic struct {
 	Name string `json:"name"`
 }
 
-func NewCommonUserExtend(name, email, password string) *CommonUserExtend {
+func NewCommonUserExtend(name, nickName, description, email, password string) *CommonUserExtend {
 	return &CommonUserExtend{
-		USER: &User{Name: name, Email: email, Password: utils.EncriptKey(password), UserType: "common_user"},
+		USER: &User{Name: name, NickName: nickName, Description: description, Email: email, Password: utils.EncriptKey(password), UserType: "common_user"},
 	}
 }

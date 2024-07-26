@@ -68,9 +68,9 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/event/{event_id}/approve-participation",webEventService.ApproveParticipation)
 		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
 		r.Post("/project/{project_id}/comment", webProjectService.SetComment)
+		r.Put("/project/{project_id}/comment", webProjectService.EditComment)
 		r.Delete("/project/{project_id}/comment", webProjectService.DeleteComment)
 	},
 	)
-
 	return c
 }

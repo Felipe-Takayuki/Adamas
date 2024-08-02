@@ -61,6 +61,13 @@ Authorization: Bearer TOKEN
     "email": "felipe@email.com",
     "password":"12345678"
 }
+### 
+POST http://localhost:3000/project/1/add-user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MjE5OTY4MjksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.WMJAQiPfYj42W5pM3bK3rBo1gqV3Vonol8MUyY5-SJg
+
+{
+    "user_id": 2
+}
 ###
 POST  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN

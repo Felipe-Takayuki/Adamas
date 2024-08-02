@@ -65,6 +65,11 @@ func (rdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 		if err != nil {
 			return nil, err
 		}
+		project.Owners, err = rdb.getOwnersByProjectID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		
 		projects = append(projects, &project)
 	}
 	return projects, nil
@@ -87,6 +92,10 @@ func (rdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error)
 			return nil, err
 		}
 		project.Comments, err = rdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Owners, err = rdb.getOwnersByProjectID(project.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -115,8 +124,6 @@ func (rdb *ProjectDB) CreateProject(title, description, content string, ownerID 
 	if err != nil {
 		return nil, err
 	}
-	var ownerNames []string
-	project.OwnerNames = append(ownerNames, project.FirstOwnerName)
 	return project, nil
 }
 
@@ -182,8 +189,11 @@ func (rdb *ProjectDB) DeleteProject(email, password string, projectID int64) err
 	return nil
 }
 
-func (rdb *ProjectDB) AddNewUserProject(projectID, userID int64) ([]*entity.CommonUserBasic, error) {
-	_, err := rdb.db.Exec("INSERT INTO OWNERS_PROJECT(project_id, user_id) VALUES (?, ?)", projectID, userID)
+func (rdb *ProjectDB) AddNewUserProject(projectID, userID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+	if !rdb.isProjectOwner(ownerID, projectID) {
+		return nil, fmt.Errorf("usuário não possui o repositório")
+	}
+	_, err := rdb.db.Exec("INSERT INTO OWNERS_PROJECT(project_id, owner_id) VALUES (?, ?)", projectID, userID)
 	if err != nil {
 		return nil, err
 	}

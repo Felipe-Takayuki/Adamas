@@ -1,11 +1,16 @@
 package reqs
 
+
 type SetCategoryRequest struct {
 	CategoryName string `json:"category_name"`
 }
 
 type SetCommentRequest struct {
 	Comment string `json:"comment"`
+}
+
+type AddNewUserRequest struct {
+	NewUserID int64 `json:"user_id"`
 }
 
 type EditCommentRequest struct {

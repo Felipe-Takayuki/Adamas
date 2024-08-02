@@ -53,6 +53,13 @@ func (rs *ProjectService) DeleteProject(email, password string, projectID int64)
 	return nil
 }
 
+func (rs *ProjectService) AddNewUserProject(projectID, userID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+	users, err := rs.ProjectDB.AddNewUserProject(projectID, userID, ownerID)
+	if err != nil {
+		return nil, err 
+	}
+	return users, nil 
+}
 func (rs *ProjectService) SetCategory(categoryName string, projectID int64) (error) {
 	err := rs.ProjectDB.SetCategory(categoryName, projectID)
 	if err != nil {

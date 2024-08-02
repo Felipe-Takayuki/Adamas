@@ -13,7 +13,7 @@ const GET_PROJECT_BY_ID = `
 const GET_PROJECTS = `
  SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
- JOIN COMMON_USER u ON o.owner_id = u.id `
+ JOIN COMMON_USER u ON o.owner_id = u.id`
 
 const GET_PROJECTS_BY_USER = `
  SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 

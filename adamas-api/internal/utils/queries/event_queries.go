@@ -49,3 +49,32 @@ const GET_EVENTS = `
 
 const APPROVE_PARTICIPATION = "INSERT INTO PROJECT_IN_ROOM(room_id, project_id) VALUES (?, ?)"
 const DELETE_PENDING_PARTICIPATION = "DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?"
+
+const UPDATE_NAME_EVENT = `
+ UPDATE EVENT 
+ SET name = ? 
+ WHERE id = ?`
+
+ const UPDATE_ADDRESS_EVENT = `
+ UPDATE EVENT 
+ SET address = ? 
+ WHERE id = ?
+ `
+
+const UPDATE_START_DATE_EVENT = `
+UPDATE EVENT 
+SET start_date = ? 
+WHERE id = ?
+`
+
+const UPDATE_END_DATE_EVENT = `
+UPDATE EVENT 
+SET end_date = ? 
+WHERE id = ?
+`
+
+const UPDATE_DESCRIPTION_EVENT = `
+UPDATE EVENT 
+SET description = ? 
+WHERE id = ?
+`

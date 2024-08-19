@@ -30,7 +30,9 @@ go run .
 
 ```json
 {
-    "name": "Felipe",
+    "name": "Felipe321",
+    "nickname": "felipe",
+    "description": "o brabo", //não é obrigatório
     "email": "felipe@email.com",
     "password": "12345678"
 }

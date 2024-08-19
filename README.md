@@ -12,7 +12,7 @@ OU
 ```
 git clone https://github.com/Adamas-Projects/Adamas-BackEnd.git
 
-cd Adamas/adamas-api/cmd/api
+cd Adamas-BackEnd/adamas-api/cmd/api
 
 go run .
 ``` 

@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
@@ -36,6 +35,7 @@ func (rdb *ProjectDB) EditComment(text string, projectID, commentID, ownerID int
 	}
 	return comment, nil 
 }
+
 
 func (rdb *ProjectDB) getCommentByID(commentID int64) (*entity.Comment, error) {
 	comment := &entity.Comment{}

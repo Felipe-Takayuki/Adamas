@@ -28,8 +28,10 @@ CREATE TABLE COMMON_USER(
 CREATE TABLE PROJECT(
   id int auto_increment NOT NULL PRIMARY KEY,
   title varchar(255) NOT NULL,
+  first_owner_id int NOT NULL,
   description varchar(255) NOT NULL,
-  content varchar(255) NOT NULL
+  content varchar(255) NOT NULL,
+  FOREIGN KEY (first_owner_id) REFERENCES COMMON_USER(id)
 );
 
 CREATE TABLE OWNERS_PROJECT(

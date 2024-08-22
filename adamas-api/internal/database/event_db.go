@@ -252,7 +252,7 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.C
 
 func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.EventBasic, error) {
 	if !edb.isEventOwner(eventID, ownerID) {
-		return nil, fmt.Errorf("instituição não possui o evento!")
+		return nil, fmt.Errorf("instituição não possui o evento")
 	}
 
 	if name != "" {

@@ -11,7 +11,7 @@ const GET_PROJECT_BY_ID = `
  JOIN COMMON_USER u ON o.owner_id = u.id WHERE p.id = ?
  `
 const GET_PROJECTS = `
- SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 
+ SELECT p.id, p.title, p.description,p.content, u.id, u.name FROM PROJECT p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON u.id = p.first_owner_id`
 

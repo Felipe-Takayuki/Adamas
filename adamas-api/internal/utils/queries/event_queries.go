@@ -25,7 +25,7 @@ const GET_ROOMS_BY_EVENT_ID = `
 const GET_SUBSCRIBERS_BY_EVENT_ID = `
 	SELECT se.user_id, u.name FROM COMMON_USER u 
 	JOIN SUBSCRIBERS_EVENT se ON se.user_id = u.id
-	WHERE u.id = ?
+	WHERE se.event_id = ?
 `
 
 const CHECK_EVENT_OWNER = `

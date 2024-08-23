@@ -112,6 +112,15 @@ Authorization: Bearer TOKEN
     "description": "Uma amostra de tcc uai"
 }
 
+###
+PUT http://localhost:3000/event/1
+Authorization: Bearer TOKEN 
+
+{
+    "name": "Amostra de TCC 001",
+    "description": "Uma amostra de tcc, com projetos dos alunos da ETEC"
+}
+
 ### 
 POST http://localhost:3000/event/1/room
 Authorization:  Bearer TOKEN

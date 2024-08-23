@@ -9,6 +9,7 @@ import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/webserver"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth"
 )
 
@@ -33,6 +34,13 @@ func Router(db *sql.DB) http.Handler {
 	c := chi.NewRouter()
 	c.Use(middleware.Logger)
 	c.Use(middleware.Recoverer)
+	corsConfig := cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}
+	c.Use(cors.Handler(corsConfig))
 	c.Post("/create", func(w http.ResponseWriter, r *http.Request) {
 		webUserService.CreateUser(w, r, tokenAuth)
 	})
@@ -60,17 +68,19 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/project", webProjectService.CreateProject)
 		r.Put("/project/{project_id}", webProjectService.EditProject)
 		r.Delete("/project/{project_id}", webProjectService.DeleteProject)
-		r.Post("/event", webEventService.CreateEvent)
-		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
-		r.Post("/event/{event_id}/subscribe",webEventService.EventRegistration)
-		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
-		r.Post("/event/{event_id}/participation",webEventService.EventRequestParticipation)
-		r.Post("/event/{event_id}/approve-participation",webEventService.ApproveParticipation)
 		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
+		r.Post("/project/{project_id}/add-user", webProjectService.AddNewUserProject)
 		r.Post("/project/{project_id}/comment", webProjectService.SetComment)
+		r.Put("/project/{project_id}/comment", webProjectService.EditComment)
 		r.Delete("/project/{project_id}/comment", webProjectService.DeleteComment)
+		r.Post("/event", webEventService.CreateEvent)
+		r.Put("/event/{event_id}", webEventService.EditEvent)
+		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
+		r.Post("/event/{event_id}/subscribe", webEventService.EventRegistration)
+		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
+		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)
+		r.Post("/event/{event_id}/approve-participation", webEventService.ApproveParticipation)
 	},
 	)
-
 	return c
 }

@@ -19,7 +19,7 @@ func NewEventDB(db *sql.DB) *EventDB {
 }
 
 func (edb *EventDB) CreateEvent(name, address, startDate, endDate, description string, institutionID int64) (*entity.Event, error) {
-	event := entity.NewEvent(name, address, startDate,endDate, description, institutionID)
+	event := entity.NewEvent(name, address, startDate, endDate, description, institutionID)
 	result, err := edb.db.Exec(queries.CREATE_EVENT, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description)
 	if err != nil {
 		return nil, err
@@ -121,25 +121,25 @@ func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) 
 	return project, nil
 }
 
-func (edb * EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
-	isOwner := edb.isEventOwner(eventID, ownerID )
+func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
+	isOwner := edb.isEventOwner(eventID, ownerID)
 	if !isOwner {
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
 	_, err := edb.db.Exec(queries.APPROVE_PARTICIPATION, roomID, projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	_, err  = edb.db.Exec(queries.DELETE_PENDING_PARTICIPATION,eventID, projectID)
+	_, err = edb.db.Exec(queries.DELETE_PENDING_PARTICIPATION, eventID, projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 
-	projects, err  := edb.getProjectsByRoomID(int(roomID))
+	projects, err := edb.getProjectsByRoomID(int(roomID))
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	return projects,nil
+	return projects, nil
 }
 
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {
@@ -183,11 +183,11 @@ func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
 		}
 		categories, err := projectDB.getCategoriesByRepoID(repo.ID)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
 		comments, err := projectDB.getCommentsByRepoID(repo.ID)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
 		repo.Categories = categories
 		repo.Comments = comments
@@ -206,7 +206,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 	var events []*entity.Event
 	for rows.Next() {
 		var event entity.Event
-		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate,&event.Description, &event.InstitutionID, &event.InstitutionName)
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
 		if err != nil {
 			return nil, err
 		}
@@ -250,6 +250,49 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.C
 	return subscribers, nil
 }
 
+func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.EventBasic, error) {
+	if !edb.isEventOwner(eventID, ownerID) {
+		return nil, fmt.Errorf("instituição não possui o evento")
+	}
+
+	if name != "" {
+		_, err := edb.db.Exec(queries.UPDATE_NAME_EVENT, name, eventID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if address != "" {
+		_, err := edb.db.Exec(queries.UPDATE_ADDRESS_EVENT, address, eventID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if startDate != "" {
+		_, err := edb.db.Exec(queries.UPDATE_START_DATE_EVENT, startDate, eventID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if endDate != "" {
+		_, err := edb.db.Exec(queries.UPDATE_END_DATE_EVENT, endDate, eventID) 
+		if err != nil {
+			return nil, err 
+		}
+	}
+
+	if description != "" {
+		_, err := edb.db.Exec(queries.UPDATE_DESCRIPTION_EVENT, description, eventID)
+		if err != nil {
+		  return nil, err
+		}
+	}
+	event := entity.EventBasic{ Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
+
+	return &event, nil
+}
 func (edb *EventDB) isEventOwner(eventID, ownerID int64) bool {
 	var count int
 	err := edb.db.QueryRow(queries.CHECK_EVENT_OWNER, ownerID, eventID).Scan(&count)

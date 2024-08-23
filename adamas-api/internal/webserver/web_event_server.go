@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
@@ -55,7 +56,7 @@ func (weh *WebEventHandler) GetSubscribers(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
 	if !ok {
-		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		http.Error(w, "user_type is not exists!", http.StatusInternalServerError)
 		return
 	}
 	if userType == "institution_user" {
@@ -267,6 +268,49 @@ func (weh *WebEventHandler) ApproveParticipation (w http.ResponseWriter, r *http
 			return
 		}
 		result, err := weh.eventService.ApproveParticipation(req.ProjectID,int64(userID), int64(eventID), req.RoomID) 
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return 
+		}
+		json.NewEncoder(w).Encode(result)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
+func (weh * WebEventHandler) EditEvent(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "institution_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		ownerID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var req *entity.EventBasic 
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		result, err := weh.eventService.EditEvent(int64(eventID),int64(ownerID), req.Name, req.Address, req.StartDate, req.EndDate, req.Description)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

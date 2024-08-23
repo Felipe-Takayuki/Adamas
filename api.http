@@ -2,6 +2,7 @@ POST http://localhost:3000/create
 
 {
     "name" : "Felipe",
+    "nickname": "felipe",
     "email": "felipe@email.com",
     "password": "12345678"
 }
@@ -60,6 +61,13 @@ Authorization: Bearer TOKEN
     "email": "felipe@email.com",
     "password":"12345678"
 }
+### 
+POST http://localhost:3000/project/1/add-user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MjE5OTY4MjksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.WMJAQiPfYj42W5pM3bK3rBo1gqV3Vonol8MUyY5-SJg
+
+{
+    "user_id": 2
+}
 ###
 POST  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
@@ -74,6 +82,15 @@ Authorization: Bearer TOKEN
 
 {
     "comment": "muito brabo"
+}
+
+###
+PUT http://localhost:3000/project/1/comment
+Authorization: Bearer TOKEN
+
+{
+    "comment_id": 1,
+    "comment": "muito brabo, eu sei"
 }
 
 ###
@@ -93,6 +110,15 @@ Authorization: Bearer TOKEN
     "start_date": "2020-12-02 10:00:00",
     "end_date": "2020-12-02 14:00:00",
     "description": "Uma amostra de tcc uai"
+}
+
+###
+PUT http://localhost:3000/event/1
+Authorization: Bearer TOKEN 
+
+{
+    "name": "Amostra de TCC 001",
+    "description": "Uma amostra de tcc, com projetos dos alunos da ETEC"
 }
 
 ### 

@@ -7,7 +7,7 @@ USE adamas_db;
 
 CREATE TABLE INSTITUTION_USER(
   id int auto_increment NOT NULL PRIMARY KEY,
-  name varchar(255) NOT NULL,
+  name varchar(255) NOT NULL UNIQUE,
   email varchar(255) NOT NULL UNIQUE,
   password varchar(64) NOT NULL,
   cnpj char(14) NOT NULL
@@ -15,7 +15,9 @@ CREATE TABLE INSTITUTION_USER(
 
 CREATE TABLE COMMON_USER(
   id int auto_increment NOT NULL PRIMARY KEY,
-  name varchar(255) NOT NULL,
+  name varchar(255) NOT NULL UNIQUE,
+  nickname varchar(20) NOT NULL,
+  description varchar(255),
   email varchar(255) NOT NULL UNIQUE,
   institution_id int NULL,
   password varchar(64) NOT NULL,
@@ -26,8 +28,10 @@ CREATE TABLE COMMON_USER(
 CREATE TABLE PROJECT(
   id int auto_increment NOT NULL PRIMARY KEY,
   title varchar(255) NOT NULL,
+  first_owner_id int NOT NULL,
   description varchar(255) NOT NULL,
-  content varchar(255) NOT NULL
+  content varchar(255) NOT NULL,
+  FOREIGN KEY (first_owner_id) REFERENCES COMMON_USER(id)
 );
 
 CREATE TABLE OWNERS_PROJECT(

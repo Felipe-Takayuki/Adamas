@@ -1,25 +1,3 @@
-
-# Como rodar a API ?
-
-```          
-git clone https://github.com/Adamas-Projects/Adamas-BackEnd.git
-
-cd Adamas/adamas-api
-
-docker-compose up --build
-```
-OU 
-```
-git clone https://github.com/Adamas-Projects/Adamas-BackEnd.git
-
-cd Adamas-BackEnd/adamas-api/cmd/api
-
-go run .
-``` 
-### E iniciar o banco de dados manualmente
-##
-
-
 # Documentação da API
 
 ## Endpoints
@@ -30,9 +8,7 @@ go run .
 
 ```json
 {
-    "name": "Felipe321",
-    "nickname": "felipe",
-    "description": "o brabo", //não é obrigatório
+    "name": "Felipe",
     "email": "felipe@email.com",
     "password": "12345678"
 }
@@ -79,7 +55,9 @@ go run .
 
 ### Criar Projeto
 
-**POST** `http://localhost:3000/project`**Authorization**: Bearer TOKEN
+**POST** `http://localhost:3000/project`
+
+**Authorization**: Bearer TOKEN
 
 ```json
 {
@@ -92,7 +70,7 @@ go run .
 
 ### Atualizar Projeto
 
-**PUT** `http://localhost:3000/project/1`
+**PUT** `http://localhost:3000/project/{project_id}`
 
 **Authorization**: Bearer TOKEN
 
@@ -107,7 +85,7 @@ go run .
 
 ### Deletar Projeto
 
-**DELETE** `http://localhost:3000/project/1`
+**DELETE** `http://localhost:3000/project/{project_id}`
 
 **Authorization**: Bearer TOKEN
 
@@ -121,13 +99,12 @@ go run .
 
 ### Adicionar Categoria ao Projeto
 
-**POST** `http://localhost:3000/project/1/category`
+**POST** `http://localhost:3000/project/{project_id}/category`
 
 **Authorization**: Bearer TOKEN
 
 ```json
 {
-    "repository_id": 1,
     "category_name": "ti"
 }
 
@@ -135,7 +112,7 @@ go run .
 
 ### Adicionar Comentário ao Projeto
 
-**POST** `http://localhost:3000/project/1/comment`
+**POST** `http://localhost:3000/project/{project_id}/comment`
 
 **Authorization**: Bearer TOKEN
 
@@ -148,13 +125,27 @@ go run .
 
 ### Deletar Comentário do Projeto
 
-**DELETE** `http://localhost:3000/project/1/comment`
+**DELETE** `http://localhost:3000/project/{project_id}/comment`
 
 **Authorization**: Bearer TOKEN
 
 ```json
 {
     "comment_id": 1
+}
+
+```
+
+### Atualizar Comentário do Projeto
+
+**PUT** `http://localhost:3000/project/{project_id}/comment`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "comment_id": 1,
+    "comment": "muito brabo, eu sei"
 }
 
 ```
@@ -175,20 +166,98 @@ go run .
 
 ```
 
-### Inscrição no Evento
+### Adicionar Usuário ao Projeto
 
-**POST** `http://localhost:3000/event/subscribe/1`
+**POST** `http://localhost:3000/project/{project_id}/add-user`
 
 **Authorization**: Bearer TOKEN
 
-### Listar Projetos
+```json
+{
+    "user_id": 2
+}
 
-**GET** `http://localhost:3000/project`
+```
 
-### Obter Projeto Específico
+### Atualizar Evento
 
-**GET** `http://localhost:3000/project/Adamas`
+**PUT** `http://localhost:3000/event/{event_id}`
 
-### Obter Evento Específico
+**Authorization**: Bearer TOKEN
 
-**GET** `http://localhost:3000/event/Amostra de TCC`
+```json
+{
+    "name": "Amostra de TCC 001",
+    "description": "Uma amostra de tcc, com projetos dos alunos da ETEC"
+}
+
+```
+
+### Adicionar Sala ao Evento
+
+**POST** `http://localhost:3000/event/{event_id}/room`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "name": "Sala 5",
+    "quantity_projects": 10
+}
+
+```
+
+### Inscrever-se no Evento
+
+**POST** `http://localhost:3000/event/{event_id}/subscribe`
+
+**Authorization**: Bearer TOKEN
+
+### Listar Inscritos no Evento
+
+**GET** `http://localhost:3000/event/{event_id}/subscribers`
+
+**Authorization**: Bearer TOKEN
+
+### Participação no Evento
+
+**POST** `http://localhost:3000/event/{event_id}/participation`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "project_id": 1
+}
+
+```
+
+### Aprovar Participação no Evento
+
+**POST** `http://localhost:3000/event/{event_id}/approve-participation`
+
+**Authorization**: Bearer TOKEN
+
+```json
+{
+    "project_id": 1,
+    "room_id": 1
+}
+
+```
+
+### Pesquisar Projetos
+
+**GET** `http://localhost:3000/project/search`
+
+### Pesquisar Projeto Específico
+
+**GET** `http://localhost:3000/project/search/{project_title}`
+
+### Listar Projetos do Usuário
+
+**GET** `http://localhost:3000/project/user/{user_id}`
+
+### Pesquisar Evento Específico
+
+**GET** `http://localhost:3000/event/search/{event_title}`

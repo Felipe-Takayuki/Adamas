@@ -65,7 +65,14 @@ func (rs *ProjectService) SetCategory(categoryName string, projectID int64) (err
 	if err != nil {
 		return err
 	}
-	return err 
+	return nil 
+}
+func (ps *ProjectService) DeleteCategory(projectID,ownerID, categoryID int64) error {
+	err := ps.ProjectDB.DeleteCategory(projectID, ownerID, categoryID)
+	if err != nil {
+		return err 
+	}
+	return nil 
 }
 
 func (rs *ProjectService) GetProjectsByUser(userID int64) ([]*entity.Project, error) {

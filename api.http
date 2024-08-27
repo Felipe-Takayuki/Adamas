@@ -63,7 +63,7 @@ Authorization: Bearer TOKEN
 }
 ### 
 POST http://localhost:3000/project/1/add-user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MjE5OTY4MjksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.WMJAQiPfYj42W5pM3bK3rBo1gqV3Vonol8MUyY5-SJg
+Authorization: Bearer TOKEN
 
 {
     "user_id": 2
@@ -75,6 +75,15 @@ Authorization: Bearer TOKEN
 {
     "category_name": "ti"
 }
+
+###
+DELETE  http://localhost:3000/project/1/category
+Authorization: Bearer TOKEN
+
+{
+    "category_name": "ti"
+}
+
 
 ###
 POST http://localhost:3000/project/1/comment

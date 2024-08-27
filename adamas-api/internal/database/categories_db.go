@@ -40,13 +40,13 @@ func (pdb *ProjectDB) deleteCategoriesByRepoID(repoID int64) error {
 	return nil
 }
 
-func (pdb *ProjectDB) DeleteCategory(projectID, ownerID, categoryID int64) error {
+func (pdb *ProjectDB) DeleteCategory(projectID, ownerID int64, categoryName string) error {
 	if !pdb.isProjectOwner(ownerID, projectID) {
 		return fmt.Errorf("usuário não possui o repositório")
 	}
-	_, err := pdb.db.Exec("DELETE FROM CATEGORY_PROJECT WHERE project_id = ? AND category_id = ?", projectID, categoryID)
+	_, err := pdb.db.Exec("DELETE FROM CATEGORY_PROJECT WHERE project_id = ? AND category_id = ?", projectID, utils.Categories[categoryName])
 	if err != nil {
-		return nil
+		return err
 	}
-	return err
+	return nil
 }

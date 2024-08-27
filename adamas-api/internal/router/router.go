@@ -69,6 +69,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Put("/project/{project_id}", webProjectService.EditProject)
 		r.Delete("/project/{project_id}", webProjectService.DeleteProject)
 		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
+		r.Delete("/project/{project_id}/category", webProjectService.DeleteCategory)
 		r.Post("/project/{project_id}/add-user", webProjectService.AddNewUserProject)
 		r.Post("/project/{project_id}/comment", webProjectService.SetComment)
 		r.Put("/project/{project_id}/comment", webProjectService.EditComment)

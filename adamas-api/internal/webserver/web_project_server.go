@@ -240,7 +240,7 @@ func (wph *WebProjectHandler) SetCategory(w http.ResponseWriter, r *http.Request
 		return
 	}
 	if userType == "common_user" {
-		var reqs *reqs.SetCategoryRequest
+		var reqs *reqs.CategoryRequest
 		err := json.NewDecoder(r.Body).Decode(&reqs)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -269,3 +269,46 @@ func (wph *WebProjectHandler) SetCategory(w http.ResponseWriter, r *http.Request
 	}
 }
 
+
+func (wph *WebProjectHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "common_user"{
+		var reqs *reqs.CategoryRequest
+		err := json.NewDecoder(r.Body).Decode(&reqs)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		ownerID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		err = wph.ProjectService.DeleteCategory(int64(projectID),int64(ownerID), reqs.CategoryName)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{"category": reqs.CategoryName})
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}

@@ -67,7 +67,7 @@ func (rs *ProjectService) SetCategory(categoryName string, projectID int64) (err
 	}
 	return nil 
 }
-func (ps *ProjectService) DeleteCategory(projectID,ownerID, categoryID int64) error {
+func (ps *ProjectService) DeleteCategory(projectID,ownerID int64, categoryID string) error {
 	err := ps.ProjectDB.DeleteCategory(projectID, ownerID, categoryID)
 	if err != nil {
 		return err 

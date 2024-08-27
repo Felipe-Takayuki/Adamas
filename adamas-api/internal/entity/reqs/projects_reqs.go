@@ -1,7 +1,7 @@
 package reqs
 
 
-type SetCategoryRequest struct {
+type CategoryRequest struct {
 	CategoryName string `json:"category_name"`
 }
 

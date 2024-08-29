@@ -128,10 +128,15 @@ func (weh *WebEventHandler) AddRoomInEvent(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)
 	if !ok {
-		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		http.Error(w, "user_type is not exists!", http.StatusInternalServerError)
 		return
 	}
 	if userType == "institution_user" {
+		institutionID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return 
+		}
 		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
 		if err != nil {
 			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
@@ -145,7 +150,7 @@ func (weh *WebEventHandler) AddRoomInEvent(w http.ResponseWriter, r *http.Reques
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.AddRoomInEvent(int64(eventID), req.Name, req.QuantityProjects)
+		result, err := weh.eventService.AddRoomInEvent(int64(eventID),int64(institutionID), req.Name, req.QuantityProjects)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

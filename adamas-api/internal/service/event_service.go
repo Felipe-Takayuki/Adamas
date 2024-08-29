@@ -69,8 +69,8 @@ func (es *EventService) ApproveParticipation(projectID, ownerID, eventID, roomID
 	return project, nil
 }
 
-func (es *EventService) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
-	rooms, err := es.EventDB.AddRoomInEvent(eventID, roomName, quantityProjects)
+func (es *EventService) AddRoomInEvent(eventID, ownerID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+	rooms, err := es.EventDB.AddRoomInEvent(eventID, ownerID, roomName, quantityProjects)
 	if err != nil {
 		return nil, err
 	}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
 
@@ -34,7 +35,46 @@ func (edb *EventDB) CreateEvent(name, address, startDate, endDate, description s
 	}
 	return event, nil
 }
-func (edb *EventDB) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+
+func (edb *EventDB) DeleteEvent(eventID, ownerID int64, email, password string) error {
+	isOwner := edb.isEventOwner(eventID, ownerID)
+	if !isOwner {
+		return fmt.Errorf("a instituição não possui o evento")
+	}
+	institutionID, err := edb.validateInstitution(email, password)
+	if err != nil {
+		return err 
+	}
+	err = edb.deleteOwnerEvent(institutionID, eventID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func (edb *EventDB) deleteOwnerEvent(institutionID, eventID int64) error {
+	_, err := edb.db.Exec(queries.DELETE_EVENT_OWNER, institutionID,eventID )
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+
+func (edb *EventDB) validateInstitution(email, password string) (int64, error) {
+	var institutionID int64
+	err := edb.db.QueryRow(queries.VALIDATE_USER, email, utils.EncriptKey(password)).Scan(&institutionID)
+	if err != nil {
+		return 0, err 
+	}
+	return institutionID, nil
+
+}
+func (edb *EventDB) AddRoomInEvent(eventID, ownerID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+	isOwner := edb.isEventOwner(eventID, ownerID)
+	if !isOwner {
+		return nil, fmt.Errorf("a instituição não possui o evento")
+	}
 	_, err := edb.db.Exec(queries.AddRoomInEvent, eventID, roomName, quantityProjects)
 	if err != nil {
 		return nil, err
@@ -277,19 +317,19 @@ func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, 
 	}
 
 	if endDate != "" {
-		_, err := edb.db.Exec(queries.UPDATE_END_DATE_EVENT, endDate, eventID) 
+		_, err := edb.db.Exec(queries.UPDATE_END_DATE_EVENT, endDate, eventID)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
 	}
 
 	if description != "" {
 		_, err := edb.db.Exec(queries.UPDATE_DESCRIPTION_EVENT, description, eventID)
 		if err != nil {
-		  return nil, err
+			return nil, err
 		}
 	}
-	event := entity.EventBasic{ Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
+	event := entity.EventBasic{Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
 
 	return &event, nil
 }

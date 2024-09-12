@@ -78,3 +78,12 @@ UPDATE EVENT
 SET description = ? 
 WHERE id = ?
 `
+
+const DELETE_PROJECTS_ROOM = `
+DELETE FROM PROJECT_IN_ROOM
+WHERE room_id = ?`
+
+const DELETE_EVENT_ROOMS = `
+DELETE FROM ROOM_IN_EVENT
+WHERE event_id = ?
+`

@@ -7,7 +7,7 @@ type Event struct {
 	StartDate       string             `json:"start_date"`
 	EndDate         string             `json:"end_date"`
 	Description     string             `json:"description"`
-	Subscribers     []*CommonUserBasic `json:"subscribers"`
+	Subscribers     []*User `json:"subscribers"`
 	InstitutionID   int64              `json:"institution_id"`
 	InstitutionName string             `json:"institution_name"`
 	Rooms           []*RoomEvent       `json:"rooms"`
@@ -31,16 +31,3 @@ type RoomEvent struct {
 	Projects         []*Project `json:"projects"`
 }
 
-type EventBasic struct {
-	Name            string             `json:"name"`
-	Address         string             `json:"address"`
-	StartDate       string             `json:"start_date"`
-	EndDate         string             `json:"end_date"`
-	Description     string             `json:"description"`
-}
-
-type RepositoryInEvent struct {
-	ID      string
-	Project *Project
-	Locale  string
-}

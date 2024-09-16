@@ -18,9 +18,9 @@ func NewInstitutionDB(idb *sql.DB) *InstitutionDB {
 	}
 }
 
-func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj string) (*entity.InstitutionUserExtend, error) {
-	institution := entity.NewInstitutionUserExtend(name, email, password, cnpj)
-	result, err := idb.db.Exec(queries.CREATE_INSTITUTION, &institution.USER.Name, &institution.USER.Email, &institution.USER.Password, &institution.CNPJ)
+func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj string) (*entity.Institution, error) {
+	institution := entity.NewInstitution(name, email, password, cnpj)
+	result, err := idb.db.Exec(queries.CREATE_INSTITUTION, &institution.Name, &institution.Email, &institution.Password, &institution.CNPJ)
 	if err != nil {
 		return nil, err
 	}
@@ -28,21 +28,20 @@ func (idb *InstitutionDB) CreateInstitution(name, email, password string, cnpj s
 	if err != nil {
 		return nil, err 
 	}else {
-		institution.USER.ID = id
+		institution.ID = id
 	}
 	return institution, nil
 }
 
-func (idb *InstitutionDB) LoginInstitution(email, password string) (*entity.InstitutionUserExtend, error) {
-	var institution entity.InstitutionUserExtend
-	institution.USER = &entity.User{}
+func (idb *InstitutionDB) LoginInstitution(email, password string) (*entity.Institution, error) {
+	var institution entity.Institution
 	err := idb.db.QueryRow(queries.LOGIN_INSTITUTION, email, utils.EncriptKey(password)).Scan(
-		&institution.USER.ID, &institution.USER.Name, &institution.USER.Email, &institution.CNPJ,
+		&institution.ID, &institution.Name, &institution.Email, &institution.CNPJ,
 	)
 	if err != nil {
 		return nil, err
 	}
-	institution.USER.UserType = "institution_user"
+	institution.UserType = "institution_user"
 	return &institution, nil
 }
 

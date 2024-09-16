@@ -129,7 +129,7 @@ func (pdb *ProjectDB) CreateProject(title, description, content string, ownerID 
 	return project, nil
 }
 
-func (pdb *ProjectDB) EditProject(title, description, content string, projectID, ownerID int64) (*entity.ProjectBasic, error) {
+func (pdb *ProjectDB) EditProject(title, description, content string, projectID, ownerID int64) (*entity.Project, error) {
 
 	if !pdb.isProjectOwner(projectID, ownerID) {
 		return nil, fmt.Errorf("usuário não possui o repositório")
@@ -154,7 +154,7 @@ func (pdb *ProjectDB) EditProject(title, description, content string, projectID,
 			return nil, err
 		}
 	}
-	project := entity.ProjectBasic{Title: title, Description: description, Content: content}
+	project := entity.Project{Title: title, Description: description, Content: content}
 	return &project, nil
 }
 
@@ -191,7 +191,7 @@ func (pdb *ProjectDB) DeleteProject(email, password string, projectID int64) err
 	return nil
 }
 
-func (pdb *ProjectDB) AddNewUserProject(projectID, userID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+func (pdb *ProjectDB) AddNewUserProject(projectID, userID, ownerID int64) ([]*entity.User, error) {
 	if !pdb.isProjectOwner(ownerID, projectID) {
 		return nil, fmt.Errorf("usuário não possui o repositório")
 	}
@@ -252,16 +252,16 @@ func (pdb *ProjectDB) deleteOwnerProject(userID, projectID int64) error {
 	return nil
 }
 
-func (pdb *ProjectDB) getOwnersByProjectID(projectID int64) ([]*entity.CommonUserBasic, error) {
+func (pdb *ProjectDB) getOwnersByProjectID(projectID int64) ([]*entity.User, error) {
 	rows, err := pdb.db.Query(queries.GET_OWNERS_BY_PROJECT, projectID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var owners []*entity.CommonUserBasic
+	var owners []*entity.User
 	for rows.Next() {
-		var owner entity.CommonUserBasic
+		var owner entity.User
 		err = rows.Scan(&owner.ID, &owner.Name)
 		if err != nil {
 			return nil, err

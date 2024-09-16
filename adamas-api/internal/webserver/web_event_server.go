@@ -99,7 +99,7 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		var req *reqs.CreateEventRequest
+		var req *entity.Event
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -221,7 +221,7 @@ func (weh *WebEventHandler) EventRequestParticipation(w http.ResponseWriter, r *
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		var req *reqs.AddPendingProjectRequest
+		var req *entity.Project
 		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -229,7 +229,7 @@ func (weh *WebEventHandler) EventRequestParticipation(w http.ResponseWriter, r *
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.EventRequestParticipation(int64(eventID), int64(userID), req.ProjectID)
+		result, err := weh.eventService.EventRequestParticipation(int64(eventID), int64(userID), req.ID)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -307,7 +307,7 @@ func (weh * WebEventHandler) EditEvent(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		var req *entity.EventBasic 
+		var req *entity.Event 
 		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}

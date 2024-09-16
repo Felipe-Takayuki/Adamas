@@ -37,7 +37,7 @@ func (es *EventService) GetEvents() ([]*entity.Event, error) {
 	return events, nil
 }
 
-func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {
 	subscribers, err := es.EventDB.GetSubscribersByEventID(eventID, ownerID)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (es *EventService) AddRoomInEvent(eventID, ownerID int64, roomName string, 
 	return rooms, nil
 }
 
-func (es *EventService) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.EventBasic, error) {
+func (es *EventService) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.Event, error) {
 	event, err := es.EventDB.EditEvent(eventID, ownerID, name, address, startDate, endDate, description)
 	if err != nil {
 		return nil, err

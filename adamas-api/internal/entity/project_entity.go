@@ -1,6 +1,9 @@
 package entity
 
-type Category string
+type Category struct {
+	ID int `json:"id"`
+	Name string `json:"name"` 
+}
 
 type Project struct {
 	ID             int64              `json:"id"`
@@ -9,7 +12,7 @@ type Project struct {
 	Content        string             `json:"content"`
 	FirstOwnerID   int                `json:"owner_id"`
 	FirstOwnerName string             `json:"owner_name"`
-	Owners         []*CommonUserBasic `json:"owners"`
+	Owners         []*User `json:"owners"`
 	Categories     []*Category        `json:"categories"`
 	Comments       []*Comment         `json:"comments"`
 }
@@ -21,11 +24,6 @@ type Comment struct {
 	Comment   string `json:"comment"`
 }
 
-type ProjectBasic struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Content     string `json:"content"`
-}
 
 func NewProject(title, description, content string, ownerID int) *Project {
 	return &Project{

@@ -276,7 +276,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 	return events, err
 }
 
-func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.CommonUserBasic, error) {
+func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {
 
 	isOwner := isEventOwner(edb.db, eventID, ownerID)
 	if !isOwner {
@@ -289,9 +289,9 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.C
 	}
 	defer rows.Close()
 
-	var subscribers []*entity.CommonUserBasic
+	var subscribers []*entity.User
 	for rows.Next() {
-		var subscriber entity.CommonUserBasic
+		var subscriber entity.User
 		err = rows.Scan(&subscriber.ID, &subscriber.Name)
 		if err != nil {
 			return nil, err
@@ -301,7 +301,7 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.C
 	return subscribers, nil
 }
 
-func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.EventBasic, error) {
+func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.Event, error) {
 	if !isEventOwner(edb.db,eventID, ownerID) {
 		return nil, fmt.Errorf("instituição não possui o evento")
 	}
@@ -340,7 +340,7 @@ func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, 
 			return nil, err
 		}
 	}
-	event := entity.EventBasic{Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
+	event := entity.Event{Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
 
 	return &event, nil
 }

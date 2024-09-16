@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/jwtauth"
@@ -23,7 +23,7 @@ func NewWebUserHandler(userService service.UserService) *WebUserHandler {
 }
 
 func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
-	var user *reqs.UserCreateRequest
+	var user *entity.User
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -39,8 +39,8 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		json.NewEncoder(w).Encode(error)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.USER.ID, "name": result.USER.Name, "email": result.USER.Email, "user_type": result.USER.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
-		fmt.Println(result.USER.UserType)
+		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
+		fmt.Println(result.UserType)
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": tokenString,
@@ -50,7 +50,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 }
 
 func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth) {
-	var login *reqs.LoginRequest
+	var login *entity.User
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
@@ -66,7 +66,7 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 		json.NewEncoder(w).Encode(error)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.USER.ID, "name": result.USER.Name, "email": result.USER.Email, "user_type": result.USER.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
+		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": tokenString,

@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
-	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/chi"
@@ -88,7 +86,7 @@ func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		var req *reqs.ProjectRequestFirst
+		var req *entity.Project
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -96,14 +94,14 @@ func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Reque
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID))
+		createProject, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(createProject)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -127,15 +125,15 @@ func (wph *WebProjectHandler) DeleteProject(w http.ResponseWriter, r *http.Reque
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		var reqs *reqs.LoginRequest
-		err = json.NewDecoder(r.Body).Decode(&reqs)
+		var delete *entity.User
+		err = json.NewDecoder(r.Body).Decode(&delete)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.ProjectService.DeleteProject(reqs.Email, reqs.Password, int64(projectID))
+		err = wph.ProjectService.DeleteProject(delete.Email, delete.Password, int64(projectID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -165,7 +163,7 @@ func (wph *WebProjectHandler) EditProject(w http.ResponseWriter, r *http.Request
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		var req *entity.ProjectBasic
+		var req *entity.Project
 		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -208,7 +206,7 @@ func (wph *WebProjectHandler) AddNewUserProject(w http.ResponseWriter, r *http.R
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		var req *reqs.AddNewUserRequest
+		var req *entity.User
 		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -216,7 +214,7 @@ func (wph *WebProjectHandler) AddNewUserProject(w http.ResponseWriter, r *http.R
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.ProjectService.AddNewUserProject(int64(projectID), req.NewUserID, int64(ownerID))
+		result, err := wph.ProjectService.AddNewUserProject(int64(projectID), req.ID, int64(ownerID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
@@ -240,7 +238,7 @@ func (wph *WebProjectHandler) SetCategory(w http.ResponseWriter, r *http.Request
 		return
 	}
 	if userType == "common_user" {
-		var reqs *reqs.SetCategoryRequest
+		var reqs *entity.Category
 		err := json.NewDecoder(r.Body).Decode(&reqs)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}

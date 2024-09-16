@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity/reqs"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
@@ -30,7 +30,7 @@ func (wph *WebProjectHandler) SetComment(w http.ResponseWriter, r *http.Request)
 			http.Error(w, "project_id is not int!", http.StatusInternalServerError)
 			return
 		}
-		var reqs *reqs.SetCommentRequest
+		var reqs *entity.Comment
 		err = json.NewDecoder(r.Body).Decode(&reqs)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
@@ -67,7 +67,7 @@ func (wph *WebProjectHandler) EditComment(w http.ResponseWriter, r *http.Request
 		http.Error(w, "project_id is not int!", http.StatusInternalServerError)
 		return
 	}
-	var reqs *reqs.EditCommentRequest
+	var reqs *entity.Comment
 	err = json.NewDecoder(r.Body).Decode(&reqs)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
@@ -75,7 +75,7 @@ func (wph *WebProjectHandler) EditComment(w http.ResponseWriter, r *http.Request
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	comment,err := wph.ProjectService.EditComment(reqs.Comment,int64(projectID),reqs.ID, int64(userID))
+	comment,err := wph.ProjectService.EditComment(reqs.Comment,int64(projectID),reqs.CommentID, int64(userID))
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -95,20 +95,20 @@ func (wph *WebProjectHandler) DeleteComment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	if userType == "common_user" {
-		var commentID *reqs.CommentID
+		var comment *entity.Comment
 		projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
 		if err != nil {
 			http.Error(w, "project_id is not int!", http.StatusInternalServerError)
 			return
 		}
-		err = json.NewDecoder(r.Body).Decode(&commentID)
+		err = json.NewDecoder(r.Body).Decode(&comment.CommentID)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		err = wph.ProjectService.DeleteComment(int64(commentID.CommentID), int64(projectID))
+		err = wph.ProjectService.DeleteComment(int64(comment.CommentID), int64(projectID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

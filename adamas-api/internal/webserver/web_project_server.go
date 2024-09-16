@@ -173,6 +173,7 @@ func (wph *WebProjectHandler) EditProject(w http.ResponseWriter, r *http.Request
 			return
 		}
 		result, err := wph.ProjectService.EditProject(req.Title, req.Description, req.Content, int64(projectID), int64(userID))
+		result.ID = int64(projectID)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

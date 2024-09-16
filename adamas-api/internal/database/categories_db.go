@@ -17,7 +17,7 @@ func (pdb *ProjectDB) getCategoriesByRepoID(repositoryID int64) ([]*entity.Categ
 	var categories []*entity.Category
 	for rows.Next() {
 		var category entity.Category
-		if err := rows.Scan(&category); err != nil {
+		if err := rows.Scan(&category.Name); err != nil {
 			return nil, err
 		}
 		categories = append(categories, &category)

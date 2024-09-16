@@ -81,7 +81,7 @@ DELETE  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
 
 {
-    "category_name": "ti"
+    "name": "ti"
 }
 
 

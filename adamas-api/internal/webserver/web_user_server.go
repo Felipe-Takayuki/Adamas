@@ -39,6 +39,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		json.NewEncoder(w).Encode(error)
 		return
 	} else {
+
 		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
 		fmt.Println(result.UserType)
 		_, tokenString, _ = tokenAuth.Encode(claims)

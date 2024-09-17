@@ -29,6 +29,7 @@ func NewInstitution(name, email, password string, cnpj string) *Institution {
 	return &Institution{
 		Name: name,
 		Email: email,
+		UserType: "institution_user",
 		Password: utils.EncriptKey(password),
 		CNPJ: cnpj,
 	}
@@ -40,6 +41,7 @@ func NewUser(name, email, password string) *User {
 	return &User{
 		Name: name,
 		Email: email,
+		UserType: "common_user",
 		Password: utils.EncriptKey(password),
 	}
 }

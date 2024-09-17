@@ -49,6 +49,10 @@ func (edb *EventDB) DeleteEvent(eventID, ownerID int64, email, password string) 
 	if err != nil {
 		return err 
 	}
+	err = deleteSubscribers(edb.db, eventID)
+	if err != nil {
+		return err 
+	}
 	err = deleteOwnerEvent(edb.db , institutionID, eventID)
 	if err != nil {
 		return err
@@ -71,7 +75,13 @@ func deleteRoomsEvent(db *sql.DB, eventID int64) error {
 	}
 	return nil 
 }
-
+func deleteSubscribers(db *sql.DB, eventID int64) error {
+	_, err := db.Exec(queries.DELETE_EVENT_SUBSCRIBERS, eventID)
+	if err != nil {
+		return err 
+	}
+	return nil 
+}
 func  validateInstitution(db *sql.DB,email, password string) (int64, error) {
 	var institutionID int64
 	err := db.QueryRow(queries.VALIDATE_USER, email, utils.EncriptKey(password)).Scan(&institutionID)
@@ -177,7 +187,7 @@ func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int
 	if !isOwner {
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
-	_, err := edb.db.Exec(queries.APPROVE_PARTICIPATION, roomID, projectID)
+	_, err := edb.db.Exec(queries.APPROVE_PARTICIPATION,eventID, roomID, projectID)
 	if err != nil {
 		return nil, err
 	}

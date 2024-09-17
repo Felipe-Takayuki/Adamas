@@ -47,7 +47,7 @@ const GET_EVENTS = `
 	JOIN OWNER_EVENT o ON e.id = o.event_id
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id`
 
-const APPROVE_PARTICIPATION = "INSERT INTO PROJECT_IN_ROOM(room_id, project_id) VALUES (?, ?)"
+const APPROVE_PARTICIPATION = "INSERT INTO PROJECT_IN_ROOM(event_id, room_id, project_id) VALUES (?, ?, ?)"
 const DELETE_PENDING_PARTICIPATION = "DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?"
 
 const UPDATE_NAME_EVENT = `
@@ -87,3 +87,7 @@ const DELETE_EVENT_ROOMS = `
 DELETE FROM ROOM_IN_EVENT
 WHERE event_id = ?
 `
+
+const DELETE_EVENT_SUBSCRIBERS = `
+DELETE FROM SUBSCRIBERS_EVENT 
+WHERE event_id = ?`

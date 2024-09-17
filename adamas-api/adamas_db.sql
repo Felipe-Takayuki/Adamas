@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS adamas_db;
+ DROP DATABASE IF EXISTS adamas_db;
 
 CREATE DATABASE adamas_db;
 
@@ -76,9 +76,10 @@ CREATE TABLE PENDING_PROJECT(
 );
 
 CREATE TABLE PROJECT_IN_ROOM(
+  event_id int NOT NULL REFERENCES EVENT(id),
   room_id int NOT NULL REFERENCES ROOM_IN_EVENT(id),
   project_id int NOT NULL REFERENCES PROJECT(id),
-  PRIMARY KEY(room_id, project_id)
+  PRIMARY KEY(event_id, room_id, project_id)
 );
 
 

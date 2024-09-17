@@ -34,7 +34,7 @@ POST http://localhost:3000/login/institution
 }
 ### 
 POST http://localhost:3000/project
-Authorization: Bearer TOKEN 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MjY1ODM0MzgsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ._Vg11GEu82e_68uXsc8p0ad6uCz5z7rKp52BlqXbpbc 
 
 {
     "title": "Adamas",
@@ -111,7 +111,7 @@ Authorization: Bearer TOKEN
 }
 ###
 POST http://localhost:3000/event
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0ZWNAZXRlYy5jb20iLCJleHAiOjE3MjY1ODM1MzQsImlkIjoxLCJuYW1lIjoiRVRFQyIsInVzZXJfdHlwZSI6Imluc3RpdHV0aW9uX3VzZXIifQ.zacFlI71W3SNekSkNYmLooDw5Vnybw2SkC79gwM8iek
 
 {
     "name": "Amostra de TCC",
@@ -132,7 +132,7 @@ Authorization: Bearer TOKEN
 
 ### 
 POST http://localhost:3000/event/1/room
-Authorization:  Bearer TOKEN
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0ZWNAZXRlYy5jb20iLCJleHAiOjE3MjY1ODM1MzQsImlkIjoxLCJuYW1lIjoiRVRFQyIsInVzZXJfdHlwZSI6Imluc3RpdHV0aW9uX3VzZXIifQ.zacFlI71W3SNekSkNYmLooDw5Vnybw2SkC79gwM8iek
 
 {
     "name": "Sala 5",
@@ -147,7 +147,7 @@ GET http://localhost:3000/event/1/subscribers
 Authorization: Bearer TOKEN
 ###
 POST  http://localhost:3000/event/1/participation
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MjY1ODM2NjQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.RTVQpW-L1ix77tBpwp6ALAcucEdIA3guBpIvSeQdx2o
 
 {
     "project_id": 1

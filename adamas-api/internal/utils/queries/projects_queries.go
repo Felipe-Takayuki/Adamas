@@ -78,7 +78,7 @@ const SET_OWNER = "INSERT INTO OWNERS_PROJECT(project_id, owner_id) VALUES (?, ?
 const SET_CATEGORY = "INSERT INTO CATEGORY_PROJECT(category_id, project_id) VALUES (?,?)"
 
 const GET_CATEGORIES_BY_PROJECT = `
-    SELECT c.name FROM CATEGORY_PROJECT cp
+    SELECT c.name, c.id FROM CATEGORY_PROJECT cp
     JOIN CATEGORY c ON cp.category_id = c.id
 	JOIN PROJECT p ON cp.project_id = p.id
 	WHERE cp.project_id = ?

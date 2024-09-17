@@ -34,7 +34,7 @@ POST http://localhost:3000/login/institution
 }
 ### 
 POST http://localhost:3000/project
-Authorization: Bearer TOKEN
+Authorization: Bearer TOKEN 
 
 {
     "title": "Adamas",
@@ -73,7 +73,7 @@ POST  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
 
 {
-    "category_name": "ti"
+    "name": "ti"
 }
 
 ###

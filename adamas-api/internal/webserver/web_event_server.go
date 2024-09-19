@@ -330,3 +330,42 @@ func (weh * WebEventHandler) EditEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (weh *WebEventHandler) DeleteEvent(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "institution_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+
+		var req *entity.Institution 
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		err = weh.eventService.DeleteEvent(int64(eventID), req.Email, req.Password)
+		if err != nil {
+				error := utils.ErrorMessage{Message: err.Error()}
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(error) 
+				return 
+		} 
+		json.NewEncoder(w).Encode(nil)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}

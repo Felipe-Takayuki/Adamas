@@ -36,16 +36,18 @@ func (edb *EventDB) CreateEvent(name, address, startDate, endDate, description s
 	return event, nil
 }
 
-func (edb *EventDB) DeleteEvent(eventID, ownerID int64, email, password string) error {
-	isOwner := isEventOwner(edb.db, eventID, ownerID)
+func (edb *EventDB) DeleteEvent(eventID int64,  email, password string) error {
+
+	institutionID, err := validateInstitution(edb.db,email, password)
+	if err != nil {
+		fmt.Println("Foi aqui")
+		return err 
+	}
+	isOwner := isEventOwner(edb.db, eventID, institutionID)
 	if !isOwner {
 		return fmt.Errorf("a instituição não possui o evento")
 	}
-	institutionID, err := validateInstitution(edb.db,email, password)
-	if err != nil {
-		return err 
-	}
-	err = deleteRoomsEvent(edb.db, eventID) 
+	err = deleteRoomsEvent(edb.db, institutionID) 
 	if err != nil {
 		return err 
 	}
@@ -57,7 +59,10 @@ func (edb *EventDB) DeleteEvent(eventID, ownerID int64, email, password string) 
 	if err != nil {
 		return err
 	}
-
+	err = deleteProjectsEvent(edb.db, eventID)
+	if err != nil {
+		return err 
+	}
 	return nil
 }
 func deleteOwnerEvent(db *sql.DB, institutionID, eventID int64) error {
@@ -66,6 +71,14 @@ func deleteOwnerEvent(db *sql.DB, institutionID, eventID int64) error {
 		return err
 	}
 	return nil
+}
+
+func deleteProjectsEvent(db *sql.DB, eventID int64) error {
+	_, err := db.Exec(queries.DELETE_EVENT_PROJECTS, eventID)
+	if err != nil {
+		return err 
+	}
+	return nil 
 }
 
 func deleteRoomsEvent(db *sql.DB, eventID int64) error {
@@ -84,7 +97,7 @@ func deleteSubscribers(db *sql.DB, eventID int64) error {
 }
 func  validateInstitution(db *sql.DB,email, password string) (int64, error) {
 	var institutionID int64
-	err := db.QueryRow(queries.VALIDATE_USER, email, utils.EncriptKey(password)).Scan(&institutionID)
+	err := db.QueryRow(queries.VALIDATE_INSITUTION_USER, email, utils.EncriptKey(password)).Scan(&institutionID)
 	if err != nil {
 		return 0, err 
 	}

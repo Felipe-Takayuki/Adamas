@@ -6,7 +6,7 @@ type Category struct {
 }
 
 type Project struct {
-	ID             int64              `json:"id"`
+	ID             int64              `json:"project_id"`
 	Title          string             `json:"title"`
 	Description    string             `json:"description"`
 	Content        string             `json:"content"`

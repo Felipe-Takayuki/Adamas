@@ -45,6 +45,13 @@ func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*enti
 	return subscribers, nil
 }
 
+func (es *EventService) DeleteEvent(eventID int64, email, password string) error {
+	err := es.EventDB.DeleteEvent(eventID,  email, password)
+	if err != nil {
+		return err 
+	}
+	return nil 
+}
 func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
 	events, err := es.EventDB.EventRegistration(eventID, userID)
 	if err != nil {

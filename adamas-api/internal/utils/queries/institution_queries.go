@@ -15,3 +15,10 @@ const DELETE_EVENT_OWNER = `
  DELETE FROM OWNER_EVENT 
  WHERE owner_id = ? 
  AND event_id = ?`
+
+ const VALIDATE_INSITUTION_USER = `
+ SELECT id 
+ FROM INSTITUTION_USER 
+ WHERE email = ? 
+ AND password = ?
+`

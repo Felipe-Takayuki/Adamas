@@ -65,6 +65,13 @@ func (edb *EventDB) DeleteEvent(eventID int64,  email, password string) error {
 	}
 	return nil
 }
+func (edb *EventDB) DeleteRoom(roomID, eventID int64) error {
+	_, err := edb.db.Exec(queries.DELETE_ROOM, roomID, eventID)
+	if err != nil {
+		return err 
+	}
+	return nil
+}
 func deleteOwnerEvent(db *sql.DB, institutionID, eventID int64) error {
 	_, err := db.Exec(queries.DELETE_EVENT_OWNER, institutionID,eventID )
 	if err != nil {

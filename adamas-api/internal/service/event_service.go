@@ -52,6 +52,15 @@ func (es *EventService) DeleteEvent(eventID int64, email, password string) error
 	}
 	return nil 
 }
+
+func (es *EventService) DeleteRoom(roomID, eventID int64) error {
+	err := es.EventDB.DeleteRoom(roomID, eventID)
+	if err != nil {
+		return err 
+	}
+	return nil 
+}
+
 func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
 	events, err := es.EventDB.EventRegistration(eventID, userID)
 	if err != nil {

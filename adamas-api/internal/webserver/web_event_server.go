@@ -180,13 +180,16 @@ func (weh *WebEventHandler) DeleteRoom(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
 			return
 		}
-		roomID, err := strconv.Atoi(chi.URLParam(r, "room_id"))
+		var req *entity.RoomEvent
+		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
 			return
 		}
 
-		err = weh.eventService.DeleteRoom(int64(roomID), int64(eventID))
+		err = weh.eventService.DeleteRoom(int64(req.ID), int64(eventID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

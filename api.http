@@ -122,6 +122,19 @@ Authorization: Bearer TOKEN
 }
 
 ###
+POST http://localhost:3000/event
+Authorization: Bearer TOKEN
+
+{
+    "name": "MORTE",
+    "address" : "MORTE",
+    "start_date": "2020-12-02 10:00:00",
+    "end_date": "2020-12-02 14:00:00",
+    "description": "MORTE"
+}
+
+
+###
 PUT http://localhost:3000/event/1
 Authorization: Bearer TOKEN 
 
@@ -145,6 +158,14 @@ Authorization:  Bearer TOKEN
 {
     "name": "Sala 5",
     "quantity_projects": 10
+}
+
+###
+DELETE http://localhost:3000/event/1/room
+Authorization: Bearer TOKEN
+
+{
+    "room_id": 1
 }
 ###
 POST http://localhost:3000/event/1/subscribe

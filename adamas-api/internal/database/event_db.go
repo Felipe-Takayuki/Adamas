@@ -216,7 +216,7 @@ func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int
 		return nil, err
 	}
 
-	projects, err := edb.getProjectsByRoomID(int(roomID))
+	projects, err := edb.getProjectsByRoomID(roomID)
 	if err != nil {
 		return nil, err
 	}
@@ -247,7 +247,7 @@ func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error
 	return rooms, nil
 }
 
-func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
+func (edb *EventDB) getProjectsByRoomID(roomID int64) ([]*entity.Project, error) {
 	rows, err := edb.db.Query(queries.GET_REPOSITORIES_BY_ROOM_ID, roomID)
 	if err != nil {
 		return nil, err

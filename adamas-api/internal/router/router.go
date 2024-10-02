@@ -78,6 +78,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Put("/event/{event_id}", webEventService.EditEvent)
 		r.Delete("/event/{event_id}", webEventService.DeleteEvent)
 		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
+		r.Delete("/event/{event_id}/room", webEventService.DeleteRoom)
 		r.Post("/event/{event_id}/subscribe", webEventService.EventRegistration)
 		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
 		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)

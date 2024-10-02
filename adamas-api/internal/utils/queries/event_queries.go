@@ -90,7 +90,7 @@ WHERE event_id = ?
 
 const DELETE_ROOM = `
 DELETE FROM ROOM_IN_EVENT 
-WHERE room_id = ? and event_id = ? 
+WHERE id = ? and event_id = ? 
 `
 const DELETE_EVENT_SUBSCRIBERS = `
 DELETE FROM SUBSCRIBERS_EVENT 

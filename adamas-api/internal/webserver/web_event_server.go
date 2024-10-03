@@ -70,14 +70,14 @@ func (weh *WebEventHandler) GetSubscribers(w http.ResponseWriter, r *http.Reques
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		result, err := weh.eventService.GetSubscribersByEventID(int64(eventID), int64(institutionID)) 
+		subscribers, err := weh.eventService.GetSubscribersByEventID(int64(eventID), int64(institutionID)) 
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(subscribers)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -107,14 +107,14 @@ func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) 
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.CreateEvent(req.Name, req.Address, req.StartDate, req.EndDate, req.Description, int64(institutionID))
+		event, err := weh.eventService.CreateEvent(req.Name, req.Address, req.StartDate, req.EndDate, req.Description, int64(institutionID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(event)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -150,14 +150,14 @@ func (weh *WebEventHandler) AddRoomInEvent(w http.ResponseWriter, r *http.Reques
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.AddRoomInEvent(int64(eventID),int64(institutionID), req.Name, req.QuantityProjects)
+		newRoom, err := weh.eventService.AddRoomInEvent(int64(eventID),int64(institutionID), req.Name, req.QuantityProjects)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(newRoom)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -223,14 +223,14 @@ func (weh *WebEventHandler) EventRegistration(w http.ResponseWriter, r *http.Req
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		result, err := weh.eventService.EventRegistration(int64(eventID), int64(userID))
+		newRegister, err := weh.eventService.EventRegistration(int64(eventID), int64(userID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(newRegister)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -267,14 +267,14 @@ func (weh *WebEventHandler) EventRequestParticipation(w http.ResponseWriter, r *
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.EventRequestParticipation(int64(eventID), int64(userID), req.ID)
+		newRequestParty, err := weh.eventService.EventRequestParticipation(int64(eventID), int64(userID), req.ID)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return 
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(newRequestParty)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -310,14 +310,14 @@ func (weh *WebEventHandler) ApproveParticipation (w http.ResponseWriter, r *http
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		result, err := weh.eventService.ApproveParticipation(req.ProjectID,int64(userID), int64(eventID), req.RoomID) 
+		projectApproved, err := weh.eventService.ApproveParticipation(req.ProjectID,int64(userID), int64(eventID), req.RoomID) 
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return 
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(projectApproved)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -353,14 +353,14 @@ func (weh * WebEventHandler) EditEvent(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := weh.eventService.EditEvent(int64(eventID),int64(ownerID), req.Name, req.Address, req.StartDate, req.EndDate, req.Description)
+		eventEdited, err := weh.eventService.EditEvent(int64(eventID),int64(ownerID), req.Name, req.Address, req.StartDate, req.EndDate, req.Description)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return 
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(eventEdited) 
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)

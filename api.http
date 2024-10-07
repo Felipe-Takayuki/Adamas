@@ -191,6 +191,9 @@ Authorization: Bearer TOKEN
 }
 ### 
 GET http://localhost:3000/project/search
+
+###
+GET http://localhost:3000/project/1
 ### 
 GET  http://localhost:3000/project/search/Adamas
 ###

@@ -42,6 +42,24 @@ func (wph *WebProjectHandler) GetProjectsByName(w http.ResponseWriter, r *http.R
 	json.NewEncoder(w).Encode(projects)
 
 }
+
+func (wph *WebProjectHandler) GetProjectByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	projectID, err := strconv.Atoi(chi.URLParam(r, "project_id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	project, err := wph.ProjectService.GetProjectByID(int64(projectID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(project)
+
+}
 func (wph *WebProjectHandler) GetProjects(w http.ResponseWriter, r *http.Request) {
 	projects, err := wph.ProjectService.GetProjects()
 	w.Header().Set("Content-Type", "application/json")

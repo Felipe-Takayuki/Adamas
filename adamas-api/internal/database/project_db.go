@@ -19,6 +19,14 @@ func NewProjectDB(db *sql.DB) *ProjectDB {
 	}
 }
 
+func (pdb *ProjectDB) GetProjectByID(projectID int64) (*entity.Project, error) {
+	project, err := pdb.getProjectByID(projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil 
+}
+
 func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error) {
 	rows, err := pdb.db.Query(queries.GET_PROJECT_BY_NAME, title)
 	if err != nil {
@@ -234,7 +242,12 @@ func (pdb *ProjectDB) getProjectByID(projectID int64) (*entity.Project, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	comments, err := pdb.getCommentsByRepoID(projectID)
+	if err != nil {
+		return nil, err
+	}
+	project.Owners, err = pdb.getOwnersByProjectID(project.ID)
 	if err != nil {
 		return nil, err
 	}

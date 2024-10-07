@@ -21,6 +21,13 @@ func (rs *ProjectService) GetProjectsByName(name string) ([]*entity.Project, err
 	}
 	return repositories, nil
 }
+func (rs *ProjectService) GetProjectByID(projectID int64) (*entity.Project, error) {
+	project, err := rs.ProjectDB.GetProjectByID(projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil
+}
 func (rs *ProjectService) GetProjects()([]*entity.Project, error) {
 	repositories, err := rs.ProjectDB.GetProjects()
 	if err != nil {

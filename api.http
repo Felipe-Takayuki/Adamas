@@ -161,6 +161,16 @@ Authorization:  Bearer TOKEN
 }
 
 ###
+PUT http://localhost:3000/event/1/room 
+Authorization: Bearer TOKEN 
+
+{
+    "room_id": 1,
+    "name": "Sala 6",
+    "quantity_projects": 200
+}
+
+###
 DELETE http://localhost:3000/event/1/room
 Authorization: Bearer TOKEN
 

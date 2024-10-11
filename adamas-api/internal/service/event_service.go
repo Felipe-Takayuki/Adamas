@@ -100,3 +100,11 @@ func (es *EventService) EditEvent(eventID, ownerID int64, name, address, startDa
 	}
 	return event, nil
 }
+
+func (es *EventService) EditRoom(roomID, eventID, quantityProjects, ownerID int64, roomName string) (*entity.RoomEvent, error) {
+	room, err := es.EventDB.EditRoom(roomID, eventID, quantityProjects, ownerID, roomName) 
+	if err != nil{
+		return nil, err 
+	}
+	return room, nil 
+}

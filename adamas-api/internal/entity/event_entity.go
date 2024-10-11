@@ -1,16 +1,16 @@
 package entity
 
 type Event struct {
-	ID              int64              `json:"id"`
-	Name            string             `json:"name"`
-	Address         string             `json:"address"`
-	StartDate       string             `json:"start_date"`
-	EndDate         string             `json:"end_date"`
-	Description     string             `json:"description"`
-	Subscribers     []*User `json:"subscribers"`
-	InstitutionID   int64              `json:"institution_id"`
-	InstitutionName string             `json:"institution_name"`
-	Rooms           []*RoomEvent       `json:"rooms"`
+	ID              int64        `json:"id"`
+	Name            string       `json:"name"`
+	Address         string       `json:"address"`
+	StartDate       string       `json:"start_date"`
+	EndDate         string       `json:"end_date"`
+	Description     string       `json:"description"`
+	Subscribers     []*User      `json:"subscribers"`
+	InstitutionID   int64        `json:"institution_id"`
+	InstitutionName string       `json:"institution_name"`
+	Rooms           []*RoomEvent `json:"rooms"`
 }
 
 func NewEvent(name, address, startDate, endDate, description string, institutionID int64) *Event {
@@ -25,9 +25,8 @@ func NewEvent(name, address, startDate, endDate, description string, institution
 }
 
 type RoomEvent struct {
-	ID               int64        `json:"room_id"`
+	ID               int64      `json:"room_id"`
 	Name             string     `json:"name"`
 	QuantityProjects int        `json:"quantity_projects"`
 	Projects         []*Project `json:"projects"`
 }
-

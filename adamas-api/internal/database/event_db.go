@@ -40,7 +40,6 @@ func (edb *EventDB) DeleteEvent(eventID int64,  email, password string) error {
 
 	institutionID, err := validateInstitution(edb.db,email, password)
 	if err != nil {
-		fmt.Println("Foi aqui")
 		return err 
 	}
 	isOwner := isEventOwner(edb.db, eventID, institutionID)
@@ -65,6 +64,30 @@ func (edb *EventDB) DeleteEvent(eventID int64,  email, password string) error {
 	}
 	return nil
 }
+
+func (edb *EventDB) EditRoom(roomID, eventID, quantityProjects, ownerID int64, roomName string) (*entity.RoomEvent, error) {
+	if !isEventOwner(edb.db,eventID, ownerID) {
+		return nil, fmt.Errorf("instituição não possui o evento")
+	}
+
+	if roomName != "" {
+		_, err := edb.db.Exec(queries.UPDATE_QUANTITY_PROJECTS_ROOM)
+		if err != nil {
+			return nil, err 
+		}
+	}
+
+	if quantityProjects != 0 {
+		_, err := edb.db.Exec(queries.UPDATE_QUANTITY_PROJECTS_ROOM)
+		if err != nil {
+			return nil, err 
+		}
+	}
+	room := &entity.RoomEvent{Name: roomName, QuantityProjects: int(quantityProjects)}
+	return room, nil 
+	
+}
+
 func (edb *EventDB) DeleteRoom(roomID, eventID int64) error {
 	_, err := edb.db.Exec(queries.DELETE_ROOM, roomID, eventID)
 	if err != nil {

@@ -79,6 +79,19 @@ SET description = ?
 WHERE id = ?
 `
 
+const UPDATE_ROOM_NAME  = `
+UPDATE ROOM_IN_EVENT
+SET name = ?
+WHERE id = ?
+AND event_id =?
+`
+const UPDATE_QUANTITY_PROJECTS_ROOM  = `
+UPDATE ROOM_IN_EVENT
+SET name = ?
+WHERE id = ?
+AND event_id =?
+`
+
 const DELETE_PROJECTS_ROOM = `
 DELETE FROM PROJECT_IN_ROOM
 WHERE room_id = ?`

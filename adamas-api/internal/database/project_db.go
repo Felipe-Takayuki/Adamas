@@ -53,6 +53,36 @@ func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error)
 
 	return projects, nil
 }
+
+func (pdb *ProjectDB) GetProjectsByCategorie(categorieID int64) ([]*entity.Project, error) {
+	rows, err := pdb.db.Query(queries.GET_PROJECTS_BY_CATEGORIES, categorieID) 
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var projects []*entity.Project
+
+	for rows.Next() {
+		var project entity.Project
+		err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName)
+		if err != nil {
+			return nil, err
+		}
+		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Comments, err = pdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		projects = append(projects, &project)
+	}
+
+	return projects, nil
+}
+
 func (pdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 	rows, err := pdb.db.Query(queries.GET_PROJECTS)
 	if err != nil {

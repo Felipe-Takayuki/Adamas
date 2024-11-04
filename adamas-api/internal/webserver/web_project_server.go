@@ -60,6 +60,25 @@ func (wph *WebProjectHandler) GetProjectByID(w http.ResponseWriter, r *http.Requ
 	json.NewEncoder(w).Encode(project)
 
 }
+
+func (wph *WebProjectHandler) GetProjectsByCategorie(w http.ResponseWriter, r *http.Request) {
+	categorie := r.URL.Query().Get("category")
+	categorieID, err := strconv.Atoi(categorie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	projects, err := wph.ProjectService.GetProjectsByCategorie(int64(categorieID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+
+	}
+	json.NewEncoder(w).Encode(projects)
+}
+
 func (wph *WebProjectHandler) GetProjects(w http.ResponseWriter, r *http.Request) {
 	projects, err := wph.ProjectService.GetProjects()
 	w.Header().Set("Content-Type", "application/json")

@@ -59,6 +59,7 @@ func Router(db *sql.DB) http.Handler {
 	c.Get("/project/search/{project_title}", webProjectService.GetProjectsByName)
 	c.Get("/project/{project_id}", webProjectService.GetProjectByID)
 	c.Get("/project/search", webProjectService.GetProjects)
+	c.Get("/project/search", webProjectService.GetProjectsByCategorie)
 
 	c.Get("/event/search/{event}", webEventService.GetEventByName)
 	c.Get("/event/search", webEventService.GetEvents)

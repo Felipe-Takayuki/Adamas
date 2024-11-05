@@ -24,6 +24,7 @@ func NewProjectHandler(projectService *service.ProjectService) *WebProjectHandle
 }
 
 func (wph *WebProjectHandler) GetProjectsByName(w http.ResponseWriter, r *http.Request) {
+
 	projectName := chi.URLParam(r, "project_title")
 	w.Header().Set("Content-Type", "application/json")
 	if projectName == "" {
@@ -32,16 +33,41 @@ func (wph *WebProjectHandler) GetProjectsByName(w http.ResponseWriter, r *http.R
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	projects, err := wph.ProjectService.GetProjectsByName(projectName)
+
+	categoriesParam := r.URL.Query().Get("categories")
+	if categoriesParam == "" {
+		projects, err := wph.ProjectService.GetProjectsByName(projectName)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(projects)
+		return 
+	}
+	categories := strings.Split(categoriesParam, ",")
+	if len(categories) > 3 {
+		categories = categories[:3]
+	}
+
+	var categoryIDs []int64
+	for _, c := range categories {
+		id, err := strconv.Atoi(strings.TrimSpace(c))
+		if err != nil {
+			http.Error(w, "Categoria inválida: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+		categoryIDs = append(categoryIDs, int64(id))
+	}
+	projects, err := wph.ProjectService.GetProjectsByNameWithCategories(projectName, categoryIDs)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return
-
 	}
 	json.NewEncoder(w).Encode(projects)
-
 }
 
 func (wph *WebProjectHandler) GetProjectByID(w http.ResponseWriter, r *http.Request) {

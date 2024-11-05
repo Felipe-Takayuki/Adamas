@@ -15,11 +15,18 @@ func NewProjectService(repoDB database.ProjectDB) *ProjectService {
 	}
 }
 func (ps *ProjectService) GetProjectsByName(name string) ([]*entity.Project, error) {
-	repositories, err := ps.ProjectDB.GetProjectsByName(name)
+	projects, err := ps.ProjectDB.GetProjectsByName(name)
 	if err != nil {
 		return nil, err
 	}
-	return repositories, nil
+	return projects, nil
+}
+func (ps *ProjectService) GetProjectsByNameWithCategories(title string, categories []int64) ([]*entity.Project, error) {
+	projects, err := ps.ProjectDB.GetProjectsByNameWithCategories(title, categories)
+	if err != nil {
+		return nil, err 
+	}
+	return projects, nil 
 }
 func (ps *ProjectService) GetProjectByID(projectID int64) (*entity.Project, error) {
 	project, err := ps.ProjectDB.GetProjectByID(projectID)

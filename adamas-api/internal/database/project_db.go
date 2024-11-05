@@ -55,6 +55,44 @@ func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error)
 	return projects, nil
 }
 
+func (pdb *ProjectDB) GetProjectsByNameWithCategories(title string, categories []int64) ([]*entity.Project, error) {
+	if len(categories) == 0 {
+		return []*entity.Project{}, nil
+	}
+	placeholders := make([]string, len(categories))
+	args := make([]interface{}, len(categories))
+	for i, id := range categories {
+		placeholders[i] = "?"     
+		args[i] = id              
+	}
+	query := fmt.Sprintf(queries.GET_PROJECTS_BY_NAME_CATEGORY, strings.Join(placeholders, ","), title)
+	rows, err := pdb.db.Query(query, append(args, title)...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var projects []*entity.Project
+
+	for rows.Next() {
+		var project entity.Project
+		err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName)
+		if err != nil {
+			return nil, err
+		}
+		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Comments, err = pdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		projects = append(projects, &project)
+	}
+	return projects, nil 
+}
+
 func (pdb *ProjectDB) GetProjectsByCategorie(categories []int64) ([]*entity.Project, error) {
 	if len(categories) == 0 {
 		return []*entity.Project{}, nil
@@ -62,8 +100,8 @@ func (pdb *ProjectDB) GetProjectsByCategorie(categories []int64) ([]*entity.Proj
 	placeholders := make([]string, len(categories))
 	args := make([]interface{}, len(categories))
 	for i, id := range categories {
-		placeholders[i] = "?"      // Adiciona um placeholder "?" para cada ID
-		args[i] = id               // Adiciona o ID atual à lista de argumentos
+		placeholders[i] = "?"     
+		args[i] = id              
 	}
 	query := fmt.Sprintf(queries.GET_PROJECTS_BY_CATEGORIES, strings.Join(placeholders, ","))
 	rows, err := pdb.db.Query(query, args...)

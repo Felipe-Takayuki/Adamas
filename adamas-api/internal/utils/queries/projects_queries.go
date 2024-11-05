@@ -5,6 +5,14 @@ const GET_PROJECT_BY_NAME = `
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON u.id = p.first_owner_id WHERE p.title = ?`
 
+const GET_PROJECTS_BY_NAME_CATEGORY = `
+ SELECT DISTINCT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+ JOIN OWNERS_PROJECT o ON p.id = o.project_id 
+ JOIN COMMON_USER u ON u.id = p.first_owner_id 
+ JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
+ WHERE cp.category_id IN (%s)
+ AND WHERE p.title = %s
+`
 const GET_PROJECT_BY_ID = `
  SELECT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
@@ -12,7 +20,7 @@ const GET_PROJECT_BY_ID = `
  `
 
 const GET_PROJECTS_BY_CATEGORIES = `
- SELECT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p
+ SELECT DISTINCT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p
  JOIN OWNERS_PROJECT o ON p.id = o.project_id
  JOIN COMMON_USER u ON u.id = p.first_owner_id
  JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id

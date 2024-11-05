@@ -29,8 +29,8 @@ func (ps *ProjectService) GetProjectByID(projectID int64) (*entity.Project, erro
 	return project, nil
 }
 
-func (ps *ProjectService) GetProjectsByCategorie(categorieID int64) ([]*entity.Project, error) {
-	projects, err := ps.ProjectDB.GetProjectsByCategorie(categorieID)
+func (ps *ProjectService) GetProjectsByCategories(categories  []int64) ([]*entity.Project, error) {
+	projects, err := ps.ProjectDB.GetProjectsByCategorie(categories)
 	if err != nil {
 		return nil, err    
 	}

@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
@@ -22,9 +23,9 @@ func NewProjectDB(db *sql.DB) *ProjectDB {
 func (pdb *ProjectDB) GetProjectByID(projectID int64) (*entity.Project, error) {
 	project, err := pdb.getProjectByID(projectID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	return project, nil 
+	return project, nil
 }
 
 func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error) {
@@ -54,8 +55,18 @@ func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error)
 	return projects, nil
 }
 
-func (pdb *ProjectDB) GetProjectsByCategorie(categorieID int64) ([]*entity.Project, error) {
-	rows, err := pdb.db.Query(queries.GET_PROJECTS_BY_CATEGORIES, categorieID) 
+func (pdb *ProjectDB) GetProjectsByCategorie(categories []int64) ([]*entity.Project, error) {
+	if len(categories) == 0 {
+		return []*entity.Project{}, nil
+	}
+	placeholders := make([]string, len(categories))
+	args := make([]interface{}, len(categories))
+	for i, id := range categories {
+		placeholders[i] = "?"      // Adiciona um placeholder "?" para cada ID
+		args[i] = id               // Adiciona o ID atual à lista de argumentos
+	}
+	query := fmt.Sprintf(queries.GET_PROJECTS_BY_CATEGORIES, strings.Join(placeholders, ","))
+	rows, err := pdb.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,13 +118,11 @@ func (pdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+
 		projects = append(projects, &project)
 	}
 	return projects, nil
 }
-
-
 
 func (pdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error) {
 	rows, err := pdb.db.Query(queries.GET_PROJECTS_BY_USER, userID)

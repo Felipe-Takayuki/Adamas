@@ -16,7 +16,7 @@ const GET_PROJECTS_BY_CATEGORIES = `
  JOIN OWNERS_PROJECT o ON p.id = o.project_id
  JOIN COMMON_USER u ON u.id = p.first_owner_id
  JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
- WHERE cp.category_id = ?
+ WHERE cp.category_id IN (%s)
 `
 
 const GET_PROJECTS = `

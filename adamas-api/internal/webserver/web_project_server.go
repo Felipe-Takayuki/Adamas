@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
@@ -61,38 +62,49 @@ func (wph *WebProjectHandler) GetProjectByID(w http.ResponseWriter, r *http.Requ
 
 }
 
-func (wph *WebProjectHandler) GetProjectsByCategorie(w http.ResponseWriter, r *http.Request) {
-	categorie := r.URL.Query().Get("category")
-	categorieID, err := strconv.Atoi(categorie)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	projects, err := wph.ProjectService.GetProjectsByCategorie(int64(categorieID))
-	if err != nil {
-		error := utils.ErrorMessage{Message: err.Error()}
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error)
-		return
-
-	}
-	json.NewEncoder(w).Encode(projects)
-}
-
 func (wph *WebProjectHandler) GetProjects(w http.ResponseWriter, r *http.Request) {
-	projects, err := wph.ProjectService.GetProjects()
-	w.Header().Set("Content-Type", "application/json")
+	categoriesParam := r.URL.Query().Get("categories")
+	if categoriesParam == "" {
+		projects, err := wph.ProjectService.GetProjects()
+		w.Header().Set("Content-Type", "application/json")
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+
+		}
+		json.NewEncoder(w).Encode(projects)
+		return
+	}
+	categories := strings.Split(categoriesParam, ",")
+	if len(categories) > 3 {
+		categories = categories[:3]
+	}
+
+	var categoryIDs []int64
+	for _, c := range categories {
+		id, err := strconv.Atoi(strings.TrimSpace(c))
+		if err != nil {
+			http.Error(w, "Categoria inválida: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+		categoryIDs = append(categoryIDs, int64(id))
+	}
+
+	projects, err := wph.ProjectService.GetProjectsByCategories(categoryIDs)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(error)
 		return
-
 	}
+
 	json.NewEncoder(w).Encode(projects)
+
 }
 func (wph *WebProjectHandler) GetProjectsByUser(w http.ResponseWriter, r *http.Request) {
-	userID,err := strconv.Atoi(chi.URLParam(r, "user_id"))
+	userID, err := strconv.Atoi(chi.URLParam(r, "user_id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -178,7 +190,7 @@ func (wph *WebProjectHandler) DeleteProject(w http.ResponseWriter, r *http.Reque
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"deleted_project":projectID})
+		json.NewEncoder(w).Encode(map[string]interface{}{"deleted_project": projectID})
 	}
 }
 
@@ -306,7 +318,6 @@ func (wph *WebProjectHandler) SetCategory(w http.ResponseWriter, r *http.Request
 	}
 }
 
-
 func (wph *WebProjectHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
@@ -315,7 +326,7 @@ func (wph *WebProjectHandler) DeleteCategory(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
 		return
 	}
-	if userType == "common_user"{
+	if userType == "common_user" {
 		var reqs *entity.Category
 		err := json.NewDecoder(r.Body).Decode(&reqs)
 		if err != nil {
@@ -334,7 +345,7 @@ func (wph *WebProjectHandler) DeleteCategory(w http.ResponseWriter, r *http.Requ
 			http.Error(w, "id is not int!", http.StatusInternalServerError)
 			return
 		}
-		err = wph.ProjectService.DeleteCategory(int64(projectID),int64(ownerID), reqs.Name)
+		err = wph.ProjectService.DeleteCategory(int64(projectID), int64(ownerID), reqs.Name)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

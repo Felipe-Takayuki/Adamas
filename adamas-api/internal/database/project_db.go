@@ -29,7 +29,7 @@ func (pdb *ProjectDB) GetProjectByID(projectID int64) (*entity.Project, error) {
 }
 
 func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error) {
-	rows, err := pdb.db.Query(queries.GET_PROJECT_BY_NAME, title)
+	rows, err := pdb.db.Query(queries.GET_PROJECT_BY_NAME, title+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,8 @@ func (pdb *ProjectDB) GetProjectsByNameWithCategories(title string, categories [
 		args[i] = id              
 	}
 	query := fmt.Sprintf(queries.GET_PROJECTS_BY_NAME_CATEGORY, strings.Join(placeholders, ","))
-	args = append(args, title)
+	fmt.Println(title)
+	args = append(args, title+"%")
 	rows, err := pdb.db.Query(query, args...)
 	if err != nil {
 		return nil, err

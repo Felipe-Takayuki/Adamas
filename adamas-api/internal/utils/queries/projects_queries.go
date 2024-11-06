@@ -11,7 +11,7 @@ const GET_PROJECTS_BY_NAME_CATEGORY = `
  JOIN COMMON_USER u ON u.id = p.first_owner_id 
  JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
  WHERE cp.category_id IN (%s)
- AND WHERE p.title = %s
+ AND p.title = ?
 `
 const GET_PROJECT_BY_ID = `
  SELECT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p

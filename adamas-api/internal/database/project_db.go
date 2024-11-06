@@ -65,8 +65,9 @@ func (pdb *ProjectDB) GetProjectsByNameWithCategories(title string, categories [
 		placeholders[i] = "?"     
 		args[i] = id              
 	}
-	query := fmt.Sprintf(queries.GET_PROJECTS_BY_NAME_CATEGORY, strings.Join(placeholders, ","), title)
-	rows, err := pdb.db.Query(query, append(args, title)...)
+	query := fmt.Sprintf(queries.GET_PROJECTS_BY_NAME_CATEGORY, strings.Join(placeholders, ","))
+	args = append(args, title)
+	rows, err := pdb.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}

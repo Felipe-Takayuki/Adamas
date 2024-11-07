@@ -42,7 +42,7 @@ const CREATE_PROJECT = "INSERT INTO PROJECT(title, description,content, first_ow
 
 const LIKE_PROJECT = "INSERT INTO LIKE_PROJECT(project_id, user_id) VALUES (?, ?)"
 
-const GET_LIKES = "SELECT user_id LIKE_PROJECT WHERE project_id = ?"
+const GET_LIKES = "SELECT user_id FROM LIKE_PROJECT WHERE project_id = ?"
 const UPDATE_CONTENT_PROJECT = `
  UPDATE PROJECT 
  SET content = ? 

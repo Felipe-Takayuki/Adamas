@@ -210,21 +210,27 @@ func (pdb *ProjectDB) LikeProject(projectID, userID int64) ([]*entity.Like, erro
 func getLikes(db *sql.DB, project_id int64) ([]*entity.Like, error) {
 	rows, err := db.Query(queries.GET_LIKES, project_id)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	defer rows.Close() 
+	defer rows.Close()
 
 	var likes []*entity.Like
 
 	for rows.Next() {
 		var like entity.Like
 		if err := rows.Scan(&like.UserID); err != nil {
-			return nil, err 
+			return nil, err
 		}
 		likes = append(likes, &like)
 	}
-	return likes, nil 
-} 
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return likes, nil
+}
+
 func (pdb *ProjectDB) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
 	project := entity.NewProject(title, description, content, ownerID)
 	result, err := pdb.db.Exec(queries.CREATE_PROJECT, &project.Title, &project.Description, &project.Content, &ownerID)

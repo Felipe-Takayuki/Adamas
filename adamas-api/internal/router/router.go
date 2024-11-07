@@ -67,6 +67,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 		r.Post("/project", webProjectService.CreateProject)
+		r.Post("/project/like", webProjectService.LikeProject)
 		r.Put("/project/{project_id}", webProjectService.EditProject)
 		r.Delete("/project/{project_id}", webProjectService.DeleteProject)
 		r.Post("/project/{project_id}/category", webProjectService.SetCategory)

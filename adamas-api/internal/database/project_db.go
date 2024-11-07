@@ -49,6 +49,10 @@ func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error)
 		if err != nil {
 			return nil, err
 		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 
@@ -90,6 +94,10 @@ func (pdb *ProjectDB) GetProjectsByNameWithCategories(title string, categories [
 		if err != nil {
 			return nil, err
 		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 	return projects, nil 
@@ -128,6 +136,10 @@ func (pdb *ProjectDB) GetProjectsByCategorie(categories []int64) ([]*entity.Proj
 		if err != nil {
 			return nil, err
 		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 
@@ -158,7 +170,10 @@ func (pdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 		if err != nil {
 			return nil, err
 		}
-
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 	return projects, nil
@@ -187,6 +202,10 @@ func (pdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error)
 		project.Owners, err = pdb.getOwnersByProjectID(project.ID)
 		if err != nil {
 			return nil, err
+		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
 		}
 		projects = append(projects, &project)
 	}

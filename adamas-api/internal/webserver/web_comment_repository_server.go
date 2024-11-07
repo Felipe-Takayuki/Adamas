@@ -46,7 +46,7 @@ func (wph *WebProjectHandler) SetComment(w http.ResponseWriter, r *http.Request)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"Comment": reqs.Comment})
+		json.NewEncoder(w).Encode(reqs)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)

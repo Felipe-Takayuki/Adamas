@@ -398,6 +398,10 @@ func (pdb *ProjectDB) getProjectByID(projectID int64) (*entity.Project, error) {
 	if err != nil {
 		return nil, err
 	}
+	project.Likes, err = getLikes(pdb.db, project.ID)
+	if err != nil {
+		return nil, err 
+	}
 	project.Comments = comments
 	project.Categories = categories
 

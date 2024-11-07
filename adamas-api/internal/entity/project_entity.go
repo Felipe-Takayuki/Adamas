@@ -19,9 +19,9 @@ type Project struct {
 }
 
 type Comment struct {
-	CommentID int64  `json:"comment_id"`
-	UserID    int64  `json:"user_id"`
-	UserName  string `json:"user_name"`
+	CommentID int64  `json:"comment_id,omitempty"`
+	UserID    int64  `json:"user_id,omitempty"`
+	UserName  string `json:"user_name,omitempty"`
 	Comment   string `json:"comment"`
 }
 

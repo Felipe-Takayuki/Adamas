@@ -7,22 +7,20 @@ import (
 type User struct {
 	ID          int64  `json:"id"`
 	Name        string `json:"name"`
-	NickName    string `json:"nickname"`
-	Description string `json:"description"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
+	NickName    string `json:"nickname,omitempty"`
+	Description string `json:"description,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Password    string `json:"password,omitempty"`
 	UserType    string `json:"user_type"`
 }
 type Institution struct {
 	ID          int64  `json:"id"`
 	Name        string `json:"name"`
-	NickName    string `json:"nickname"`
-	Description string `json:"description"`
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	UserType    string `json:"user_type"`
-	CNPJ   string   `json:"cnpj"`
-	Events []*Event `json:"events"`
+	CNPJ   string   `json:"cnpj,omitempty"`
+	Events []*Event `json:"events,omitempty"`
 }
 
 func NewInstitution(name, email, password string, cnpj string) *Institution {

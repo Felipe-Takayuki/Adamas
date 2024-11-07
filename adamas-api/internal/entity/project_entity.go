@@ -12,10 +12,10 @@ type Project struct {
 	Content        string      `json:"content"`
 	FirstOwnerID   int         `json:"owner_id"`
 	FirstOwnerName string      `json:"owner_name"`
-	Owners         []*User     `json:"owners"`
-	Categories     []*Category `json:"categories"`
-	Comments       []*Comment  `json:"comments"`
-	Likes          []*Like     `json:"likes"`
+	Owners         []*User     `json:"owners,omitempty"`
+	Categories     []*Category `json:"categories,omitempty"`
+	Comments       []*Comment  `json:"comments,omitempty"`
+	Likes          []*Like     `json:"likes,omitempty"`
 }
 
 type Comment struct {
@@ -27,7 +27,7 @@ type Comment struct {
 
 type Like struct {
 	ProjectID int64 `json:"project_id,omitempty"`
-	UserID    *int64 `json:"user_id,omitempty"`
+	UserID    *int64 `json:"user_id"`
 }
 
 func NewProject(title, description, content string, ownerID int) *Project {

@@ -84,6 +84,14 @@ Authorization: Bearer TOKEN
 
 }
 ###
+DELETE  http://localhost:3000/project/like
+Authorization: Bearer TOKEN
+
+{
+    "project_id":1
+
+}
+###
 DELETE  http://localhost:3000/project/1/category
 Authorization: Bearer TOKEN
 
@@ -94,7 +102,7 @@ Authorization: Bearer TOKEN
 
 ###
 POST http://localhost:3000/project/1/comment
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzA5ODU4MTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ._d_Kw24KD3Dt8KPlTlCDFVpE4dVqNZHecABvv2Sf1a8
 
 {
     "comment": "muito brabo"

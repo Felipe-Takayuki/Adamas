@@ -26,6 +26,7 @@ type Comment struct {
 }
 
 type Like struct {
+	ProjectID int64 `json:"project_id,omitempty"`
 	UserID    int64 `json:"user_id"`
 }
 

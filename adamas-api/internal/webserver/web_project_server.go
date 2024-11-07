@@ -155,8 +155,24 @@ func (wph *WebProjectHandler) LikeProject(w http.ResponseWriter, r *http.Request
 		http.Error(w, "id is not int!", http.StatusInternalServerError)
 		return
 	}
-	//falta completar
+	var req *entity.Like
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	likes, err := wph.ProjectService.LikeProject(req.ProjectID, int64(userID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(likes)
 }
+
 func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")

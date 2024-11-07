@@ -147,6 +147,16 @@ func (wph *WebProjectHandler) GetProjectsByUser(w http.ResponseWriter, r *http.R
 	json.NewEncoder(w).Encode(projects)
 }
 
+func (wph *WebProjectHandler) LikeProject(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userID, ok := claims["id"].(float64)
+	if !ok {
+		http.Error(w, "id is not int!", http.StatusInternalServerError)
+		return
+	}
+	//falta completar
+}
 func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")

@@ -40,6 +40,9 @@ const GET_PROJECTS_BY_USER = `
 `
 const CREATE_PROJECT = "INSERT INTO PROJECT(title, description,content, first_owner_id) VALUES (?,?,?,?)"
 
+const LIKE_PROJECT = "INSERT INTO LIKE_PROJECT(project_id, user_id) VALUES (?, ?)"
+
+const GET_LIKES = "SELECT user_id LIKE_PROJECT WHERE project_id = ?"
 const UPDATE_CONTENT_PROJECT = `
  UPDATE PROJECT 
  SET content = ? 

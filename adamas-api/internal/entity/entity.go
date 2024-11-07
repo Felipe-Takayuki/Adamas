@@ -11,34 +11,33 @@ type User struct {
 	Description string `json:"description,omitempty"`
 	Email       string `json:"email,omitempty"`
 	Password    string `json:"password,omitempty"`
-	UserType    string `json:"user_type"`
+	UserType    string `json:"user_type,omitempty"`
 }
 type Institution struct {
-	ID          int64  `json:"id"`
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	UserType    string `json:"user_type"`
-	CNPJ   string   `json:"cnpj,omitempty"`
-	Events []*Event `json:"events,omitempty"`
+	ID       int64    `json:"id"`
+	Name     string   `json:"name"`
+	Email    string   `json:"email,omitempty"`
+	Password string   `json:"password,omitempty"`
+	UserType string   `json:"user_type,omitempty"`
+	CNPJ     string   `json:"cnpj,omitempty"`
+	Events   []*Event `json:"events,omitempty"`
 }
 
 func NewInstitution(name, email, password string, cnpj string) *Institution {
 	return &Institution{
-		Name: name,
-		Email: email,
+		Name:     name,
+		Email:    email,
 		UserType: "institution_user",
 		Password: utils.EncriptKey(password),
-		CNPJ: cnpj,
+		CNPJ:     cnpj,
 	}
 
 }
 
-
 func NewUser(name, email, password string) *User {
 	return &User{
-		Name: name,
-		Email: email,
+		Name:     name,
+		Email:    email,
 		UserType: "common_user",
 		Password: utils.EncriptKey(password),
 	}

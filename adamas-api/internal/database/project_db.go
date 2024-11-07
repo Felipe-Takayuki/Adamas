@@ -205,6 +205,17 @@ func (pdb *ProjectDB) LikeProject(projectID, userID int64) ([]*entity.Like, erro
 	return likes, nil 
 }
 
+func (pdb *ProjectDB) RemoveLikeProject(projectID, userID int64) ([]*entity.Like, error) {
+	_, err := pdb.db.Exec(queries.REMOVE_LIKE, projectID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	likes, err := getLikes(pdb.db, projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return likes,nil 
+}
 
 
 func getLikes(db *sql.DB, project_id int64) ([]*entity.Like, error) {

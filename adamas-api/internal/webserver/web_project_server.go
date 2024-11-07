@@ -44,7 +44,7 @@ func (wph *WebProjectHandler) GetProjectsByName(w http.ResponseWriter, r *http.R
 			return
 		}
 		json.NewEncoder(w).Encode(projects)
-		return 
+		return
 	}
 	categories := strings.Split(categoriesParam, ",")
 	if len(categories) > 3 {
@@ -150,27 +150,77 @@ func (wph *WebProjectHandler) GetProjectsByUser(w http.ResponseWriter, r *http.R
 func (wph *WebProjectHandler) LikeProject(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
-	userID, ok := claims["id"].(float64)
+	userType, ok := claims["user_type"].(string)
 	if !ok {
-		http.Error(w, "id is not int!", http.StatusInternalServerError)
+		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
 		return
 	}
-	var req *entity.Like
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		error := utils.ErrorMessage{Message: err.Error()}
+	if userType == "common_user" {
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var req *entity.Like
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		likes, err := wph.ProjectService.LikeProject(req.ProjectID, int64(userID))
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(likes)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	likes, err := wph.ProjectService.LikeProject(req.ProjectID, int64(userID))
-	if err != nil {
-		error := utils.ErrorMessage{Message: err.Error()}
-		w.WriteHeader(http.StatusInternalServerError)
+}
+
+func (wph *WebProjectHandler) RemoveLikeProject(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "common_user" {
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var req *entity.Like
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		likes, err := wph.ProjectService.RemoveLikeProject(req.ProjectID, int64(userID))
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(likes)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	json.NewEncoder(w).Encode(likes)
 }
 
 func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {

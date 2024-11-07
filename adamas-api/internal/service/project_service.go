@@ -44,6 +44,14 @@ func (ps *ProjectService) LikeProject(projectID, userID int64) ([]*entity.Like, 
 	return likes, nil 
 }
 
+func (ps *ProjectService) RemoveLikeProject(projectID,userID int64)([]*entity.Like, error) {
+	likes, err := ps.ProjectDB.RemoveLikeProject(projectID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	return likes,nil
+}
+
 func (ps *ProjectService) GetProjectsByCategories(categories  []int64) ([]*entity.Project, error) {
 	projects, err := ps.ProjectDB.GetProjectsByCategorie(categories)
 	if err != nil {

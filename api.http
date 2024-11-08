@@ -102,7 +102,7 @@ Authorization: Bearer TOKEN
 
 ###
 POST http://localhost:3000/project/1/comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzA5ODU4MTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ._d_Kw24KD3Dt8KPlTlCDFVpE4dVqNZHecABvv2Sf1a8
+Authorization: Bearer TOKEN
 
 {
     "comment": "muito brabo"
@@ -199,6 +199,10 @@ Authorization: Bearer TOKEN
 ###
 GET http://localhost:3000/event/1/subscribers
 Authorization: Bearer TOKEN
+
+### 
+GET http://localhost:3000/event/1/pending_projects
+Authorization: Bearer TOKEN
 ###
 POST  http://localhost:3000/event/1/participation
 Authorization: Bearer TOKEN
@@ -230,3 +234,6 @@ GET http://localhost:3000/event/search/Amostra de TCC
 
 ###
 GET http://localhost:3000/event/search
+
+###
+GET http://localhost:3000/event/1/approved_projects

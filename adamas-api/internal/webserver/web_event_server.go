@@ -85,6 +85,58 @@ func (weh *WebEventHandler) GetSubscribers(w http.ResponseWriter, r *http.Reques
 		return
 	}
 }
+
+func (weh *WebEventHandler) GetPendingProjectsInEvent(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "institution_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		institutionID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		pendingProjects, err := weh.eventService.GetPendingProjectsInEvent(int64(eventID),int64(institutionID))
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		json.NewEncoder(w).Encode(pendingProjects)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
+func (weh *WebEventHandler) GetProjectsInEvent(w http.ResponseWriter, r *http.Request) {
+	eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+	}
+	approvedProjects, err := weh.eventService.GetProjectsInEvent(int64(eventID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return 
+	}
+	json.NewEncoder(w).Encode(approvedProjects)
+}
+
 func (weh *WebEventHandler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")

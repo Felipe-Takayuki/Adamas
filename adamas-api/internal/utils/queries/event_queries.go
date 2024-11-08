@@ -28,6 +28,8 @@ const GET_SUBSCRIBERS_BY_EVENT_ID = `
 	WHERE se.event_id = ?
 `
 
+
+
 const CHECK_EVENT_OWNER = `
  SELECT COUNT(*) 
  FROM OWNER_EVENT 
@@ -41,6 +43,22 @@ const GET_REPOSITORIES_BY_ROOM_ID = `
 	JOIN OWNERS_PROJECT op ON op.project_id = p.id
 	JOIN COMMON_USER u ON u.id = op.owner_id
 	WHERE pr.room_id = ?`
+
+const GET_PENDING_PROJECTS = `
+	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+	JOIN PENDING_PROJECT pp ON p.id = pp.project_id
+	JOIN OWNERS_PROJECT op ON op.project_id = p.id
+	JOIN COMMON_USER u ON u.id = op.owner_id
+	WHERE pp.event_id = ? 
+`
+
+const GET_PROJECTS_EVENT = `
+	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+	JOIN PROJECT_IN_ROOM pir ON p.id = pir.project_id
+	JOIN OWNERS_PROJECT op ON op.project_id = p.id
+	JOIN COMMON_USER u ON u.id = op.owner_id
+	where pir.event_id = ?
+`
 
 const GET_EVENTS = `
 	SELECT e.id, e.name, e.address, e.start_date, e.end_date, e.description, o.owner_id, i.name FROM EVENT e

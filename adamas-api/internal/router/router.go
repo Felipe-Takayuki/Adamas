@@ -62,6 +62,7 @@ func Router(db *sql.DB) http.Handler {
 
 	c.Get("/event/search/{event}", webEventService.GetEventByName)
 	c.Get("/event/search", webEventService.GetEvents)
+	c.Get("/event/{event_id}/approved_projects", webEventService.GetProjectsInEvent)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -83,6 +84,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
 		r.Put("/event/{event_id}/room", webEventService.EditRoom)
 		r.Delete("/event/{event_id}/room", webEventService.DeleteRoom)
+		r.Get("/event/{event_id}/pending_projects", webEventService.GetPendingProjectsInEvent)
 		r.Post("/event/{event_id}/subscribe", webEventService.EventRegistration)
 		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
 		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)

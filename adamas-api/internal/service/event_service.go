@@ -45,6 +45,22 @@ func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*enti
 	return subscribers, nil
 }
 
+func (es *EventService) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*entity.Project, error) {
+	pendingProjects, err := es.EventDB.GetPendingProjectsInEvent(eventID, ownerID) 
+	if err != nil {
+		return nil, err 
+	}
+	return pendingProjects, nil 
+}
+
+func (es *EventService) GetProjectsInEvent(eventID int64) ([]*entity.Project, error) {
+	approvedProjects, err := es.EventDB.GetProjectsInEvent(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return approvedProjects, nil 
+}
+
 func (es *EventService) DeleteEvent(eventID int64, email, password string) error {
 	err := es.EventDB.DeleteEvent(eventID,  email, password)
 	if err != nil {

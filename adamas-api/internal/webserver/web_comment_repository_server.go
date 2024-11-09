@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
+
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
@@ -45,7 +46,7 @@ func (wph *WebProjectHandler) SetComment(w http.ResponseWriter, r *http.Request)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]interface{}{"Comment": reqs.Comment})
+		json.NewEncoder(w).Encode(reqs)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)
@@ -101,7 +102,7 @@ func (wph *WebProjectHandler) DeleteComment(w http.ResponseWriter, r *http.Reque
 			http.Error(w, "project_id is not int!", http.StatusInternalServerError)
 			return
 		}
-		err = json.NewDecoder(r.Body).Decode(&comment.CommentID)
+		err = json.NewDecoder(r.Body).Decode(&comment)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusBadRequest)

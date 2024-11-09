@@ -18,7 +18,7 @@ func NewUserDB (db *sql.DB) *UserDB {
 }
 
 func (ud *UserDB) CreateUser(name, nickName, description, email, password string) (*entity.User, error) {
-	user := entity.NewUser(name, nickName, description, email, password)
+	user := entity.NewUser(name, email, password)
 	result, err := ud.db.Exec(queries.CREATE_USER,  user.Name, user.NickName, user.Description,user.Email, user.Password)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,6 @@ func (ud *UserDB) CreateUser(name, nickName, description, email, password string
 
 func (ud * UserDB) LoginUser(email, password string) (*entity.User, error) {
     var user entity.User
-
     err := ud.db.QueryRow(queries.LOGIN_USER, email, utils.EncriptKey(password)).Scan(
         &user.ID, &user.Name, &user.Email,
     )

@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
@@ -19,8 +20,16 @@ func NewProjectDB(db *sql.DB) *ProjectDB {
 	}
 }
 
+func (pdb *ProjectDB) GetProjectByID(projectID int64) (*entity.Project, error) {
+	project, err := pdb.getProjectByID(projectID)
+	if err != nil {
+		return nil, err
+	}
+	return project, nil
+}
+
 func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error) {
-	rows, err := pdb.db.Query(queries.GET_PROJECT_BY_NAME, title)
+	rows, err := pdb.db.Query(queries.GET_PROJECT_BY_NAME, title+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -40,11 +49,103 @@ func (pdb *ProjectDB) GetProjectsByName(title string) ([]*entity.Project, error)
 		if err != nil {
 			return nil, err
 		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 
 	return projects, nil
 }
+
+func (pdb *ProjectDB) GetProjectsByNameWithCategories(title string, categories []int64) ([]*entity.Project, error) {
+	if len(categories) == 0 {
+		return []*entity.Project{}, nil
+	}
+	placeholders := make([]string, len(categories))
+	args := make([]interface{}, len(categories))
+	for i, id := range categories {
+		placeholders[i] = "?"     
+		args[i] = id              
+	}
+	query := fmt.Sprintf(queries.GET_PROJECTS_BY_NAME_CATEGORY, strings.Join(placeholders, ","))
+	fmt.Println(title)
+	args = append(args, title+"%")
+	rows, err := pdb.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var projects []*entity.Project
+
+	for rows.Next() {
+		var project entity.Project
+		err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName)
+		if err != nil {
+			return nil, err
+		}
+		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Comments, err = pdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
+		projects = append(projects, &project)
+	}
+	return projects, nil 
+}
+
+func (pdb *ProjectDB) GetProjectsByCategorie(categories []int64) ([]*entity.Project, error) {
+	if len(categories) == 0 {
+		return []*entity.Project{}, nil
+	}
+	placeholders := make([]string, len(categories))
+	args := make([]interface{}, len(categories))
+	for i, id := range categories {
+		placeholders[i] = "?"     
+		args[i] = id              
+	}
+	query := fmt.Sprintf(queries.GET_PROJECTS_BY_CATEGORIES, strings.Join(placeholders, ","))
+	rows, err := pdb.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var projects []*entity.Project
+
+	for rows.Next() {
+		var project entity.Project
+		err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName)
+		if err != nil {
+			return nil, err
+		}
+		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Comments, err = pdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
+		projects = append(projects, &project)
+	}
+
+	return projects, nil
+}
+
 func (pdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 	rows, err := pdb.db.Query(queries.GET_PROJECTS)
 	if err != nil {
@@ -69,13 +170,14 @@ func (pdb *ProjectDB) GetProjects() ([]*entity.Project, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 	return projects, nil
 }
-
-
 
 func (pdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error) {
 	rows, err := pdb.db.Query(queries.GET_PROJECTS_BY_USER, userID)
@@ -101,9 +203,62 @@ func (pdb *ProjectDB) GetProjectsByUser(userID int64) ([]*entity.Project, error)
 		if err != nil {
 			return nil, err
 		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err 
+		}
 		projects = append(projects, &project)
 	}
 	return projects, nil
+}
+
+func (pdb *ProjectDB) LikeProject(projectID, userID int64) ([]*entity.Like, error)  {
+	_, err := pdb.db.Exec(queries.LIKE_PROJECT, projectID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	likes , err := getLikes(pdb.db, projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return likes, nil 
+}
+
+func (pdb *ProjectDB) RemoveLikeProject(projectID, userID int64) ([]*entity.Like, error) {
+	_, err := pdb.db.Exec(queries.REMOVE_LIKE, projectID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	likes, err := getLikes(pdb.db, projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return likes,nil 
+}
+
+
+func getLikes(db *sql.DB, project_id int64) ([]*entity.Like, error) {
+	rows, err := db.Query(queries.GET_LIKES, project_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var likes []*entity.Like
+
+	for rows.Next() {
+		var like entity.Like
+		if err := rows.Scan(&like.UserID); err != nil {
+			return nil, err
+		}
+		likes = append(likes, &like)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return likes, nil
 }
 
 func (pdb *ProjectDB) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
@@ -234,9 +389,18 @@ func (pdb *ProjectDB) getProjectByID(projectID int64) (*entity.Project, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	comments, err := pdb.getCommentsByRepoID(projectID)
 	if err != nil {
 		return nil, err
+	}
+	project.Owners, err = pdb.getOwnersByProjectID(project.ID)
+	if err != nil {
+		return nil, err
+	}
+	project.Likes, err = getLikes(pdb.db, project.ID)
+	if err != nil {
+		return nil, err 
 	}
 	project.Comments = comments
 	project.Categories = categories

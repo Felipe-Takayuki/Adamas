@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
+	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils/queries"
 )
 
@@ -34,7 +35,110 @@ func (edb *EventDB) CreateEvent(name, address, startDate, endDate, description s
 	}
 	return event, nil
 }
-func (edb *EventDB) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+
+func (edb *EventDB) DeleteEvent(eventID int64, email, password string) error {
+
+	institutionID, err := validateInstitution(edb.db, email, password)
+	if err != nil {
+		return err
+	}
+	isOwner := isEventOwner(edb.db, eventID, institutionID)
+	if !isOwner {
+		return fmt.Errorf("a instituição não possui o evento")
+	}
+	err = deleteRoomsEvent(edb.db, institutionID)
+	if err != nil {
+		return err
+	}
+	err = deleteSubscribers(edb.db, eventID)
+	if err != nil {
+		return err
+	}
+	err = deleteOwnerEvent(edb.db, institutionID, eventID)
+	if err != nil {
+		return err
+	}
+	err = deleteProjectsEvent(edb.db, eventID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (edb *EventDB) EditRoom(roomID, eventID, quantityProjects, ownerID int64, roomName string) (*entity.RoomEvent, error) {
+	if !isEventOwner(edb.db, eventID, ownerID) {
+		return nil, fmt.Errorf("instituição não possui o evento")
+	}
+
+	if roomName != "" {
+		_, err := edb.db.Exec(queries.UPDATE_QUANTITY_PROJECTS_ROOM)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if quantityProjects != 0 {
+		_, err := edb.db.Exec(queries.UPDATE_QUANTITY_PROJECTS_ROOM)
+		if err != nil {
+			return nil, err
+		}
+	}
+	room := &entity.RoomEvent{Name: roomName, QuantityProjects: int(quantityProjects)}
+	return room, nil
+
+}
+
+func (edb *EventDB) DeleteRoom(roomID, eventID int64) error {
+	_, err := edb.db.Exec(queries.DELETE_ROOM, roomID, eventID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func deleteOwnerEvent(db *sql.DB, institutionID, eventID int64) error {
+	_, err := db.Exec(queries.DELETE_EVENT_OWNER, institutionID, eventID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func deleteProjectsEvent(db *sql.DB, eventID int64) error {
+	_, err := db.Exec(queries.DELETE_EVENT_PROJECTS, eventID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func deleteRoomsEvent(db *sql.DB, eventID int64) error {
+	_, err := db.Exec(queries.DELETE_EVENT_ROOMS, eventID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func deleteSubscribers(db *sql.DB, eventID int64) error {
+	_, err := db.Exec(queries.DELETE_EVENT_SUBSCRIBERS, eventID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func validateInstitution(db *sql.DB, email, password string) (int64, error) {
+	var institutionID int64
+	err := db.QueryRow(queries.VALIDATE_INSITUTION_USER, email, utils.EncriptKey(password)).Scan(&institutionID)
+	if err != nil {
+		return 0, err
+	}
+	return institutionID, nil
+
+}
+func (edb *EventDB) AddRoomInEvent(eventID, ownerID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+	isOwner := isEventOwner(edb.db, eventID, ownerID)
+	if !isOwner {
+		return nil, fmt.Errorf("a instituição não possui o evento")
+	}
 	_, err := edb.db.Exec(queries.AddRoomInEvent, eventID, roomName, quantityProjects)
 	if err != nil {
 		return nil, err
@@ -121,12 +225,87 @@ func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) 
 	return project, nil
 }
 
-func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
-	isOwner := edb.isEventOwner(eventID, ownerID)
+func (edb *EventDB) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*entity.Project, error) {
+	pdb := NewProjectDB(edb.db)
+	isOwner := isEventOwner(edb.db, eventID, ownerID)
 	if !isOwner {
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
-	_, err := edb.db.Exec(queries.APPROVE_PARTICIPATION, roomID, projectID)
+	rows, err := edb.db.Query(queries.GET_PENDING_PROJECTS, eventID)
+	if err != nil {
+		return nil, err
+	}
+	
+	defer rows.Close()
+	var projects []*entity.Project
+	for rows.Next() {
+		var project entity.Project
+		if err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName); err != nil {
+			return nil, err
+		}
+		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Comments, err = pdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Owners, err = pdb.getOwnersByProjectID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err
+		}
+		projects = append(projects, &project)
+	}
+
+	return projects, nil 
+}
+
+func (edb *EventDB) GetProjectsInEvent(eventID int64) ([]*entity.Project, error) {
+	pdb := NewProjectDB(edb.db)
+	rows, err := edb.db.Query(queries.GET_PROJECTS_EVENT, eventID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var projects []*entity.Project
+	for rows.Next() {
+		var project entity.Project
+		if err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName); err != nil {
+			return nil, err
+		}
+		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Comments, err = pdb.getCommentsByRepoID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Owners, err = pdb.getOwnersByProjectID(project.ID)
+		if err != nil {
+			return nil, err
+		}
+		project.Likes, err = getLikes(pdb.db, project.ID)
+		if err != nil {
+			return nil, err
+		}
+		projects = append(projects, &project)
+	}
+
+	return projects, nil 
+}
+
+func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
+	isOwner := isEventOwner(edb.db, eventID, ownerID)
+	if !isOwner {
+		return nil, fmt.Errorf("a instituição não possui o evento")
+	}
+	_, err := edb.db.Exec(queries.APPROVE_PARTICIPATION, eventID, roomID, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +314,7 @@ func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int
 		return nil, err
 	}
 
-	projects, err := edb.getProjectsByRoomID(int(roomID))
+	projects, err := edb.getProjectsByRoomID(roomID)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +345,7 @@ func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error
 	return rooms, nil
 }
 
-func (edb *EventDB) getProjectsByRoomID(roomID int) ([]*entity.Project, error) {
+func (edb *EventDB) getProjectsByRoomID(roomID int64) ([]*entity.Project, error) {
 	rows, err := edb.db.Query(queries.GET_REPOSITORIES_BY_ROOM_ID, roomID)
 	if err != nil {
 		return nil, err
@@ -227,7 +406,7 @@ func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
 
 func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {
 
-	isOwner := edb.isEventOwner(eventID, ownerID)
+	isOwner := isEventOwner(edb.db, eventID, ownerID)
 	if !isOwner {
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
@@ -251,7 +430,7 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.U
 }
 
 func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, endDate, description string) (*entity.Event, error) {
-	if !edb.isEventOwner(eventID, ownerID) {
+	if !isEventOwner(edb.db, eventID, ownerID) {
 		return nil, fmt.Errorf("instituição não possui o evento")
 	}
 
@@ -277,25 +456,25 @@ func (edb *EventDB) EditEvent(eventID, ownerID int64, name, address, startDate, 
 	}
 
 	if endDate != "" {
-		_, err := edb.db.Exec(queries.UPDATE_END_DATE_EVENT, endDate, eventID) 
+		_, err := edb.db.Exec(queries.UPDATE_END_DATE_EVENT, endDate, eventID)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
 	}
 
 	if description != "" {
 		_, err := edb.db.Exec(queries.UPDATE_DESCRIPTION_EVENT, description, eventID)
 		if err != nil {
-		  return nil, err
+			return nil, err
 		}
 	}
-	event := entity.Event{ Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
+	event := entity.Event{Name: name, Address: address, StartDate: startDate, EndDate: endDate, Description: description}
 
 	return &event, nil
 }
-func (edb *EventDB) isEventOwner(eventID, ownerID int64) bool {
+func isEventOwner(db *sql.DB, eventID, ownerID int64) bool {
 	var count int
-	err := edb.db.QueryRow(queries.CHECK_EVENT_OWNER, ownerID, eventID).Scan(&count)
+	err := db.QueryRow(queries.CHECK_EVENT_OWNER, ownerID, eventID).Scan(&count)
 	if err != nil {
 		return false
 	}

@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS adamas_db;
+ DROP DATABASE IF EXISTS adamas_db;
 
 CREATE DATABASE adamas_db;
 
@@ -32,6 +32,12 @@ CREATE TABLE PROJECT(
   description varchar(255) NOT NULL,
   content varchar(255) NOT NULL,
   FOREIGN KEY (first_owner_id) REFERENCES COMMON_USER(id)
+);
+
+CREATE TABLE LIKE_PROJECT(
+  project_id int NOT NULL REFERENCES PROJECT(id),
+  user_id int NOT NULL REFERENCES COMMON_USER(id),
+  PRIMARY KEY(project_id, user_id)
 );
 
 CREATE TABLE OWNERS_PROJECT(
@@ -76,9 +82,10 @@ CREATE TABLE PENDING_PROJECT(
 );
 
 CREATE TABLE PROJECT_IN_ROOM(
+  event_id int NOT NULL REFERENCES EVENT(id),
   room_id int NOT NULL REFERENCES ROOM_IN_EVENT(id),
   project_id int NOT NULL REFERENCES PROJECT(id),
-  PRIMARY KEY(room_id, project_id)
+  PRIMARY KEY(event_id, room_id, project_id)
 );
 
 

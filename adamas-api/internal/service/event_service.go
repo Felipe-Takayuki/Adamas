@@ -45,6 +45,38 @@ func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*enti
 	return subscribers, nil
 }
 
+func (es *EventService) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*entity.Project, error) {
+	pendingProjects, err := es.EventDB.GetPendingProjectsInEvent(eventID, ownerID) 
+	if err != nil {
+		return nil, err 
+	}
+	return pendingProjects, nil 
+}
+
+func (es *EventService) GetProjectsInEvent(eventID int64) ([]*entity.Project, error) {
+	approvedProjects, err := es.EventDB.GetProjectsInEvent(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return approvedProjects, nil 
+}
+
+func (es *EventService) DeleteEvent(eventID int64, email, password string) error {
+	err := es.EventDB.DeleteEvent(eventID,  email, password)
+	if err != nil {
+		return err 
+	}
+	return nil 
+}
+
+func (es *EventService) DeleteRoom(roomID, eventID int64) error {
+	err := es.EventDB.DeleteRoom(roomID, eventID)
+	if err != nil {
+		return err 
+	}
+	return nil 
+}
+
 func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
 	events, err := es.EventDB.EventRegistration(eventID, userID)
 	if err != nil {
@@ -69,8 +101,8 @@ func (es *EventService) ApproveParticipation(projectID, ownerID, eventID, roomID
 	return project, nil
 }
 
-func (es *EventService) AddRoomInEvent(eventID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
-	rooms, err := es.EventDB.AddRoomInEvent(eventID, roomName, quantityProjects)
+func (es *EventService) AddRoomInEvent(eventID, ownerID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
+	rooms, err := es.EventDB.AddRoomInEvent(eventID, ownerID, roomName, quantityProjects)
 	if err != nil {
 		return nil, err
 	}
@@ -83,4 +115,12 @@ func (es *EventService) EditEvent(eventID, ownerID int64, name, address, startDa
 		return nil, err
 	}
 	return event, nil
+}
+
+func (es *EventService) EditRoom(roomID, eventID, quantityProjects, ownerID int64, roomName string) (*entity.RoomEvent, error) {
+	room, err := es.EventDB.EditRoom(roomID, eventID, quantityProjects, ownerID, roomName) 
+	if err != nil{
+		return nil, err 
+	}
+	return room, nil 
 }

@@ -25,14 +25,8 @@ func NewEvent(name, address, startDate, endDate, description string, institution
 }
 
 type RoomEvent struct {
-	ID               int        `json:"id"`
+	ID               int64      `json:"room_id"`
 	Name             string     `json:"name"`
-	QuantityProjects int        `json:"quantity_projects"`
-	Projects         []*Project `json:"projects"`
-}
-
-type RepositoryInEvent struct {
-	ID      string
-	Project *Project
-	Locale  string
+	QuantityProjects int        `json:"quantity_projects,omitempty"`
+	Projects         []*Project `json:"projects,omitempty"`
 }

@@ -14,62 +14,107 @@ func NewProjectService(repoDB database.ProjectDB) *ProjectService {
 		ProjectDB: repoDB,
 	}
 }
-func (rs *ProjectService) GetProjectsByName(name string) ([]*entity.Project, error) {
-	repositories, err := rs.ProjectDB.GetProjectsByName(name)
+func (ps *ProjectService) GetProjectsByName(name string) ([]*entity.Project, error) {
+	projects, err := ps.ProjectDB.GetProjectsByName(name)
 	if err != nil {
 		return nil, err
 	}
-	return repositories, nil
+	return projects, nil
 }
-func (rs *ProjectService) GetProjects()([]*entity.Project, error) {
-	repositories, err := rs.ProjectDB.GetProjects()
+func (ps *ProjectService) GetProjectsByNameWithCategories(title string, categories []int64) ([]*entity.Project, error) {
+	projects, err := ps.ProjectDB.GetProjectsByNameWithCategories(title, categories)
+	if err != nil {
+		return nil, err 
+	}
+	return projects, nil 
+}
+func (ps *ProjectService) GetProjectByID(projectID int64) (*entity.Project, error) {
+	project, err := ps.ProjectDB.GetProjectByID(projectID)
+	if err != nil {
+		return nil, err 
+	}
+	return project, nil
+}
+
+func (ps *ProjectService) LikeProject(projectID, userID int64) ([]*entity.Like, error) {
+	likes, err := ps.ProjectDB.LikeProject(projectID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	return likes, nil 
+}
+
+func (ps *ProjectService) RemoveLikeProject(projectID,userID int64)([]*entity.Like, error) {
+	likes, err := ps.ProjectDB.RemoveLikeProject(projectID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	return likes,nil
+}
+
+func (ps *ProjectService) GetProjectsByCategories(categories  []int64) ([]*entity.Project, error) {
+	projects, err := ps.ProjectDB.GetProjectsByCategorie(categories)
+	if err != nil {
+		return nil, err    
+	}
+	return projects, nil 
+}
+func (ps *ProjectService) GetProjects()([]*entity.Project, error) {
+	repositories, err := ps.ProjectDB.GetProjects()
 	if err != nil {
 		return nil, err 
 	}
 	return repositories, nil
 }
-func (rs *ProjectService) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
-	repo, err := rs.ProjectDB.CreateProject(title, description, content,ownerID)
+func (ps *ProjectService) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
+	repo, err := ps.ProjectDB.CreateProject(title, description, content,ownerID)
 	if err != nil {
 		return nil, err
 	}
 	return repo, nil
 }
 
-func (rs *ProjectService) EditProject(title, description, content string, projectID, ownerID int64) (*entity.Project, error) {
-	repo, err := rs.ProjectDB.EditProject(title, description, content, projectID, ownerID) 
+func (ps *ProjectService) EditProject(title, description, content string, projectID, ownerID int64) (*entity.Project, error) {
+	project, err := ps.ProjectDB.EditProject(title, description, content, projectID, ownerID) 
 	if err != nil {
 		return nil, err
 	}
-	return repo, nil
+	return project, nil
 }
 
-func (rs *ProjectService) DeleteProject(email, password string, projectID int64) error {
+func (ps *ProjectService) DeleteProject(email, password string, projectID int64) error {
 
-	err := rs.ProjectDB.DeleteProject(email, password, projectID)
+	err := ps.ProjectDB.DeleteProject(email, password, projectID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (rs *ProjectService) AddNewUserProject(projectID, userID, ownerID int64) ([]*entity.User, error) {
-	users, err := rs.ProjectDB.AddNewUserProject(projectID, userID, ownerID)
+func (ps *ProjectService) AddNewUserProject(projectID, userID, ownerID int64) ([]*entity.User, error) {
+	useps, err := ps.ProjectDB.AddNewUserProject(projectID, userID, ownerID)
 	if err != nil {
 		return nil, err 
 	}
-	return users, nil 
+	return useps, nil 
 }
-func (rs *ProjectService) SetCategory(categoryName string, projectID int64) (error) {
-	err := rs.ProjectDB.SetCategory(categoryName, projectID)
+func (ps *ProjectService) SetCategory(categoryName string, projectID int64) (error) {
+	err := ps.ProjectDB.SetCategory(categoryName, projectID)
 	if err != nil {
 		return err
 	}
-	return err 
+	return nil 
+}
+func (ps *ProjectService) DeleteCategory(projectID,ownerID int64, categoryID string) error {
+	err := ps.ProjectDB.DeleteCategory(projectID, ownerID, categoryID)
+	if err != nil {
+		return err 
+	}
+	return nil 
 }
 
-func (rs *ProjectService) GetProjectsByUser(userID int64) ([]*entity.Project, error) {
-	projects, err := rs.ProjectDB.GetProjectsByUser(userID)
+func (ps *ProjectService) GetProjectsByUser(userID int64) ([]*entity.Project, error) {
+	projects, err := ps.ProjectDB.GetProjectsByUser(userID)
 	if err != nil {
 		return nil, err 
 	}

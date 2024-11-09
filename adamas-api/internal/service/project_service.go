@@ -75,11 +75,11 @@ func (ps *ProjectService) CreateProject(title, description, content string, owne
 }
 
 func (ps *ProjectService) EditProject(title, description, content string, projectID, ownerID int64) (*entity.Project, error) {
-	repo, err := ps.ProjectDB.EditProject(title, description, content, projectID, ownerID) 
+	project, err := ps.ProjectDB.EditProject(title, description, content, projectID, ownerID) 
 	if err != nil {
 		return nil, err
 	}
-	return repo, nil
+	return project, nil
 }
 
 func (ps *ProjectService) DeleteProject(email, password string, projectID int64) error {

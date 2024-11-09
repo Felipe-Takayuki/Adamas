@@ -1,8 +1,6 @@
 package entity
 
-import (
-	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
-)
+import "github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 
 type User struct {
 	ID          int64  `json:"id"`

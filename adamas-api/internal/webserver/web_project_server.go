@@ -246,14 +246,14 @@ func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Reque
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		result, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID))
+		createProject, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID))
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(createProject)
 	} else {
 		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
 		w.WriteHeader(http.StatusBadRequest)

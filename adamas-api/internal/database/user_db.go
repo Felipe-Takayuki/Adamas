@@ -44,3 +44,41 @@ func (ud * UserDB) LoginUser(email, password string) (*entity.User, error) {
 
     return &user, nil
 }
+
+func (ud *UserDB) GetUsers() ([]*entity.User, error) {
+	rows, err  := ud.db.Query(queries.GET_USERS)
+	if err != nil {
+		return nil, err 
+	}
+	defer rows.Close()
+
+	var users []*entity.User
+	for rows.Next() {
+		var user entity.User
+		err := rows.Scan(&user.ID, &user.Name)
+		if err != nil {
+			return nil, err 
+		}
+		users = append(users, &user)
+	}
+	return users, nil
+}
+
+func (ud *UserDB) GetUsersByName(name string) ([]*entity.User, error) {
+	rows, err  := ud.db.Query(queries.GET_USERS_BY_NAME, name+"%")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*entity.User
+	for rows.Next() {
+		var user entity.User
+		err := rows.Scan(&user.ID, &user.Name)
+		if err != nil {
+			return nil, err 
+		}
+		users = append(users, &user)
+	}
+	return users, nil	
+}

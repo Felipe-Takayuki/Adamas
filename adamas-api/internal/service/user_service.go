@@ -30,3 +30,19 @@ func (us *UserService) LoginUser(email, password string) (*entity.User, error) {
 	}
 	return user, nil
 }
+
+func (us *UserService) GetUsers() ([]*entity.User, error) {
+	users, err := us.UserDB.GetUsers()
+	if err != nil {
+		return nil, err 
+	}
+	return users, nil 
+}
+
+func (us *UserService) GetUsersByName(name string) ([]*entity.User, error) {
+	users, err := us.UserDB.GetUsersByName(name)
+	if err != nil {
+		return nil, err 
+	}
+	return users, nil 
+}

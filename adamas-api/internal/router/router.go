@@ -63,6 +63,9 @@ func Router(db *sql.DB) http.Handler {
 	c.Get("/event/search/{event}", webEventService.GetEventByName)
 	c.Get("/event/search", webEventService.GetEvents)
 	c.Get("/event/{event_id}/approved_projects", webEventService.GetProjectsInEvent)
+
+	c.Get("/user/search", webUserService.GetUsers)
+	c.Get("/user/search/{username}", webUserService.GetUsersByName)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))

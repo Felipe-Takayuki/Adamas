@@ -33,7 +33,7 @@ func (wub *WebUserHandler) CreateUser(w http.ResponseWriter, r *http.Request, to
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	result, err := wub.UserService.CreateUser(user.Name, user.NickName, user.Description, user.Email, user.Password)
+	result, err := wub.UserService.CreateUser(user.Name, user.NickName, user.Email, user.Password)
 	if err != nil {
 		error := utils.ErrorMessage{Message: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)

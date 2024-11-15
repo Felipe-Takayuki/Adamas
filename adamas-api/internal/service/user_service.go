@@ -15,8 +15,8 @@ func NewUserService(userDB database.UserDB) *UserService {
 	}
 }
 
-func (us *UserService) CreateUser(name, nickName, description, email, password string) (*entity.User, error) {
-	user, err := us.UserDB.CreateUser(name, nickName, description, email, password)
+func (us *UserService) CreateUser(name, nickName, email, password string) (*entity.User, error) {
+	user, err := us.UserDB.CreateUser(name, nickName, email, password)
 	if err != nil {
 		return nil, err
 	}

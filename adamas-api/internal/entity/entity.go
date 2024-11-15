@@ -32,10 +32,11 @@ func NewInstitution(name, email, password string, cnpj string) *Institution {
 
 }
 
-func NewUser(name, email, password string) *User {
+func NewUser(name, nickName, email, password string) *User {
 	return &User{
 		Name:     name,
 		Email:    email,
+		NickName: nickName,
 		UserType: "common_user",
 		Password: utils.EncriptKey(password),
 	}

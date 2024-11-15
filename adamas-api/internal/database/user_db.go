@@ -17,9 +17,9 @@ func NewUserDB (db *sql.DB) *UserDB {
 	}
 }
 
-func (ud *UserDB) CreateUser(name, nickName, description, email, password string) (*entity.User, error) {
-	user := entity.NewUser(name, email, password)
-	result, err := ud.db.Exec(queries.CREATE_USER,  user.Name, user.NickName, user.Description,user.Email, user.Password)
+func (ud *UserDB) CreateUser(name, nickName, email, password string) (*entity.User, error) {
+	user := entity.NewUser(name, nickName, email, password)
+	result, err := ud.db.Exec(queries.CREATE_USER,  user.Name, user.NickName, user.Email, user.Password)
 	if err != nil {
 		return nil, err
 	}

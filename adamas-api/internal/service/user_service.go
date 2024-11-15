@@ -23,6 +23,14 @@ func (us *UserService) CreateUser(name, nickName, email, password string) (*enti
 	return user, nil
 }
 
+func (us *UserService) EditUser(name, nickName, description string, userID int64)  (*entity.User, error) {
+	user, err := us.UserDB.EditUser(name, nickName ,description, userID)
+	if err != nil {
+		return nil, err 
+	}
+	return user, nil 
+}
+
 func (us *UserService) LoginUser(email, password string) (*entity.User, error) {
 	user, err := us.UserDB.LoginUser(email, password)
 	if err != nil {

@@ -77,6 +77,51 @@ func (wub *WebUserHandler) LoginUser(w http.ResponseWriter, r *http.Request, tok
 
 }
 
+func (wub *WebUserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "user_type is not string!", http.StatusInternalServerError)
+		return
+	}
+
+	if userType == "common_user" {
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		var edit *entity.User
+		err := json.NewDecoder(r.Body).Decode(&edit)
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+		if userID == float64(edit.ID) {
+			user, err := wub.UserService.EditUser(edit.Name, edit.NickName, edit.Description, edit.ID)
+			if err != nil {
+				error := utils.ErrorMessage{Message: err.Error()}
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(error)
+				return
+			}
+			json.NewEncoder(w).Encode(user) 
+		} else {
+			error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(error)
+			return
+		}
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
 func (wub *WebUserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	users, err := wub.UserService.GetUsers()

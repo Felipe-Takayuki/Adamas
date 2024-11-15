@@ -3,8 +3,8 @@ package entity
 import "github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 
 type User struct {
-	ID          int64  `json:"id"`
-	Name        string `json:"name"`
+	ID          int64  `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
 	NickName    string `json:"nickname,omitempty"`
 	Description string `json:"description,omitempty"`
 	Email       string `json:"email,omitempty"`

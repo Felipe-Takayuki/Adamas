@@ -32,6 +32,35 @@ func (ud *UserDB) CreateUser(name, nickName, email, password string) (*entity.Us
 	return user, nil
 }
 
+func (ud *UserDB) EditUser(name, nickName, description string, userID int64) (*entity.User, error) {
+	
+	if name != "" {
+		_, err := ud.db.Exec(queries.UPDATE_USERNAME, name, userID)
+		if err != nil {
+			return nil, err 
+		}
+	}
+
+	if nickName != "" {
+		_, err := ud.db.Exec(queries.UPDATE_NICKNAME, nickName, userID)
+		if err != nil {
+			return nil, err 
+		}
+	}
+
+	if description != "" {
+		_, err := ud.db.Exec(queries.UPDATE_DESCRIPTION, description, userID)
+		if err != nil {
+			return nil, err 
+		}
+	}
+
+	user := entity.User{Name: name, NickName: nickName, Description: description}
+	return &user, nil 
+
+
+}
+
 func (ud * UserDB) LoginUser(email, password string) (*entity.User, error) {
     var user entity.User
     err := ud.db.QueryRow(queries.LOGIN_USER, email, utils.EncriptKey(password)).Scan(

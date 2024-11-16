@@ -41,6 +41,8 @@ func Router(db *sql.DB) http.Handler {
 		AllowCredentials: true,
 	}
 	c.Use(cors.Handler(corsConfig))
+
+	
 	c.Post("/create", func(w http.ResponseWriter, r *http.Request) {
 		webUserService.CreateUser(w, r, tokenAuth)
 	})
@@ -93,6 +95,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)
 		r.Post("/event/{event_id}/approve-participation", webEventService.ApproveParticipation)
 		r.Put("/user", webUserService.EditUser)
+		r.Get("/user", webUserService.GetUserByID)
 	},
 	)
 	return c

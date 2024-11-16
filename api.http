@@ -24,6 +24,10 @@ Authorization: Bearer TOKEN
     "nickname": "felipe001",
     "description": "Marília "
 }
+
+###
+GET http://localhost:3000/user 
+Authorization: Bearer TOKEN
 ### 
 POST http://localhost:3000/create/institution 
 
@@ -246,3 +250,9 @@ GET http://localhost:3000/event/search
 
 ###
 GET http://localhost:3000/event/1/approved_projects
+
+###
+GET http://localhost:3000/user/search 
+
+###
+GET http://localhost:3000/user/search/Felipe 

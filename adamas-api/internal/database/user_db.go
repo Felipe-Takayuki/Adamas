@@ -84,13 +84,22 @@ func (ud *UserDB) GetUsers() ([]*entity.User, error) {
 	var users []*entity.User
 	for rows.Next() {
 		var user entity.User
-		err := rows.Scan(&user.ID, &user.Name)
+		err := rows.Scan(&user.ID, &user.Name, &user.NickName, &user.Description)
 		if err != nil {
 			return nil, err 
 		}
 		users = append(users, &user)
 	}
 	return users, nil
+}
+
+func (ud *UserDB) GetUserByID(userID int64) (*entity.User, error) {
+	var user entity.User 
+	err := ud.db.QueryRow(queries.GET_USER, userID).Scan(&user.ID, &user.Name, &user.NickName, &user.Description)
+	if err != nil {
+		return nil, err 
+	}
+	return &user, nil  
 }
 
 func (ud *UserDB) GetUsersByName(name string) ([]*entity.User, error) {
@@ -103,7 +112,7 @@ func (ud *UserDB) GetUsersByName(name string) ([]*entity.User, error) {
 	var users []*entity.User
 	for rows.Next() {
 		var user entity.User
-		err := rows.Scan(&user.ID, &user.Name)
+		err := rows.Scan(&user.ID, &user.Name, &user.NickName, &user.Description)
 		if err != nil {
 			return nil, err 
 		}

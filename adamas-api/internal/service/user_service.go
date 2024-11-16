@@ -47,6 +47,14 @@ func (us *UserService) GetUsers() ([]*entity.User, error) {
 	return users, nil 
 }
 
+func (us *UserService) GetUserByID(userID int64) (*entity.User, error) {
+	user, err := us.UserDB.GetUserByID(userID)
+	if err != nil {
+		return nil, err 
+	}
+	return user, nil 
+}
+
 func (us *UserService) GetUsersByName(name string) ([]*entity.User, error) {
 	users, err := us.UserDB.GetUsersByName(name)
 	if err != nil {

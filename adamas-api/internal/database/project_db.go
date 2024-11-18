@@ -261,7 +261,17 @@ func getLikes(db *sql.DB, project_id int64) ([]*entity.Like, error) {
 	return likes, nil
 }
 
-func (pdb *ProjectDB) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
+func (pdb *ProjectDB) setCategoriesInCreation(IdsCategories []int64, projectID int64) (error) {
+	for _, item := range IdsCategories {
+		_, err := pdb.db.Exec(queries.SET_CATEGORY, item, projectID)
+		if err != nil {
+			return err
+		}
+	}
+	return nil 
+} 
+
+func (pdb *ProjectDB) CreateProject(title, description, content string, ownerID int, IdsCategories []int64) (*entity.Project, error) {
 	project := entity.NewProject(title, description, content, ownerID)
 	result, err := pdb.db.Exec(queries.CREATE_PROJECT, &project.Title, &project.Description, &project.Content, &ownerID)
 
@@ -272,7 +282,10 @@ func (pdb *ProjectDB) CreateProject(title, description, content string, ownerID 
 	if err != nil {
 		return nil, err
 	}
-
+	err = pdb.setCategoriesInCreation(IdsCategories, project.ID)
+	if err != nil {
+		return nil, err 
+	}
 	err = pdb.db.QueryRow(queries.GET_OWNER_NAME_BY_ID, project.FirstOwnerID).Scan(&project.FirstOwnerName)
 	if err != nil {
 		return nil, err

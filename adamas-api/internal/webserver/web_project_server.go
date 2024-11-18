@@ -246,7 +246,7 @@ func (wph *WebProjectHandler) CreateProject(w http.ResponseWriter, r *http.Reque
 			json.NewEncoder(w).Encode(error)
 			return
 		}
-		createProject, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID))
+		createProject, err := wph.ProjectService.CreateProject(req.Title, req.Description, req.Content, int(userID), req.CategoriesAdd)
 		if err != nil {
 			error := utils.ErrorMessage{Message: err.Error()}
 			w.WriteHeader(http.StatusInternalServerError)

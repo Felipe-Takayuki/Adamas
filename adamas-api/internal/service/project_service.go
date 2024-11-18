@@ -66,8 +66,8 @@ func (ps *ProjectService) GetProjects()([]*entity.Project, error) {
 	}
 	return repositories, nil
 }
-func (ps *ProjectService) CreateProject(title, description, content string, ownerID int) (*entity.Project, error) {
-	repo, err := ps.ProjectDB.CreateProject(title, description, content,ownerID)
+func (ps *ProjectService) CreateProject(title, description, content string, ownerID int, IdsCategories []int64) (*entity.Project, error) {
+	repo, err := ps.ProjectDB.CreateProject(title, description, content,ownerID, IdsCategories)
 	if err != nil {
 		return nil, err
 	}

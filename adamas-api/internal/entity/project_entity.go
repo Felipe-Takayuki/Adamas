@@ -14,6 +14,7 @@ type Project struct {
 	FirstOwnerName string      `json:"owner_name"`
 	Owners         []*User     `json:"owners,omitempty"`
 	Categories     []*Category `json:"categories,omitempty"`
+	CategoriesAdd  []int64     `json:"categories_add"`
 	Comments       []*Comment  `json:"comments,omitempty"`
 	Likes          []*Like     `json:"likes,omitempty"`
 }
@@ -26,7 +27,7 @@ type Comment struct {
 }
 
 type Like struct {
-	ProjectID int64 `json:"project_id,omitempty"`
+	ProjectID int64  `json:"project_id,omitempty"`
 	UserID    *int64 `json:"user_id"`
 }
 

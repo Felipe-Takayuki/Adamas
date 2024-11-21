@@ -30,7 +30,7 @@ CREATE TABLE PROJECT(
   title varchar(255) NOT NULL,
   first_owner_id int NOT NULL,
   description varchar(255) NOT NULL,
-  content varchar(255) NOT NULL,
+  content MEDIUMTEXT NOT NULL,
   FOREIGN KEY (first_owner_id) REFERENCES COMMON_USER(id)
 );
 

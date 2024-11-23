@@ -31,6 +31,7 @@ CREATE TABLE PROJECT(
   first_owner_id int NOT NULL,
   description varchar(255) NOT NULL,
   content MEDIUMTEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (first_owner_id) REFERENCES COMMON_USER(id)
 );
 

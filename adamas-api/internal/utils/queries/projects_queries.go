@@ -3,7 +3,9 @@ package queries
 const GET_PROJECT_BY_NAME = `
  SELECT DISTINCT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
- JOIN COMMON_USER u ON u.id = p.first_owner_id WHERE p.title LIKE ?`
+ JOIN COMMON_USER u ON u.id = p.first_owner_id WHERE p.title LIKE ?
+ ORDER BY p.created_at DESC
+ `
 
 const GET_PROJECTS_BY_NAME_CATEGORY = `
  SELECT DISTINCT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
@@ -12,6 +14,7 @@ const GET_PROJECTS_BY_NAME_CATEGORY = `
  JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
  WHERE cp.category_id IN (%s)
  AND p.title LIKE ?
+ ORDER BY p.created_at DESC
 `
 const GET_PROJECT_BY_ID = `
  SELECT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p
@@ -25,18 +28,22 @@ const GET_PROJECTS_BY_CATEGORIES = `
  JOIN COMMON_USER u ON u.id = p.first_owner_id
  JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
  WHERE cp.category_id IN (%s)
+ ORDER BY p.created_at DESC
 `
 
 const GET_PROJECTS = `
- SELECT DISTINCT p.id, p.title, p.description,p.content, u.id, u.name FROM PROJECT p 
+ SELECT p.id, p.title, p.description,p.content, u.id, u.name FROM PROJECT p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
- JOIN COMMON_USER u ON u.id = p.first_owner_id`
+ JOIN COMMON_USER u ON u.id = p.first_owner_id
+ ORDER BY p.created_at DESC
+ `
 
 const GET_PROJECTS_BY_USER = `
  SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON o.owner_id = u.id
  WHERE u.id = ?
+ ORDER BY p.created_at DESC
 `
 const CREATE_PROJECT = "INSERT INTO PROJECT(title, description,content, first_owner_id) VALUES (?,?,?,?)"
 

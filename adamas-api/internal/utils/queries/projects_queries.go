@@ -121,6 +121,7 @@ const GET_COMMENTS_BY_PROJECT = `
  JOIN PROJECT r ON com.project_id = r.id
  JOIN COMMON_USER u ON com.owner_id = u.id
  WHERE com.project_id = ?
+ ORDER BY com.commented_at DESC
 `
 const SET_COMMENT = "INSERT INTO COMMENT (owner_id, project_id, comment) VALUES (?, ?, ?)"
 

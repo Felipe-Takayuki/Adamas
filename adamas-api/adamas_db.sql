@@ -52,6 +52,7 @@ CREATE TABLE EVENT(
   address varchar(255) NOT NULL,
   start_date TIMESTAMP NOT NULL,
   end_date  TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   description varchar(255) NOT NULL
 );
 
@@ -163,6 +164,7 @@ CREATE TABLE COMMENT(
   owner_id int NOT NULL,
   project_id int NOT NULL,
   comment varchar(255) NOT NULL,
+  commented_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (owner_id) REFERENCES COMMON_USER(id),
   FOREIGN KEY (project_id) REFERENCES PROJECT(id)
 );

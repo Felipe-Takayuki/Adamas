@@ -68,6 +68,7 @@ func Router(db *sql.DB) http.Handler {
 
 	c.Get("/user/search", webUserService.GetUsers)
 	c.Get("/user/search/{username}", webUserService.GetUsersByName)
+	c.Get("/user/{user_id}", webUserService.GetUserByID)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -95,7 +96,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)
 		r.Post("/event/{event_id}/approve-participation", webEventService.ApproveParticipation)
 		r.Put("/user", webUserService.EditUser)
-		r.Get("/user", webUserService.GetUserByID)
+		r.Get("/user", webUserService.GetUserByToken)
 	},
 	)
 	return c

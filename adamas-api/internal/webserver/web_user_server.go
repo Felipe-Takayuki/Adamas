@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
@@ -135,6 +136,23 @@ func (wub *WebUserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wub *WebUserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	userID, err := strconv.Atoi(chi.URLParam(r, "user_id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	users, err := wub.UserService.GetUserByID(int64(userID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(users)
+
+}
+func (wub *WebUserHandler) GetUserByToken(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	userType, ok := claims["user_type"].(string)

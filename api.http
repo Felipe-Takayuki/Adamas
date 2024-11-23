@@ -255,4 +255,7 @@ GET http://localhost:3000/event/1/approved_projects
 GET http://localhost:3000/user/search 
 
 ###
+GET http://localhost:3000/user/1
+ 
+###
 GET http://localhost:3000/user/search/Felipe 

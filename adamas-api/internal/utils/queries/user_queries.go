@@ -8,7 +8,7 @@ const GET_USERS = "SELECT id, name, nickname, COALESCE(description, '') AS descr
 
 const GET_USERS_BY_NAME = "SELECT id, name, nickname, description FROM COMMON_USER WHERE name LIKE ?"
 
-const GET_USER = "SELECT id, name, nickname, description FROM COMMON_USER WHERE id = ?"
+const GET_USER = "SELECT id, name, nickname, COALESCE(description, '') AS description FROM COMMON_USER WHERE id = ?"
 
 const UPDATE_USERNAME = "UPDATE COMMON_USER SET name = ? WHERE id = ?"
 

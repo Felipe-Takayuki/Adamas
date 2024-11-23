@@ -4,7 +4,7 @@ const CREATE_USER = "INSERT INTO COMMON_USER(name, nickname, email, password) VA
 
 const LOGIN_USER = "SELECT id, name, email FROM COMMON_USER WHERE email = ? and password = ?"
 
-const GET_USERS = "SELECT id, name, nickname, description FROM COMMON_USER"
+const GET_USERS = "SELECT id, name, nickname, COALESCE(description, '') AS description FROM COMMON_USER"
 
 const GET_USERS_BY_NAME = "SELECT id, name, nickname, description FROM COMMON_USER WHERE name LIKE ?"
 

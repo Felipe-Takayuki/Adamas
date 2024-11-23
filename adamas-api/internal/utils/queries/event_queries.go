@@ -63,7 +63,8 @@ const GET_PROJECTS_EVENT = `
 const GET_EVENTS = `
 	SELECT e.id, e.name, e.address, e.start_date, e.end_date, e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id
-	JOIN INSTITUTION_USER i ON o.owner_id = i.id`
+	JOIN INSTITUTION_USER i ON o.owner_id = i.id
+	ORDER BY e.created_at DESC`
 
 const APPROVE_PARTICIPATION = "INSERT INTO PROJECT_IN_ROOM(event_id, room_id, project_id) VALUES (?, ?, ?)"
 const DELETE_PENDING_PARTICIPATION = "DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?"

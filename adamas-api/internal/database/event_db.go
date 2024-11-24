@@ -150,7 +150,6 @@ func (edb *EventDB) AddRoomInEvent(eventID, ownerID int64, roomName string, quan
 	return rooms, nil
 }
 
-
 func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 	rows, err := edb.db.Query(queries.GET_EVENT_BY_NAME, name)
 	if err != nil {
@@ -199,13 +198,13 @@ func (edb *EventDB) EventRegistration(eventID, userID int64) (*entity.Event, err
 func (edb *EventDB) DeleteRegistrationInEvent(eventID, userID int64) (*entity.Event, error) {
 	_, err := edb.db.Exec("DELETE FROM SUBSCRIBERS_EVENT WHERE event_id = ? AND user_id = ? ", eventID, userID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	event, err := edb.GetEventByID(eventID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	return event, nil 
+	return event, nil
 }
 func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) (*entity.Project, error) {
 	pdb := NewProjectDB(edb.db)
@@ -223,7 +222,7 @@ func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) 
 	return project, nil
 }
 
-func (edb *EventDB) DeleteParticipationInEvent(eventID, userID, projectID int64) (string, error){
+func (edb *EventDB) DeleteParticipationInEvent(eventID, userID, projectID int64) (string, error) {
 	pdb := NewProjectDB(edb.db)
 	if !pdb.isProjectOwner(userID, projectID) {
 		return "", fmt.Errorf("usuário não possui o repositório")
@@ -231,32 +230,41 @@ func (edb *EventDB) DeleteParticipationInEvent(eventID, userID, projectID int64)
 	pendingProject, _ := edb.db.Exec("DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?", eventID, projectID)
 	rowsAffected, err := pendingProject.RowsAffected()
 	if rowsAffected == 0 {
-		_, err = edb.db.Exec("DELETE FROM PROJECT_IN_ROOM WHERE event_id = ? AND project_id = ? ", eventID, projectID )
+		_, err = edb.db.Exec("DELETE FROM PROJECT_IN_ROOM WHERE event_id = ? AND project_id = ? ", eventID, projectID)
 		if err != nil {
 			return "", err
 		}
 	}
-	if err != nil{
-		return "", err 
+	if err != nil {
+		return "", err
 	}
-	return "deletado", err 
+	return "deletado", err
 }
+
 func (edb *EventDB) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*entity.Project, error) {
-	pdb := NewProjectDB(edb.db)
 	isOwner := isEventOwner(edb.db, eventID, ownerID)
 	if !isOwner {
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
+	pendingProjects, err := edb.getPendingProjectsInEvent(eventID)
+	if err != nil {
+		return nil, err
+	}
+	return pendingProjects, nil
+}
+
+func (edb *EventDB) getPendingProjectsInEvent(eventID int64) ([]*entity.Project, error) {
+	pdb := NewProjectDB(edb.db)
 	rows, err := edb.db.Query(queries.GET_PENDING_PROJECTS, eventID)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	defer rows.Close()
 	var projects []*entity.Project
 	for rows.Next() {
 		var project entity.Project
-		if err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName); err != nil {
+		if err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content); err != nil {
 			return nil, err
 		}
 		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
@@ -277,8 +285,7 @@ func (edb *EventDB) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*entity
 		}
 		projects = append(projects, &project)
 	}
-
-	return projects, nil 
+	return projects, nil
 }
 
 func (edb *EventDB) GetProjectsInEvent(eventID int64) ([]*entity.Project, error) {
@@ -291,7 +298,7 @@ func (edb *EventDB) GetProjectsInEvent(eventID int64) ([]*entity.Project, error)
 	var projects []*entity.Project
 	for rows.Next() {
 		var project entity.Project
-		if err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content, &project.FirstOwnerID, &project.FirstOwnerName); err != nil {
+		if err := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Content); err != nil {
 			return nil, err
 		}
 		project.Categories, err = pdb.getCategoriesByRepoID(project.ID)
@@ -313,7 +320,7 @@ func (edb *EventDB) GetProjectsInEvent(eventID int64) ([]*entity.Project, error)
 		projects = append(projects, &project)
 	}
 
-	return projects, nil 
+	return projects, nil
 }
 
 func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
@@ -340,12 +347,12 @@ func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int
 func (edb *EventDB) GetRoomsByEventID(eventID, ownerID int64) ([]*entity.RoomEvent, error) {
 	if !isEventOwner(edb.db, eventID, ownerID) {
 		return nil, fmt.Errorf("a instituição não possui o evento")
-	} 
+	}
 	rooms, err := edb.getRoomsByEventID(eventID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
-	return rooms, nil 
+	return rooms, nil
 }
 
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {
@@ -410,12 +417,18 @@ func (edb *EventDB) GetEventByID(eventID int64) (*entity.Event, error) {
 	}
 	event.Subscribers, err = edb.getSubscribersByEventID(eventID)
 	if err != nil {
-		return nil, err 
+		return nil, err
+	}
+	event.PendingProjects, err = edb.getPendingProjectsInEvent(eventID)
+	if err != nil {
+		return nil, err
+	}
+	event.ProjectsParticipating, err = edb.GetProjectsInEvent(eventID)
+	if err != nil {
+		return nil, err
 	}
 	return event, err
 }
-
-
 
 func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {
 
@@ -424,10 +437,9 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.U
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
 
-
 	subscribers, err := edb.getSubscribersByEventID(eventID)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	return subscribers, nil
 }

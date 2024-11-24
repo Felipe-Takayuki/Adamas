@@ -1,16 +1,18 @@
 package entity
 
 type Event struct {
-	ID              int64        `json:"id"`
-	Name            string       `json:"name"`
-	Address         string       `json:"address"`
-	StartDate       string       `json:"start_date"`
-	EndDate         string       `json:"end_date"`
-	Description     string       `json:"description"`
-	Subscribers     []*User      `json:"subscribers,omitempty"`
-	InstitutionID   int64        `json:"institution_id"`
-	InstitutionName string       `json:"institution_name"`
-	Rooms           []*RoomEvent `json:"rooms,omitempty"`
+	ID                    int64        `json:"id"`
+	Name                  string       `json:"name"`
+	Address               string       `json:"address"`
+	StartDate             string       `json:"start_date"`
+	EndDate               string       `json:"end_date"`
+	Description           string       `json:"description"`
+	Subscribers           []*User      `json:"subscribers,omitempty"`
+	ProjectsParticipating []*Project   `json:"projects_participating,omitempty"`
+	PendingProjects       []*Project   `json:"pending_projects,omitempty"`
+	InstitutionID         int64        `json:"institution_id"`
+	InstitutionName       string       `json:"institution_name"`
+	Rooms                 []*RoomEvent `json:"rooms,omitempty"`
 }
 
 func NewEvent(name, address, startDate, endDate, description string, institutionID int64) *Event {

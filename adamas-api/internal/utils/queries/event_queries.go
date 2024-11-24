@@ -45,18 +45,14 @@ const GET_REPOSITORIES_BY_ROOM_ID = `
 	WHERE pr.room_id = ?`
 
 const GET_PENDING_PROJECTS = `
-	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+	SELECT p.id, p.title, p.description, p.content FROM PROJECT p
 	JOIN PENDING_PROJECT pp ON p.id = pp.project_id
-	JOIN OWNERS_PROJECT op ON op.project_id = p.id
-	JOIN COMMON_USER u ON u.id = op.owner_id
 	WHERE pp.event_id = ? 
 `
 
 const GET_PROJECTS_EVENT = `
-	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+	SELECT  p.id, p.title, p.description, p.content FROM PROJECT p
 	JOIN PROJECT_IN_ROOM pir ON p.id = pir.project_id
-	JOIN OWNERS_PROJECT op ON op.project_id = p.id
-	JOIN COMMON_USER u ON u.id = op.owner_id
 	where pir.event_id = ?
 `
 

@@ -10,11 +10,11 @@ type Project struct {
 	Title          string      `json:"title"`
 	Description    string      `json:"description"`
 	Content        string      `json:"content"`
-	FirstOwnerID   int         `json:"owner_id"`
-	FirstOwnerName string      `json:"owner_name"`
+	FirstOwnerID   int         `json:"owner_id,omitempty"`
+	FirstOwnerName string      `json:"owner_name,omitempty"`
 	Owners         []*User     `json:"owners,omitempty"`
 	Categories     []*Category `json:"categories,omitempty"`
-	CategoriesAdd  []int64     `json:"categories_add"`
+	CategoriesAdd  []int64     `json:"categories_add,omitempty"`
 	Comments       []*Comment  `json:"comments,omitempty"`
 	Likes          []*Like     `json:"likes,omitempty"`
 }

@@ -32,10 +32,14 @@ const GET_PROJECTS_BY_CATEGORIES = `
 `
 
 const GET_PROJECTS = `
- SELECT p.id, p.title, p.description,p.content, u.id, u.name FROM PROJECT p 
+ SELECT DISTINCT p.id, p.title, p.description,p.content, u.id, u.name FROM (
+    SELECT * 
+    FROM PROJECT 
+    ORDER BY created_at DESC
+) p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON u.id = p.first_owner_id
- ORDER BY p.created_at DESC
+
  `
 
 const GET_PROJECTS_BY_USER = `

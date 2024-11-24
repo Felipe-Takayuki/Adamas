@@ -264,3 +264,6 @@ GET http://localhost:3000/user/1
  
 ###
 GET http://localhost:3000/user/search/Felipe 
+
+### 
+GET http://localhost:3000/institution/1

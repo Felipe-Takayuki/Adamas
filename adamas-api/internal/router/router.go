@@ -100,6 +100,7 @@ func Router(db *sql.DB) http.Handler {
 		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
 		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)
 		r.Post("/event/{event_id}/approve-participation", webEventService.ApproveParticipation)
+		r.Delete("/event/{event_id}/participation", webEventService.DeleteParticipationInEvent)
 		r.Put("/user", webUserService.EditUser)
 		r.Get("/user", webUserService.GetUserByToken)
 	},

@@ -117,6 +117,14 @@ func (es *EventService) EventRequestParticipation(eventID, userID, projectID int
 	return project, nil
 }
 
+func (es *EventService) DeleteParticipationInEvent(eventID, userID, projectID int64) (string, error) {
+	participationWasDeleted, err := es.EventDB.DeleteParticipationInEvent(eventID, userID, projectID)
+	if err != nil {
+		return "", err 
+	}
+	return participationWasDeleted, nil 
+}
+
 func (es *EventService) ApproveParticipation(projectID, ownerID, eventID, roomID int64) ([]*entity.Project, error) {
 	project, err := es.EventDB.ApproveParticipation(projectID, ownerID, eventID, roomID)
 	if err != nil {

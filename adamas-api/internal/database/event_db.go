@@ -223,6 +223,24 @@ func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) 
 	return project, nil
 }
 
+func (edb *EventDB) DeleteParticipationInEvent(eventID, userID, projectID int64) (string, error){
+	pdb := NewProjectDB(edb.db)
+	if !pdb.isProjectOwner(userID, projectID) {
+		return "", fmt.Errorf("usuário não possui o repositório")
+	}
+	pendingProject, _ := edb.db.Exec("DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?", eventID, projectID)
+	rowsAffected, err := pendingProject.RowsAffected()
+	if rowsAffected == 0 {
+		_, err = edb.db.Exec("DELETE FROM PROJECT_IN_ROOM WHERE event_id = ? AND project_id = ? ", eventID, projectID )
+		if err != nil {
+			return "", err
+		}
+	}
+	if err != nil{
+		return "", err 
+	}
+	return "deletado", err 
+}
 func (edb *EventDB) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*entity.Project, error) {
 	pdb := NewProjectDB(edb.db)
 	isOwner := isEventOwner(edb.db, eventID, ownerID)

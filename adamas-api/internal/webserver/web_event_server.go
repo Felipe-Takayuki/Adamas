@@ -40,6 +40,24 @@ func (weh *WebEventHandler) GetEventByName(w http.ResponseWriter, r *http.Reques
 	}
 	json.NewEncoder(w).Encode(events)
 }
+
+func (weh *WebEventHandler) GetEventByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	event, err := weh.eventService.GetEventByID(int64(eventID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(event)
+
+}
 func (weh *WebEventHandler) GetEvents(w http.ResponseWriter, r *http.Request) {
 	events, err := weh.eventService.EventDB.GetEvents()
 	if err != nil {

@@ -198,12 +198,12 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 	return events, err
 }
 
-func (edb *EventDB) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
+func (edb *EventDB) EventRegistration(eventID, userID int64) (*entity.Event, error) {
 	_, err := edb.db.Exec("INSERT INTO SUBSCRIBERS_EVENT(event_id, user_id) VALUES (?, ?)", eventID, userID)
 	if err != nil {
 		return nil, err
 	}
-	event, err := edb.getEventByID(eventID)
+	event, err := edb.GetEventByID(eventID)
 	if err != nil {
 		return nil, err
 	}
@@ -375,33 +375,13 @@ func (edb *EventDB) getProjectsByRoomID(roomID int64) ([]*entity.Project, error)
 	return repositories, nil
 }
 
-func (edb *EventDB) getEventByID(eventID int64) ([]*entity.Event, error) {
-	rows, err := edb.db.Query(queries.GET_EVENT_BY_ID, eventID)
+func (edb *EventDB) GetEventByID(eventID int64) (*entity.Event, error) {
+	event := &entity.Event{}
+	err := edb.db.QueryRow(queries.GET_EVENT_BY_ID, eventID).Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var events []*entity.Event
-	for rows.Next() {
-		var event entity.Event
-		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
-		if err != nil {
-			return nil, err
-		}
-		rooms, err := edb.getRoomsByEventID(event.ID)
-		if err != nil {
-			return nil, err
-		}
-		subscribers, err := edb.GetSubscribersByEventID(eventID, event.InstitutionID)
-		if err != nil {
-			return nil, err
-		}
-		event.Subscribers = subscribers
-		event.Rooms = rooms
-		events = append(events, &event)
-	}
-	return events, err
+	return event, err
 }
 
 func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {

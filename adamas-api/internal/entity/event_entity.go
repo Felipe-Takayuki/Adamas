@@ -7,10 +7,10 @@ type Event struct {
 	StartDate       string       `json:"start_date"`
 	EndDate         string       `json:"end_date"`
 	Description     string       `json:"description"`
-	Subscribers     []*User      `json:"subscribers"`
+	Subscribers     []*User      `json:"subscribers,omitempty"`
 	InstitutionID   int64        `json:"institution_id"`
 	InstitutionName string       `json:"institution_name"`
-	Rooms           []*RoomEvent `json:"rooms"`
+	Rooms           []*RoomEvent `json:"rooms,omitempty"`
 }
 
 func NewEvent(name, address, startDate, endDate, description string, institutionID int64) *Event {

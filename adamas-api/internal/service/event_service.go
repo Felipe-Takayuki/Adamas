@@ -29,6 +29,14 @@ func (es *EventService) GetEventByName(name string) ([]*entity.Event, error) {
 	}
 	return events, nil
 }
+
+func (es *EventService) GetEventByID(eventID int64) (*entity.Event, error) {
+	event, err := es.EventDB.GetEventByID(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return event,nil 
+}
 func (es *EventService) GetEvents() ([]*entity.Event, error) {
 	events, err := es.EventDB.GetEvents()
 	if err != nil {
@@ -77,7 +85,7 @@ func (es *EventService) DeleteRoom(roomID, eventID int64) error {
 	return nil 
 }
 
-func (es *EventService) EventRegistration(eventID, userID int64) ([]*entity.Event, error) {
+func (es *EventService) EventRegistration(eventID, userID int64) (*entity.Event, error) {
 	events, err := es.EventDB.EventRegistration(eventID, userID)
 	if err != nil {
 		return nil, err

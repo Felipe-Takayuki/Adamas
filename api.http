@@ -187,6 +187,9 @@ Authorization:  Bearer TOKEN
     "name": "Sala 5",
     "quantity_projects": 10
 }
+###
+GET http://localhost:3000/event/1/room 
+Authorization: Bearer TOKEN
 
 ###
 PUT http://localhost:3000/event/1/room 

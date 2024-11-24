@@ -69,6 +69,14 @@ func (es *EventService) GetProjectsInEvent(eventID int64) ([]*entity.Project, er
 	return approvedProjects, nil 
 }
 
+
+func (es *EventService) GetRoomsByEventID(eventID, owner_id int64) ([]*entity.RoomEvent, error) {
+	rooms, err := es.EventDB.GetRoomsByEventID(eventID, owner_id)
+	if err != nil {
+		return nil, err 
+	}
+	return rooms, nil 
+}
 func (es *EventService) DeleteEvent(eventID int64, email, password string) error {
 	err := es.EventDB.DeleteEvent(eventID,  email, password)
 	if err != nil {

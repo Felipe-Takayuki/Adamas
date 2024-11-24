@@ -150,6 +150,7 @@ func (edb *EventDB) AddRoomInEvent(eventID, ownerID int64, roomName string, quan
 	return rooms, nil
 }
 
+
 func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 	rows, err := edb.db.Query(queries.GET_EVENT_BY_NAME, name)
 	if err != nil {
@@ -164,11 +165,6 @@ func (edb *EventDB) GetEventByName(name string) ([]*entity.Event, error) {
 		if err != nil {
 			return nil, err
 		}
-		rooms, err := edb.getRoomsByEventID(event.ID)
-		if err != nil {
-			return nil, err
-		}
-		event.Rooms = rooms
 		events = append(events, &event)
 	}
 	return events, err
@@ -183,16 +179,6 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 	for rows.Next() {
 		var event entity.Event
 		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
-		rooms, err := edb.getRoomsByEventID(event.ID)
-		if err != nil {
-			return nil, err
-		}
-		subscribers, err := edb.GetSubscribersByEventID(event.ID, event.InstitutionID)
-		if err != nil {
-			return nil, err
-		}
-		event.Subscribers = subscribers
-		event.Rooms = rooms
 		events = append(events, &event)
 	}
 	return events, err
@@ -319,6 +305,17 @@ func (edb *EventDB) ApproveParticipation(projectID, ownerID, eventID, roomID int
 		return nil, err
 	}
 	return projects, nil
+}
+
+func (edb *EventDB) GetRoomsByEventID(eventID, ownerID int64) ([]*entity.RoomEvent, error) {
+	if !isEventOwner(edb.db, eventID, ownerID) {
+		return nil, fmt.Errorf("a instituição não possui o evento")
+	} 
+	rooms, err := edb.getRoomsByEventID(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return rooms, nil 
 }
 
 func (edb *EventDB) getRoomsByEventID(eventID int64) ([]*entity.RoomEvent, error) {

@@ -195,6 +195,18 @@ func (edb *EventDB) EventRegistration(eventID, userID int64) (*entity.Event, err
 	}
 	return event, nil
 }
+
+func (edb *EventDB) DeleteRegistrationInEvent(eventID, userID int64) (*entity.Event, error) {
+	_, err := edb.db.Exec("DELETE FROM SUBSCRIBERS_EVENT WHERE event_id = ? AND user_id = ? ", eventID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	event, err := edb.GetEventByID(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return event, nil 
+}
 func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) (*entity.Project, error) {
 	pdb := NewProjectDB(edb.db)
 	if !pdb.isProjectOwner(userID, projectID) {

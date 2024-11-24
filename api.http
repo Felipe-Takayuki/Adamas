@@ -213,6 +213,10 @@ POST http://localhost:3000/event/1/subscribe
 Authorization: Bearer TOKEN
 
 ###
+DELETE http://localhost:3000/event/1/subscribe
+Authorization: Bearer TOKEN
+
+###
 GET http://localhost:3000/event/1/subscribers
 Authorization: Bearer TOKEN
 

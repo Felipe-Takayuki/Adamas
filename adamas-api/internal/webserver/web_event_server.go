@@ -344,6 +344,41 @@ func (weh *WebEventHandler) EventRegistration(w http.ResponseWriter, r *http.Req
 	}
 }
 
+func (weh *WebEventHandler) DeleteRegistrationInEvent(w http.ResponseWriter, r *http.Request) {
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	userType, ok := claims["user_type"].(string)
+	if !ok {
+		http.Error(w, "id is not exists!", http.StatusInternalServerError)
+		return
+	}
+	if userType == "common_user" {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "event_id"))
+		if err != nil {
+			http.Error(w, "event_id is not int!", http.StatusInternalServerError)
+			return
+		}
+		userID, ok := claims["id"].(float64)
+		if !ok {
+			http.Error(w, "id is not int!", http.StatusInternalServerError)
+			return
+		}
+		deleteRegister, err := weh.eventService.DeleteRegistrationInEvent(int64(eventID), int64(userID))
+		if err != nil {
+			error := utils.ErrorMessage{Message: err.Error()}
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(error)
+			return 
+		}
+		json.NewEncoder(w).Encode(deleteRegister)
+	} else {
+		error := utils.ErrorMessage{Message: "este usuário não possui essa permissão!"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+}
+
 func (weh *WebEventHandler) EventRequestParticipation(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")

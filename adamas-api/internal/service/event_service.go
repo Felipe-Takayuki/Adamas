@@ -94,11 +94,19 @@ func (es *EventService) DeleteRoom(roomID, eventID int64) error {
 }
 
 func (es *EventService) EventRegistration(eventID, userID int64) (*entity.Event, error) {
-	events, err := es.EventDB.EventRegistration(eventID, userID)
+	event, err := es.EventDB.EventRegistration(eventID, userID)
 	if err != nil {
 		return nil, err
 	}
-	return events, nil
+	return event, nil
+}
+
+func (es *EventService) DeleteRegistrationInEvent(eventID, userID int64) (*entity.Event, error) {
+	event, err := es.EventDB.DeleteRegistrationInEvent(eventID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	return event, nil 
 }
 
 func (es *EventService) EventRequestParticipation(eventID, userID, projectID int64) (*entity.Project, error) {

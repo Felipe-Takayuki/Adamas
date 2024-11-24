@@ -378,8 +378,14 @@ func (edb *EventDB) GetEventByID(eventID int64) (*entity.Event, error) {
 	if err != nil {
 		return nil, err
 	}
+	event.Subscribers, err = edb.getSubscribersByEventID(eventID)
+	if err != nil {
+		return nil, err 
+	}
 	return event, err
 }
+
+
 
 func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {
 
@@ -388,6 +394,15 @@ func (edb *EventDB) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.U
 		return nil, fmt.Errorf("a instituição não possui o evento")
 	}
 
+
+	subscribers, err := edb.getSubscribersByEventID(eventID)
+	if err != nil {
+		return nil, err 
+	}
+	return subscribers, nil
+}
+
+func (edb *EventDB) getSubscribersByEventID(eventID int64) ([]*entity.User, error) {
 	rows, err := edb.db.Query(queries.GET_SUBSCRIBERS_BY_EVENT_ID, eventID)
 	if err != nil {
 		return nil, err

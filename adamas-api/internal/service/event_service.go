@@ -44,6 +44,13 @@ func (es *EventService) GetEvents() ([]*entity.Event, error) {
 	}
 	return events, nil
 }
+func (es *EventService) GetEventByOwnerID(ownerID int64) ([]*entity.Event, error) {
+	events, err := es.EventDB.GetEventByOwnerID(ownerID)
+	if err != nil {
+		return nil, err 
+	}
+	return events, nil
+}
 
 func (es *EventService) GetSubscribersByEventID(eventID, ownerID int64) ([]*entity.User, error) {
 	subscribers, err := es.EventDB.GetSubscribersByEventID(eventID, ownerID)
@@ -60,6 +67,7 @@ func (es *EventService) GetPendingProjectsInEvent(eventID, ownerID int64) ([]*en
 	}
 	return pendingProjects, nil 
 }
+
 
 func (es *EventService) GetProjectsInEvent(eventID int64) ([]*entity.Project, error) {
 	approvedProjects, err := es.EventDB.GetProjectsInEvent(eventID)

@@ -69,6 +69,22 @@ func (weh *WebEventHandler) GetEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(events)
 }
 
+func (weh *WebEventHandler) GetEventByOwnerID(w http.ResponseWriter, r *http.Request) {
+	institutionID, err := strconv.Atoi(chi.URLParam(r, "institution_id"))
+	if err != nil {
+		http.Error(w, "institution_id is not int!", http.StatusInternalServerError)
+		return
+	}
+	events, err := weh.eventService.GetEventByOwnerID(int64(institutionID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(events)
+}
+
 func (weh *WebEventHandler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")

@@ -183,6 +183,22 @@ func (edb *EventDB) GetEvents() ([]*entity.Event, error) {
 	return events, err
 }
 
+func (edb *EventDB) GetEventByOwnerID(ownerID int64) ([]*entity.Event, error) {
+	rows,err := edb.db.Query(queries.GET_EVENTS_BY_OWNER_ID, ownerID)
+	if err != nil {
+		return nil, err 
+	}
+	defer rows.Close()
+	var events []*entity.Event
+
+	for rows.Next() {
+		var event entity.Event
+		err = rows.Scan(&event.ID, &event.Name, &event.Address, &event.StartDate, &event.EndDate, &event.Description, &event.InstitutionID, &event.InstitutionName)
+		events = append(events, &event)
+	}
+	return events, nil 
+}
+
 func (edb *EventDB) EventRegistration(eventID, userID int64) (*entity.Event, error) {
 	_, err := edb.db.Exec("INSERT INTO SUBSCRIBERS_EVENT(event_id, user_id) VALUES (?, ?)", eventID, userID)
 	if err != nil {

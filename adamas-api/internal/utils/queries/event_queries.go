@@ -18,6 +18,12 @@ const GET_EVENT_BY_ID = `
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id
 	WHERE e.id = ?`
 
+const GET_EVENTS_BY_OWNER_ID = `
+	SELECT e.id, e.name, e.address, e.start_date, e.end_date , e.description, o.owner_id, i.name FROM EVENT e
+	JOIN OWNER_EVENT o ON e.id = o.event_id
+	JOIN INSTITUTION_USER i ON o.owner_id = i.id
+	WHERE i.id = ?
+`
 const GET_ROOMS_BY_EVENT_ID = `
 	SELECT rie.id, rie.name, rie.quantity_projects FROM ROOM_IN_EVENT rie
 	WHERE rie.event_id = ?`

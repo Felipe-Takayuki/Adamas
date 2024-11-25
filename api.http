@@ -265,6 +265,9 @@ GET http://localhost:3000/event/search
 
 ###
 GET http://localhost:3000/event/1
+
+###
+GET http://localhost:3000/event/institution/1
 ###
 GET http://localhost:3000/event/1/approved_projects
 

@@ -246,6 +246,14 @@ Authorization: Bearer TOKEN
     "project_id": 1,
     "room_id": 1
 }
+
+###
+DELETE http://localhost:3000/event/1/disapprove-participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1
+}
 ### 
 GET http://localhost:3000/project/search
 

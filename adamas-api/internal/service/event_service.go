@@ -141,6 +141,14 @@ func (es *EventService) ApproveParticipation(projectID, ownerID, eventID, roomID
 	return project, nil
 }
 
+func (es *EventService) DisaApproveParticipation(projectID, eventID, ownerID int64) (string, error) {
+	wasDisaaprove, err := es.EventDB.DisaApproveParticipation(projectID, eventID, ownerID)
+	if err != nil {
+		return "", err 
+	}
+	return wasDisaaprove, nil 
+}
+
 func (es *EventService) AddRoomInEvent(eventID, ownerID int64, roomName string, quantityProjects int) ([]*entity.RoomEvent, error) {
 	rooms, err := es.EventDB.AddRoomInEvent(eventID, ownerID, roomName, quantityProjects)
 	if err != nil {

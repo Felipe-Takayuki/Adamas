@@ -69,6 +69,7 @@ const GET_EVENTS = `
 	ORDER BY e.created_at DESC`
 
 const APPROVE_PARTICIPATION = "INSERT INTO PROJECT_IN_ROOM(event_id, room_id, project_id) VALUES (?, ?, ?)"
+
 const DELETE_PENDING_PARTICIPATION = "DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?"
 
 const UPDATE_NAME_EVENT = `

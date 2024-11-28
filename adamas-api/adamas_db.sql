@@ -1,21 +1,22 @@
-DROP DATABASE IF EXISTS adamas_db;
 
-CREATE DATABASE adamas_db;
+CREATE DATABASE IF NOT EXISTS adamas_db;
 
 USE adamas_db;
 
 
-CREATE TABLE INSTITUTION_USER(
+CREATE TABLE IF NOT EXISTS INSTITUTION_USER(
   id int auto_increment NOT NULL PRIMARY KEY,
-  name varchar(255) NOT NULL,
+  name varchar(255) NOT NULL UNIQUE,
   email varchar(255) NOT NULL UNIQUE,
   password varchar(64) NOT NULL,
   cnpj char(14) NOT NULL
 );
 
-CREATE TABLE COMMON_USER(
+CREATE TABLE IF NOT EXISTS COMMON_USER(
   id int auto_increment NOT NULL PRIMARY KEY,
-  name varchar(255) NOT NULL,
+  name varchar(255) NOT NULL UNIQUE,
+  nickname varchar(20) NOT NULL,
+  description varchar(255),
   email varchar(255) NOT NULL UNIQUE,
   institution_id int NULL,
   password varchar(64) NOT NULL,
@@ -23,41 +24,51 @@ CREATE TABLE COMMON_USER(
 );
 
 
-CREATE TABLE PROJECT(
+CREATE TABLE IF NOT EXISTS PROJECT(
   id int auto_increment NOT NULL PRIMARY KEY,
   title varchar(255) NOT NULL,
+  first_owner_id int NOT NULL,
   description varchar(255) NOT NULL,
-  content varchar(255) NOT NULL
+  content MEDIUMTEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (first_owner_id) REFERENCES COMMON_USER(id)
 );
 
-CREATE TABLE OWNERS_PROJECT(
+CREATE TABLE IF NOT EXISTS LIKE_PROJECT(
+  project_id int NOT NULL REFERENCES PROJECT(id),
+  user_id int NOT NULL REFERENCES COMMON_USER(id),
+  PRIMARY KEY(project_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS OWNERS_PROJECT(
   project_id int NOT NULL REFERENCES PROJECT(id),
   owner_id int NOT NULL REFERENCES COMMON_USER(id),
   PRIMARY KEY(project_id, owner_id)
 );
 
-CREATE TABLE EVENT(
+CREATE TABLE IF NOT EXISTS EVENT(
   id int auto_increment NOT NULL PRIMARY KEY,
   name varchar(100) NOT NULL,
   address varchar(255) NOT NULL,
   start_date TIMESTAMP NOT NULL,
   end_date  TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   description varchar(255) NOT NULL
 );
 
-CREATE TABLE OWNER_EVENT(
+CREATE TABLE IF NOT EXISTS OWNER_EVENT(
   event_id int NOT NULL REFERENCES EVENT(id),
   owner_id int NOT NULL REFERENCES INSTITUTION_USER(id),
   PRIMARY KEY(event_id, owner_id)
 );
 
-CREATE TABLE SUBSCRIBERS_EVENT(
+CREATE TABLE IF NOT EXISTS SUBSCRIBERS_EVENT(
   event_id int NOT NULL REFERENCES EVENT(id),
   user_id  int NOT NULL REFERENCES COMMON_USER(id),
   PRIMARY KEY(event_id, user_id)
 );
 
-CREATE TABLE ROOM_IN_EVENT(
+CREATE TABLE IF NOT EXISTS ROOM_IN_EVENT(
   id int auto_increment NOT NULL PRIMARY KEY,
   event_id int NOT NULL,
   name varchar(50) NOT NULL UNIQUE,
@@ -65,22 +76,23 @@ CREATE TABLE ROOM_IN_EVENT(
   FOREIGN KEY (event_id) REFERENCES EVENT(id) 
 );
 
-CREATE TABLE PENDING_PROJECT(
+CREATE TABLE IF NOT EXISTS PENDING_PROJECT(
   event_id int NOT NULL REFERENCES EVENT(id),
   project_id int NOT NULL REFERENCES PROJECT(id),
   PRIMARY KEY(event_id, project_id)
 );
 
-CREATE TABLE PROJECT_IN_ROOM(
+CREATE TABLE IF NOT EXISTS PROJECT_IN_ROOM(
+  event_id int NOT NULL REFERENCES EVENT(id),
   room_id int NOT NULL REFERENCES ROOM_IN_EVENT(id),
   project_id int NOT NULL REFERENCES PROJECT(id),
-  PRIMARY KEY(room_id, project_id)
+  PRIMARY KEY(event_id, room_id, project_id)
 );
 
 
 DELIMITER $$
 
-CREATE TRIGGER before_insert_project_in_room
+CREATE TRIGGER IF NOT EXISTS before_insert_project_in_room
 BEFORE INSERT ON PROJECT_IN_ROOM
 FOR EACH ROW
 BEGIN
@@ -109,7 +121,7 @@ DELIMITER ;
 
 
 
-CREATE TABLE CATEGORY(
+CREATE TABLE IF NOT EXISTS CATEGORY(
   id int auto_increment NOT NULL PRIMARY KEY,
   name varchar(200) NOT NULL
 ); 
@@ -123,7 +135,7 @@ INSERT INTO CATEGORY(name) values
 ("Marketing"),
 ("Mecânica");
 
-CREATE TABLE CATEGORY_PROJECT(
+CREATE TABLE IF NOT EXISTS CATEGORY_PROJECT(
   category_id int NOT NULL REFERENCES CATEGORY(id),
   project_id int NOT NULL REFERENCES PROJECT(id),
   PRIMARY KEY(category_id,project_id)
@@ -147,11 +159,12 @@ DELIMITER ;
 
 
 
-CREATE TABLE COMMENT(
+CREATE TABLE IF NOT EXISTS COMMENT(
   id int auto_increment NOT NULL PRIMARY KEY,
   owner_id int NOT NULL,
   project_id int NOT NULL,
   comment varchar(255) NOT NULL,
+  commented_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (owner_id) REFERENCES COMMON_USER(id),
   FOREIGN KEY (project_id) REFERENCES PROJECT(id)
 );

@@ -1,40 +1,41 @@
 package entity
 
-type Category string
+type Category struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
 type Project struct {
-	ID             int64       `json:"id"`
+	ID             int64       `json:"project_id"`
 	Title          string      `json:"title"`
 	Description    string      `json:"description"`
 	Content        string      `json:"content"`
-	FirstOwnerID   int         `json:"owner_id"`
-	FirstOwnerName string      `json:"owner_name"`
-	OwnerIDs       []int       `json:"owners_id"`
-	OwnerNames     []string    `json:"owners_name"`
-	Categories     []*Category `json:"categories"`
-	Comments       []*Comment  `json:"comments"`
+	FirstOwnerID   int         `json:"owner_id,omitempty"`
+	FirstOwnerName string      `json:"owner_name,omitempty"`
+	Owners         []*User     `json:"owners,omitempty"`
+	Categories     []*Category `json:"categories,omitempty"`
+	CategoriesAdd  []int64     `json:"categories_add,omitempty"`
+	Comments       []*Comment  `json:"comments,omitempty"`
+	Likes          []*Like     `json:"likes,omitempty"`
 }
 
 type Comment struct {
-	CommentID int64  `json:"comment_id"`
-	UserID    int64  `json:"user_id"`
-	UserName  string `json:"user_name"`
+	CommentID int64  `json:"comment_id,omitempty"`
+	UserID    int64  `json:"user_id,omitempty"`
+	UserName  string `json:"user_name,omitempty"`
 	Comment   string `json:"comment"`
 }
 
-type ProjectBasic struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Content     string `json:"content"`
+type Like struct {
+	ProjectID int64  `json:"project_id,omitempty"`
+	UserID    *int64 `json:"user_id"`
 }
 
 func NewProject(title, description, content string, ownerID int) *Project {
-	var ownerIDs []int
 	return &Project{
 		Title:        title,
 		Description:  description,
 		Content:      content,
 		FirstOwnerID: ownerID,
-		OwnerIDs:     append(ownerIDs, ownerID),
 	}
 }

@@ -1,28 +1,69 @@
 package queries
 
 const GET_PROJECT_BY_NAME = `
- SELECT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p
+ SELECT DISTINCT p.id, p.title, p.description, p.content, u.id, u.name FROM (
+    SELECT * 
+    FROM PROJECT 
+    ORDER BY created_at DESC
+ ) p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
- JOIN COMMON_USER u ON o.owner_id = u.id WHERE p.title = ?`
+ JOIN COMMON_USER u ON u.id = p.first_owner_id WHERE p.title LIKE ?
+ `
 
+const GET_PROJECTS_BY_NAME_CATEGORY = `
+ SELECT DISTINCT p.id, p.title, p.description, p.content, u.id, u.name FROM (
+    SELECT * 
+    FROM PROJECT 
+    ORDER BY created_at DESC
+ ) p 
+ JOIN OWNERS_PROJECT o ON p.id = o.project_id 
+ JOIN COMMON_USER u ON u.id = p.first_owner_id 
+ JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
+ WHERE cp.category_id IN (%s)
+ AND p.title LIKE ?
+`
 const GET_PROJECT_BY_ID = `
  SELECT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM PROJECT p
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON o.owner_id = u.id WHERE p.id = ?
  `
+
+const GET_PROJECTS_BY_CATEGORIES = `
+ SELECT DISTINCT p.id, p.title, p.description, p.content, o.owner_id, u.name FROM (
+    SELECT * 
+    FROM PROJECT 
+    ORDER BY created_at DESC
+ ) p 
+ JOIN OWNERS_PROJECT o ON p.id = o.project_id
+ JOIN COMMON_USER u ON u.id = p.first_owner_id
+ JOIN CATEGORY_PROJECT cp ON cp.project_id = p.id
+ WHERE cp.category_id IN (%s)
+`
+
 const GET_PROJECTS = `
- SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 
+ SELECT DISTINCT p.id, p.title, p.description,p.content, u.id, u.name FROM (
+    SELECT * 
+    FROM PROJECT 
+    ORDER BY created_at DESC
+) p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
- JOIN COMMON_USER u ON o.owner_id = u.id `
+ JOIN COMMON_USER u ON u.id = p.first_owner_id
+
+ `
 
 const GET_PROJECTS_BY_USER = `
  SELECT p.id, p.title, p.description,p.content, o.owner_id, u.name FROM PROJECT p 
  JOIN OWNERS_PROJECT o ON p.id = o.project_id 
  JOIN COMMON_USER u ON o.owner_id = u.id
  WHERE u.id = ?
+ ORDER BY p.created_at DESC
 `
-const CREATE_PROJECT = "INSERT INTO PROJECT(title, description,content) VALUES (?,?,?)"
+const CREATE_PROJECT = "INSERT INTO PROJECT(title, description,content, first_owner_id) VALUES (?,?,?,?)"
 
+const LIKE_PROJECT = "INSERT INTO LIKE_PROJECT(project_id, user_id) VALUES (?, ?)"
+
+const GET_LIKES = "SELECT user_id FROM LIKE_PROJECT WHERE project_id = ?"
+const REMOVE_LIKE = "DELETE FROM LIKE_PROJECT WHERE project_id = ? and user_id = ?"
 const UPDATE_CONTENT_PROJECT = `
  UPDATE PROJECT 
  SET content = ? 
@@ -36,6 +77,11 @@ const UPDATE_DESCRIPTION_PROJECT = `
  SET description = ? 
  WHERE id = ?`
 
+const UPDATE_COMMENT = `
+ UPDATE COMMENT
+ SET comment = ? 
+ WHERE id = ?
+`
 const DELETE_PROJECT = `
  DELETE FROM PROJECT 
  WHERE id = ?
@@ -59,6 +105,13 @@ const CHECK_PROJECT_OWNER = `
  AND project_id = ?
 `
 
+const CHECK_COMMENT_OWNER = `
+ SELECT COUNT(*) 
+ FROM COMMENT 
+ WHERE owner_id = ? 
+ AND id = ?
+`
+
 const GET_OWNER_NAME_BY_ID = "SELECT name FROM COMMON_USER WHERE id = ?"
 
 const SET_OWNER = "INSERT INTO OWNERS_PROJECT(project_id, owner_id) VALUES (?, ?)"
@@ -66,7 +119,7 @@ const SET_OWNER = "INSERT INTO OWNERS_PROJECT(project_id, owner_id) VALUES (?, ?
 const SET_CATEGORY = "INSERT INTO CATEGORY_PROJECT(category_id, project_id) VALUES (?,?)"
 
 const GET_CATEGORIES_BY_PROJECT = `
-    SELECT c.name FROM CATEGORY_PROJECT cp
+    SELECT c.name, c.id FROM CATEGORY_PROJECT cp
     JOIN CATEGORY c ON cp.category_id = c.id
 	JOIN PROJECT p ON cp.project_id = p.id
 	WHERE cp.project_id = ?
@@ -77,12 +130,18 @@ const GET_OWNERS_BY_PROJECT = `
 	JOIN COMMON_USER u ON op.owner_id = u.id
 	WHERE op.project_id = ?
 `
-
+const GET_COMMENT_BY_ID = `
+ SELECT com.id, u.id, u.name, com.comment FROM COMMENT com
+ JOIN PROJECT r ON com.project_id = r.id
+ JOIN COMMON_USER u ON com.owner_id = u.id
+ WHERE com.id = ?
+`
 const GET_COMMENTS_BY_PROJECT = `
  SELECT com.id, u.id, u.name, com.comment FROM COMMENT com
  JOIN PROJECT r ON com.project_id = r.id
  JOIN COMMON_USER u ON com.owner_id = u.id
  WHERE com.project_id = ?
+ ORDER BY com.commented_at DESC
 `
 const SET_COMMENT = "INSERT INTO COMMENT (owner_id, project_id, comment) VALUES (?, ?, ?)"
 

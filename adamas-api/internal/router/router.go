@@ -9,6 +9,7 @@ import (
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/webserver"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth"
 )
 
@@ -33,6 +34,15 @@ func Router(db *sql.DB) http.Handler {
 	c := chi.NewRouter()
 	c.Use(middleware.Logger)
 	c.Use(middleware.Recoverer)
+	corsConfig := cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}
+	c.Use(cors.Handler(corsConfig))
+
+	
 	c.Post("/create", func(w http.ResponseWriter, r *http.Request) {
 		webUserService.CreateUser(w, r, tokenAuth)
 	})
@@ -49,28 +59,53 @@ func Router(db *sql.DB) http.Handler {
 
 	c.Get("/project/user/{user_id}", webProjectService.GetProjectsByUser)
 	c.Get("/project/search/{project_title}", webProjectService.GetProjectsByName)
+	c.Get("/project/{project_id}", webProjectService.GetProjectByID)
 	c.Get("/project/search", webProjectService.GetProjects)
 
 	c.Get("/event/search/{event}", webEventService.GetEventByName)
 	c.Get("/event/search", webEventService.GetEvents)
+	c.Get("/event/{event_id}/approved_projects", webEventService.GetProjectsInEvent)
+	c.Get("/event/{event_id}", webEventService.GetEventByID)
+	c.Get("/event/institution/{institution_id}", webEventService.GetEventByOwnerID)
+
+	c.Get("/user/search", webUserService.GetUsers)
+	c.Get("/user/search/{username}", webUserService.GetUsersByName)
+	c.Get("/user/{user_id}", webUserService.GetUserByID)
+
+	c.Get("/institution/{institution_id}", webInstitutionService.GetInstitutionByID)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 		r.Post("/project", webProjectService.CreateProject)
+		r.Post("/project/like", webProjectService.LikeProject)
+		r.Delete("/project/like", webProjectService.RemoveLikeProject)
 		r.Put("/project/{project_id}", webProjectService.EditProject)
 		r.Delete("/project/{project_id}", webProjectService.DeleteProject)
-		r.Post("/event", webEventService.CreateEvent)
-		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
-		r.Post("/event/{event_id}/subscribe",webEventService.EventRegistration)
-		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
-		r.Post("/event/{event_id}/participation",webEventService.EventRequestParticipation)
-		r.Post("/event/{event_id}/approve-participation",webEventService.ApproveParticipation)
 		r.Post("/project/{project_id}/category", webProjectService.SetCategory)
+		r.Delete("/project/{project_id}/category", webProjectService.DeleteCategory)
+		r.Post("/project/{project_id}/add-user", webProjectService.AddNewUserProject)
 		r.Post("/project/{project_id}/comment", webProjectService.SetComment)
+		r.Put("/project/{project_id}/comment", webProjectService.EditComment)
 		r.Delete("/project/{project_id}/comment", webProjectService.DeleteComment)
+		r.Post("/event", webEventService.CreateEvent)
+		r.Put("/event/{event_id}", webEventService.EditEvent)
+		r.Delete("/event/{event_id}", webEventService.DeleteEvent)
+		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
+		r.Get("/event/{event_id}/room", webEventService.GetRoomsByEventID) 
+		r.Put("/event/{event_id}/room", webEventService.EditRoom)
+		r.Delete("/event/{event_id}/room", webEventService.DeleteRoom)
+		r.Get("/event/{event_id}/pending_projects", webEventService.GetPendingProjectsInEvent)
+		r.Post("/event/{event_id}/subscribe", webEventService.EventRegistration)
+		r.Delete("/event/{event_id}/subscribe", webEventService.DeleteRegistrationInEvent)
+		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
+		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)
+		r.Post("/event/{event_id}/approve-participation", webEventService.ApproveParticipation)
+		r.Delete("/event/{event_id}/disapprove-participation", webEventService.DisaApproveParticipation)
+		r.Delete("/event/{event_id}/participation", webEventService.DeleteParticipationInEvent)
+		r.Put("/user", webUserService.EditUser)
+		r.Get("/user", webUserService.GetUserByToken)
 	},
 	)
-
 	return c
 }

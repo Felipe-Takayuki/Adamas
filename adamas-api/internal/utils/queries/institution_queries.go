@@ -4,6 +4,8 @@ const CREATE_INSTITUTION = "INSERT INTO INSTITUTION_USER(name, email, password, 
 
 const LOGIN_INSTITUTION = "SELECT id, name, email, cnpj FROM INSTITUTION_USER WHERE email = ? and password = ?"
 
+const GET_INSTITUTION_BY_ID = "SELECT id, name FROM INSTITUTION_USER WHERE id = ? "
+
 const VALIDATE_INSTITUTION = `
  SELECT id 
  FROM INSTITUTION_USER 

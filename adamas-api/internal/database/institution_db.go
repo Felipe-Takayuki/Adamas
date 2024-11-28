@@ -45,3 +45,12 @@ func (idb *InstitutionDB) LoginInstitution(email, password string) (*entity.Inst
 	return &institution, nil
 }
 
+func (idb *InstitutionDB) GetInstitutionByID(institutionID int64)(*entity.Institution, error) {
+	institution := &entity.Institution{}
+
+	err := idb.db.QueryRow(queries.GET_INSTITUTION_BY_ID, institutionID).Scan(&institution.ID, &institution.Name)
+	if err != nil{
+		return nil, err 
+	}
+	return institution, nil 
+}

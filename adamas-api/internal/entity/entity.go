@@ -3,8 +3,8 @@ package entity
 import "github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
 
 type User struct {
-	ID          int64  `json:"id"`
-	Name        string `json:"name"`
+	ID          int64  `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
 	NickName    string `json:"nickname,omitempty"`
 	Description string `json:"description,omitempty"`
 	Email       string `json:"email,omitempty"`
@@ -32,10 +32,11 @@ func NewInstitution(name, email, password string, cnpj string) *Institution {
 
 }
 
-func NewUser(name, email, password string) *User {
+func NewUser(name, nickName, email, password string) *User {
 	return &User{
 		Name:     name,
 		Email:    email,
+		NickName: nickName,
 		UserType: "common_user",
 		Password: utils.EncriptKey(password),
 	}

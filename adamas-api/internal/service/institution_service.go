@@ -30,3 +30,11 @@ func (is *InstitutionService) LoginInstitution (email, password string) (*entity
 	}
 	return institution, nil
 }
+
+func (is *InstitutionService) GetInstitutionByID (institutionID int64) (*entity.Institution, error) {
+	institution,err := is.InstitutionDB.GetInstitutionByID(institutionID)
+	if err != nil {
+		return nil, err 
+	}
+	return institution, nil 
+}

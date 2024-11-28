@@ -1,0 +1,144 @@
+POST http://localhost:3000/create
+
+{
+    "name" : "Felipe",
+    "nickname": "felipe",
+    "email": "felipe@email.com",
+    "password": "12345678"
+}
+
+### 
+POST http://localhost:3000/login
+
+{
+    "email": "felipe@email.com",
+    "password": "12345678"
+}
+
+###
+PUT http://localhost:3000/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "id": 1, 
+    "nickname": "felipe001",
+    "description": "Marília "
+}
+
+###
+GET http://localhost:3000/user 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+### 
+POST http://localhost:3000/project
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "title": "Adamas",
+    "description": "uma rede social para projetos",
+    "content": "### hello world!"
+}
+
+
+###
+PUT http://localhost:3000/project/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "title": "Adamas-Projects",
+    "description": "uma rede social para a divulgação de projetos e eventos",
+    "content": "### hello world 2"
+}
+
+###
+DELETE  http://localhost:3000/project/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+{
+    "email": "felipe@email.com",
+    "password":"12345678"
+}
+### 
+POST http://localhost:3000/project/1/add-user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+{
+    "id": 2
+}
+###
+POST  http://localhost:3000/project/1/category
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+{
+    "name": "ti"
+}
+###
+POST http://localhost:3000/project/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "project_id":1
+
+}
+###
+DELETE  http://localhost:3000/project/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "project_id":1
+
+}
+###
+DELETE  http://localhost:3000/project/1/category
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+{
+    "name": "ti"
+}
+
+
+###
+POST http://localhost:3000/project/1/comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "comment": "muito brabo"
+}
+
+###
+PUT http://localhost:3000/project/1/comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4Mzg0OTQsImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.GBgmZ7pja7Qb7D8UgBPL9mPmSWHNqQ5ZYrwRgOg5NUk
+
+{
+    "comment_id": 1,
+    "comment": "muito brabo, eu sei"
+}
+
+###
+DELETE  http://localhost:3000/project/1/comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+{
+    "comment_id" : 1
+}
+
+###
+POST http://localhost:3000/event/1/subscribe
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+###
+DELETE http://localhost:3000/event/1/subscribe
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZUBlbWFpbC5jb20iLCJleHAiOjE3MzI4MTA1NDksImlkIjoxLCJuYW1lIjoiRmVsaXBlIiwidXNlcl90eXBlIjoiY29tbW9uX3VzZXIifQ.sM6wBjNKyXgm-VRN8gdTOc9yJ5pO13zPZKZdRZV-OiE
+
+POST  http://localhost:3000/event/1/participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1
+}
+###
+DELETE http://localhost:3000/event/1/participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1
+}

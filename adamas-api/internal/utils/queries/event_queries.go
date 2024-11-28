@@ -18,6 +18,12 @@ const GET_EVENT_BY_ID = `
 	JOIN INSTITUTION_USER i ON o.owner_id = i.id
 	WHERE e.id = ?`
 
+const GET_EVENTS_BY_OWNER_ID = `
+	SELECT e.id, e.name, e.address, e.start_date, e.end_date , e.description, o.owner_id, i.name FROM EVENT e
+	JOIN OWNER_EVENT o ON e.id = o.event_id
+	JOIN INSTITUTION_USER i ON o.owner_id = i.id
+	WHERE i.id = ?
+`
 const GET_ROOMS_BY_EVENT_ID = `
 	SELECT rie.id, rie.name, rie.quantity_projects FROM ROOM_IN_EVENT rie
 	WHERE rie.event_id = ?`
@@ -45,27 +51,25 @@ const GET_REPOSITORIES_BY_ROOM_ID = `
 	WHERE pr.room_id = ?`
 
 const GET_PENDING_PROJECTS = `
-	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+	SELECT p.id, p.title, p.description, p.content FROM PROJECT p
 	JOIN PENDING_PROJECT pp ON p.id = pp.project_id
-	JOIN OWNERS_PROJECT op ON op.project_id = p.id
-	JOIN COMMON_USER u ON u.id = op.owner_id
 	WHERE pp.event_id = ? 
 `
 
 const GET_PROJECTS_EVENT = `
-	SELECT p.id, p.title, p.description, p.content, u.id, u.name FROM PROJECT p
+	SELECT  p.id, p.title, p.description, p.content FROM PROJECT p
 	JOIN PROJECT_IN_ROOM pir ON p.id = pir.project_id
-	JOIN OWNERS_PROJECT op ON op.project_id = p.id
-	JOIN COMMON_USER u ON u.id = op.owner_id
 	where pir.event_id = ?
 `
 
 const GET_EVENTS = `
 	SELECT e.id, e.name, e.address, e.start_date, e.end_date, e.description, o.owner_id, i.name FROM EVENT e
 	JOIN OWNER_EVENT o ON e.id = o.event_id
-	JOIN INSTITUTION_USER i ON o.owner_id = i.id`
+	JOIN INSTITUTION_USER i ON o.owner_id = i.id
+	ORDER BY e.created_at DESC`
 
 const APPROVE_PARTICIPATION = "INSERT INTO PROJECT_IN_ROOM(event_id, room_id, project_id) VALUES (?, ?, ?)"
+
 const DELETE_PENDING_PARTICIPATION = "DELETE FROM PENDING_PROJECT WHERE event_id = ? AND project_id = ?"
 
 const UPDATE_NAME_EVENT = `

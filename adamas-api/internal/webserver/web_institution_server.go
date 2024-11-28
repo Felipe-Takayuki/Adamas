@@ -3,11 +3,13 @@ package webserver
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/entity"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/service"
 	"github.com/Felipe-Takayuki/Adamas/adamas-api/internal/utils"
+	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 )
 
@@ -38,7 +40,7 @@ func (wih *WebInstitutionHandler) CreateInstitution(w http.ResponseWriter, r *ht
 		json.NewEncoder(w).Encode(error)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
+		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Hour)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": tokenString,
@@ -64,10 +66,26 @@ func (wih *WebInstitutionHandler) LoginInstitution(w http.ResponseWriter, r *htt
 		json.NewEncoder(w).Encode(error)
 		return
 	} else {
-		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Minute * 10)}
+		claims := map[string]interface{}{"id": result.ID, "name": result.Name, "email": result.Email, "user_type": result.UserType, "exp": jwtauth.ExpireIn(time.Hour)}
 		_, tokenString, _ = tokenAuth.Encode(claims)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": tokenString,
 		})
 	}
+}
+
+func (wih *WebInstitutionHandler) GetInstitutionByID(w http.ResponseWriter, r *http.Request) {
+	institutionID, err := strconv.Atoi(chi.URLParam(r, "institution_id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	institution, err := wih.institutionService.GetInstitutionByID(int64(institutionID))
+	if err != nil {
+		error := utils.ErrorMessage{Message: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(error)
+		return
+	}
+	json.NewEncoder(w).Encode(institution)
 }

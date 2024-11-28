@@ -1,0 +1,102 @@
+### 
+POST http://localhost:3000/create/institution 
+
+{
+    "name" : "ETEC",
+    "email": "etec@etec.com",
+    "password": "12345678",
+    "cnpj": "28301041000137"
+}
+
+### 
+POST http://localhost:3000/login/institution
+
+{
+    "email": "etec@etec.com",
+    "password": "12345678"
+}
+
+###
+POST http://localhost:3000/event
+Authorization: Bearer TOKEN
+
+{
+    "name": "Amostra de TCC",
+    "address" : "ETEC ANTONIO DEVISATE, avenida castro alves",
+    "start_date": "2020-12-02 10:00:00",
+    "end_date": "2020-12-02 14:00:00",
+    "description": "Uma amostra de tcc uai"
+}
+
+
+###
+PUT http://localhost:3000/event/1
+Authorization: Bearer TOKEN 
+
+{
+    "name": "Amostra de TCC 001",
+    "description": "Uma amostra de tcc, com projetos dos alunos da ETEC"
+}
+
+###
+DELETE http://localhost:3000/event/1
+Authorization: Bearer TOKEN
+
+{
+    "email": "etec@etec.com",
+    "password": "12345678"
+}
+### 
+POST http://localhost:3000/event/1/room
+Authorization:  Bearer TOKEN
+
+{
+    "name": "Sala 5",
+    "quantity_projects": 10
+}
+###
+GET http://localhost:3000/event/1/room 
+Authorization: Bearer TOKEN
+
+###
+PUT http://localhost:3000/event/1/room 
+Authorization: Bearer TOKEN 
+
+{
+    "room_id": 1,
+    "name": "Sala 6",
+    "quantity_projects": 200
+}
+
+###
+DELETE http://localhost:3000/event/1/room
+Authorization: Bearer TOKEN
+
+{
+    "room_id": 1
+}
+
+###
+GET http://localhost:3000/event/1/subscribers
+Authorization: Bearer TOKEN
+
+### 
+GET http://localhost:3000/event/1/pending_projects
+Authorization: Bearer TOKEN
+
+###
+POST http://localhost:3000/event/1/approve-participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1,
+    "room_id": 1
+}
+
+###
+DELETE http://localhost:3000/event/1/disapprove-participation
+Authorization: Bearer TOKEN
+
+{
+    "project_id": 1
+}

@@ -41,6 +41,8 @@ func Router(db *sql.DB) http.Handler {
 		AllowCredentials: true,
 	}
 	c.Use(cors.Handler(corsConfig))
+
+	
 	c.Post("/create", func(w http.ResponseWriter, r *http.Request) {
 		webUserService.CreateUser(w, r, tokenAuth)
 	})
@@ -63,6 +65,14 @@ func Router(db *sql.DB) http.Handler {
 	c.Get("/event/search/{event}", webEventService.GetEventByName)
 	c.Get("/event/search", webEventService.GetEvents)
 	c.Get("/event/{event_id}/approved_projects", webEventService.GetProjectsInEvent)
+	c.Get("/event/{event_id}", webEventService.GetEventByID)
+	c.Get("/event/institution/{institution_id}", webEventService.GetEventByOwnerID)
+
+	c.Get("/user/search", webUserService.GetUsers)
+	c.Get("/user/search/{username}", webUserService.GetUsersByName)
+	c.Get("/user/{user_id}", webUserService.GetUserByID)
+
+	c.Get("/institution/{institution_id}", webInstitutionService.GetInstitutionByID)
 	// Rotas protegidas
 	c.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -82,13 +92,19 @@ func Router(db *sql.DB) http.Handler {
 		r.Put("/event/{event_id}", webEventService.EditEvent)
 		r.Delete("/event/{event_id}", webEventService.DeleteEvent)
 		r.Post("/event/{event_id}/room", webEventService.AddRoomInEvent)
+		r.Get("/event/{event_id}/room", webEventService.GetRoomsByEventID) 
 		r.Put("/event/{event_id}/room", webEventService.EditRoom)
 		r.Delete("/event/{event_id}/room", webEventService.DeleteRoom)
 		r.Get("/event/{event_id}/pending_projects", webEventService.GetPendingProjectsInEvent)
 		r.Post("/event/{event_id}/subscribe", webEventService.EventRegistration)
+		r.Delete("/event/{event_id}/subscribe", webEventService.DeleteRegistrationInEvent)
 		r.Get("/event/{event_id}/subscribers", webEventService.GetSubscribers)
 		r.Post("/event/{event_id}/participation", webEventService.EventRequestParticipation)
 		r.Post("/event/{event_id}/approve-participation", webEventService.ApproveParticipation)
+		r.Delete("/event/{event_id}/disapprove-participation", webEventService.DisaApproveParticipation)
+		r.Delete("/event/{event_id}/participation", webEventService.DeleteParticipationInEvent)
+		r.Put("/user", webUserService.EditUser)
+		r.Get("/user", webUserService.GetUserByToken)
 	},
 	)
 	return c

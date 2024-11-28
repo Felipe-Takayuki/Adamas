@@ -230,7 +230,14 @@ func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) 
 	if !pdb.isProjectOwner(userID, projectID) {
 		return nil, fmt.Errorf("usuário não possui o repositório")
 	}
-	_, err := edb.db.Exec("INSERT INTO PENDING_PROJECT(event_id, project_id) VALUES (?, ?)", eventID, projectID)
+	projectInEvent, err := edb.projectWasApproved(projectID, eventID, userID)
+	if err != nil {
+		return nil, err 
+	}
+	if projectInEvent {
+		return nil, fmt.Errorf("o projeto já esta inscrito")
+	}
+	_, err = edb.db.Exec("INSERT INTO PENDING_PROJECT(event_id, project_id) VALUES (?, ?)", eventID, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -238,9 +245,27 @@ func (edb *EventDB) EventRequestParticipation(eventID, userID, projectID int64) 
 	if err != nil {
 		return nil, err
 	}
+	
 	return project, nil
 }
 
+func (edb *EventDB) projectWasApproved(projectID, eventID, ownerID int64) (bool, error) {
+	pdb := NewProjectDB(edb.db)
+	if !pdb.isProjectOwner(ownerID, projectID) {
+		return false, fmt.Errorf("usuário não possui o repositório")
+	}
+	var quantityProjects int64
+	err := edb.db.QueryRow("SELECT COUNT(*) FROM PROJECT_IN_ROOM WHERE event_id = ? AND project_id = ?",eventID, projectID).Scan(&quantityProjects)
+	if err != nil {
+		return false, err 
+	}
+	if quantityProjects == 0 {
+		return false, nil 
+	} else {
+		return true, nil 
+	}
+
+}
 func (edb *EventDB) DeleteParticipationInEvent(eventID, userID, projectID int64) (string, error) {
 	pdb := NewProjectDB(edb.db)
 	if !pdb.isProjectOwner(userID, projectID) {
